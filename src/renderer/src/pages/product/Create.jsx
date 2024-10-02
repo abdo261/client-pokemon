@@ -1,34 +1,103 @@
-import { Button, Input, Select, SelectItem } from '@nextui-org/react'
+import { Button, Checkbox, Input, Select, SelectItem, Spinner } from '@nextui-org/react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MdClose, MdOutlineCategory } from 'react-icons/md'
-import tacos from '../../assets/images/tacosrm.png'
+import { useDispatch, useSelector } from 'react-redux'
+import { createProduct } from '../../redux/api/productApi' // Assuming this action exists
+import { getCategories } from '../../redux/api/categoryApi' // Fetch categories
+import { productActions } from '../../redux/slices/productSlice'
+import { formatErrorField } from '../../utils/utils'
+import { imageURI } from '../../utils/axios'
+import defaultImage from '../../assets/images/dfault-image.png'
+import { LuImagePlus } from 'react-icons/lu'
 
-const categories = [
-  { id: 1, name: 'Tacos', productCount: 12, image: tacos },
-  { id: 2, name: 'Pizza', productCount: 0, image: tacos },
-  { id: 3, name: 'Sandwich', productCount: 6, image: tacos },
-  { id: 4, name: 'Pasticho', productCount: 0, image: tacos },
-  { id: 5, name: 'Salade', productCount: 0, image: tacos },
-  { id: 6, name: 'Boisson', productCount: 0, image: tacos },
-  { id: 7, name: 'Assiette', productCount: 0, image: null },
-  { id: 8, name: 'Assiette', productCount: 0, image: null },
-  { id: 9, name: 'Assiette', productCount: 0, image: null }
-]
 const Create = ({ onClose }) => {
+  const dispatch = useDispatch()
+  const { categories, loadingGet, error } = useSelector((state) => state.category)
+  const { errorValidation } = useSelector((state) => state.product)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     categoryId: '',
-    prix: '',
-    image: null
+    price: '',
+    image: null,
+    isPublish: true,
+    imageFile:null
   })
+  const [imagePreview, setImagePreview] = useState(null)
+  const fileInputRef = useRef(null);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  useEffect(() => {
+    dispatch(getCategories()) // Fetch categories when component mounts
+  }, [dispatch])
+
   const handelChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    dispatch(productActions.setErrorValidation({ ...errorValidation, [field]: null }))
+    if (field === 'price') {
+      const numericValue = Number(value)
+
+      // Ensure the value is a valid number and not negative
+      if (!isNaN(numericValue) && numericValue >= 0) {
+        setFormData((prev) => ({ ...prev, [field]: numericValue }))
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }))
+    }
   }
+
   const handelSubmit = (e) => {
     e.preventDefault()
     console.log(formData)
+    const newFormData= new FormData()
+    newFormData.append('name',formData.name)
+    newFormData.append('categoryId',formData.categoryId)
+    newFormData.append('price',formData.price)
+    newFormData.append('isPublish',formData.isPublish)
+    newFormData.append('imageFile',formData.imageFile)
+    
+    if (formData.image) {
+      newFormData.append('image', formData.image)
+    }
+    setIsLoading(true)
+    dispatch(
+      createProduct(
+        newFormData,
+        () => {
+          
+          setFormData({
+            name: '',
+            categoryId: '',
+            price: '',
+            image: null,
+            imageFile:null,
+            isPublish: true
+          })
+        },
+        setIsLoading(false)
+      )
+    )
   }
+  useEffect(() => {
+    dispatch(productActions.setErrorValidation(null))
+    setFormData({
+      name: '',
+      categoryId: '',
+      price: '',
+      image: null,
+      imageFile:null,
+      isPublish: true
+    })
+  }, [])
   return (
     <motion.div
       initial={{ height: 0 }}
@@ -37,80 +106,192 @@ const Create = ({ onClose }) => {
       transition={{ duration: 0.5 }}
       className="w-full flex justify-center overflow-hidden"
     >
-      <div className="bg-white dark:bg-[#43474b] rounded-lg p-4 w-[450px]  h-fit overflow-hidden flex flex-col gap-4 items-center relative">
+      <div className="bg-white dark:bg-[#43474b] rounded-lg p-4 w-[450px] h-fit overflow-hidden flex flex-col gap-4 items-center relative">
         <Button
           className="absolute top-2 right-2 text-danger"
           isIconOnly
           size="sm"
           radius="full"
-          variant="faded"
+          variant="bordered"
           onClick={onClose}
         >
           <MdClose size={20} />
         </Button>
-        <h1 className="font-bold text-2xl underline ">Crée Une Nouvele Produit</h1>
+        <h1 className="font-bold text-2xl underline">Crée Une Nouvele Produit</h1>
         <form className="w-full flex flex-col gap-2" onSubmit={handelSubmit}>
           <Input
             label="Nom"
-            variant="faded"
-            placeholder="entrFe le nome de categories"
+            variant="bordered"
+            placeholder="Entrez le nom du produit"
             fullWidth
             className="font-bold tracking-wider text-lg"
             id="name"
             onChange={(e) => handelChange('name', e.target.value)}
             value={formData.name}
+            isInvalid={errorValidation && formatErrorField(errorValidation, 'name') && true}
+            errorMessage={
+              errorValidation &&
+              formatErrorField(errorValidation, 'name') && (
+                <ol>
+                  {formatErrorField(errorValidation, 'name').map((e) => (
+                    <li key={e}>-{e}</li>
+                  ))}
+                </ol>
+              )
+            }
           />
-          <div className="flex items-center gap-2 w-full">
-            <Select
-              placeholder="filtré par categorie"
-              className="tracking-widest"
-              variant="faded"
-              startContent={<MdOutlineCategory />}
-              onChange={(e) => handelChange('categoryId', e.target.value)}
-              aria-label="sategory"
-              label="Categorie"
-            >
-              {categories.map((category) => (
-                <SelectItem
-                  key={category.id}
-                  value={category.id}
-                  className="dark:text-white"
-                  startContent={
-                    <div className=" self-center  text-center">
-                      {category.image ? (
-                        <img src={category.image} alt="tacos" className="object-cover h-[50px]" />
-                      ) : (
-                        <MdOutlineCategory
-                          MdFastfood
-                          size={40}
-                          className="self-center m-1 mx-auto"
-                        />
-                      )}
-                    </div>
-                  }
-                >
-                  {category.name}
-                </SelectItem>
-              ))}
-            </Select>
+
+          <div className="flex items-start gap-2 w-full">
+            {loadingGet && <Spinner label="Chargement des catégories" />}
+            {categories && (
+              <Select
+                placeholder="Filtré par catégorie"
+                className="tracking-widest"
+                variant="bordered"
+                value={formData.categoryId}
+                startContent={<MdOutlineCategory />}
+                onChange={(e) => handelChange('categoryId', parseInt(e.target.value))}
+                isInvalid={
+                  errorValidation && formatErrorField(errorValidation, 'categoryId') && true
+                }
+                selectedKeys={['' + formData.categoryId]}
+                errorMessage={
+                  errorValidation &&
+                  formatErrorField(errorValidation, 'categoryId') && (
+                    <ol>
+                      {formatErrorField(errorValidation, 'categoryId').map((e) => (
+                        <li key={e}>-{e}</li>
+                      ))}
+                    </ol>
+                  )
+                }
+                aria-label="category"
+                label="Catégorie"
+              >
+                {categories.map((category) => (
+                  <SelectItem
+                    key={category.id}
+                    value={category.id}
+                    className="dark:text-white"
+                    startContent={
+                      <div className="self-center text-center">
+                        {category.imageFile ? (
+                          <img
+                            src={`${imageURI}${category.imageFile}`}
+                            alt={category.name}
+                            className="object-cover h-[50px]"
+                          />
+                        ) : (
+                          <img
+                              src={defaultImage}
+                              alt={category.name}
+                              className="object-cover h-[50px]"
+                            />
+                        )}
+                      </div>
+                    }
+                  >
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+
             <Input
               label="Prix"
-              variant="faded"
-              placeholder="entre le Prix"
+              variant="bordered"
+              placeholder="Entrez le prix"
               fullWidth
               className="font-bold tracking-wider text-lg"
-              id="name"
-              onChange={(e) => handelChange('prix', e.target.value)}
-              value={formData.prix}
+              id="prix"
+              onChange={(e) => handelChange('price', e.target.value)}
+              value={formData.price}
+              isInvalid={errorValidation && formatErrorField(errorValidation, 'price') && true}
+              errorMessage={
+                errorValidation &&
+                formatErrorField(errorValidation, 'price') && (
+                  <ol>
+                    {formatErrorField(errorValidation, 'price').map((e) => (
+                      <li key={e}>-{e}</li>
+                    ))}
+                  </ol>
+                )
+              }
             />
           </div>
-
-          <div className="flex items-center justify-end gap-2 ">
-            <Button color="warning" variant="flat" className="font-bold">
-              Claire
+          <Checkbox
+            value={formData.isPublish}
+            checked={formData.isPublish}
+            onChange={(e) => handelChange('isPublish', e.target.checked)}
+            isSelected={formData.isPublish}
+            id="isPublish"
+          >
+            Disponible
+          </Checkbox>
+          <div className="flex flex-col w-full items-center">
+            {imagePreview && (
+              <div className=" relative">
+                <img src={imagePreview} alt="Preview" className="w-[200px] rounded-lg" />
+                <Button
+                  isIconOnly
+                  onClick={() => {
+                    setImagePreview(null);
+                    setFormData((prev) => ({ ...prev, image: null}));
+                    fileInputRef.current.value = null; 
+                  }}
+                  className="absolute top-2 right-2"
+                  size='sm'
+                >
+                  x
+                </Button>
+                <div className="text-danger font-bold text-small">
+                  {errorValidation && formatErrorField(errorValidation, 'image') && (
+                    <ol>
+                      {formatErrorField(errorValidation, 'image').map((e) => (
+                        <li>-{e}</li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              </div>
+            )}
+            <label htmlFor="image" className="font-bold">
+              Image
+            </label>
+            <LuImagePlus className="cursor-pointer" onClick={() => fileInputRef.current.click()} size={40} />
+            <input
+            type="file"
+            id="image"
+            ref={fileInputRef} // Add the ref here
+            accept="image/*"
+            className="rounded-lg cursor-pointer hidden"
+            onChange={handleImageChange} // Handle image input change
+            />
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              color="warning"
+              variant="flat"
+              className="font-bold"
+              onClick={() =>
+                setFormData({
+                  name: '',
+                  categoryId: '',
+                  prix: '',
+                  image: null
+                })
+              }
+            >
+              Vider
             </Button>
-            <Button color="success" variant="flat" className="font-bold" type="submit">
-              Crée
+            <Button
+              color="success"
+              variant="flat"
+              className="font-bold"
+              type="submit"
+              isLoading={isLoading}
+            >
+              Créer
             </Button>
           </div>
         </form>

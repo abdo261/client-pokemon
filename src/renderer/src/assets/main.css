@@ -45,10 +45,10 @@
   font-optical-sizing: auto;
 }
 a.active {
-  @apply bg-blue-200  text-blue-700 hover:text-blue-700 hover:bg-blue-200;
+  @apply bg-[#FEC82A]  text-orange-600 hover:text-orange-600 hover:bg-[#FEC82A];
 }
 a.active span {
-  @apply bg-blue-200  text-blue-700 dark:text-blue-700 dark:bg-blue-200;
+  @apply bg-[#FEC82A]  text-orange-600 dark:text-orange-600 dark:bg-[#FEC82A];
 }
 
 .payment-link.active,

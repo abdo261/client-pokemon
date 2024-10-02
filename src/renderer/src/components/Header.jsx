@@ -33,7 +33,7 @@ const Header = ({ toggleSideBare, open }) => {
             <span className="text-xs sm:text-medium font-semibold">user test</span>
             <span className="text-[10px] sm:text-sm font-semibold text-gray-400">@Admin</span>
           </Link>
-          <Avatar isBordered className="flex-shrink-0" />
+          <Avatar isBordered className="flex-shrink-0"  />
         </div>
       </div>
     </header>

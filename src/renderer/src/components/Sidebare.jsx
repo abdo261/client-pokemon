@@ -7,6 +7,7 @@ import { FaUserShield } from 'react-icons/fa6'
 import { FaHandHoldingUsd } from 'react-icons/fa'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { FaHome } from 'react-icons/fa'
+import { FaCalendarDays } from "react-icons/fa6";
 
 import { MdFastfood } from 'react-icons/md'
 import pokeemon from "../assets/images/pokeemon-01.png"
@@ -15,10 +16,11 @@ import { useEffect, useState } from 'react'
 
 const Links = [
   { name: 'Accueil', href: '/', icon: <FaHome /> },
+  { name: 'Journée ', href: '/days', icon: <FaCalendarDays /> },
   { name: 'Catégories', href: '/categories', icon: <MdOutlineCategory /> },
   { name: 'Produits', href: '/products', icon: <MdFastfood /> },
   { name: 'Commande', href: '/commandes', icon: <FaHandHoldingUsd /> },
-  { name: 'Factures', href: '/invoices', icon: <IoDocumentTextOutline /> }
+  { name: 'Factures', href: '/invoices', icon: <IoDocumentTextOutline /> },
 ]
 
 const AdminLinks = [
@@ -73,35 +75,9 @@ const Sidebare = ({ open }) => {
           </Link>
         </div>
 
-        <div className="border-t border-gray-100">
+        <div className="border-b border-gray-100">
           <div className="px-2">
-            <div className="py-4 space-y-2">
-              {AdminLinks.map(
-                (l, i) =>
-                  l.isShow && (
-                    <Tooltip
-                      content={l.name}
-                      showArrow
-                      placement="right"
-                      size="lg"
-                      color="foreground"
-                      radius="sm"
-                      delay={0}
-                      closeDelay={0}
-                      key={i}
-                    >
-                      <NavLink
-                        to={l.href}
-                        className={` group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700 text-2xl `}
-                      >
-                        {l.icon}
-                      </NavLink>
-                    </Tooltip>
-                  )
-              )}
-            </div>
-
-            <ul className="space-y-1 border-t border-gray-100 pt-4">
+            <ul className="space-y-1  pb-4 pt-4">
               {Links.map((l, i) => (
                 <Tooltip
                   content={l.name}
@@ -127,6 +103,31 @@ const Sidebare = ({ open }) => {
             </ul>
           </div>
         </div>
+        <div className="py-4 px-2  space-y-2 ">
+              {AdminLinks.map(
+                (l, i) =>
+                  l.isShow && (
+                    <Tooltip
+                      content={l.name}
+                      showArrow
+                      placement="right"
+                      size="lg"
+                      color="foreground"
+                      radius="sm"
+                      delay={0}
+                      closeDelay={0}
+                      key={i}
+                    >
+                      <NavLink
+                        to={l.href}
+                        className={` group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700 text-2xl `}
+                      >
+                        {l.icon}
+                      </NavLink>
+                    </Tooltip>
+                  )
+              )}
+            </div>
       </div>
 
       <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 p-2">

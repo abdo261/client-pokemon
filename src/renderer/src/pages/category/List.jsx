@@ -1,4 +1,4 @@
-import { Button, Chip, Input, Pagination } from '@nextui-org/react'
+import { Button, Chip, Input, Pagination, Spinner } from '@nextui-org/react'
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion' // Import AnimatePresence
 import Create from './Create'
@@ -8,31 +8,23 @@ import { BiSolidEdit, BiTrash } from 'react-icons/bi'
 import { FiEye, FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import tacos from '../../assets/images/tacosrm.png'
-import { getCategories } from '../../redux/api/categoryApi'
+import { deleteCategory, getCategories } from '../../redux/api/categoryApi'
 import { useDispatch, useSelector } from 'react-redux'
 import swal from 'sweetalert'
+import ErrorAlert from '../../components/ErrorAlert'
+import defaultImage from '../../assets/images/dfault-image.png'
+import { imageURI } from '../../utils/axios'
 
-// const categories = [
-//   { id: 1, name: 'Tacos', productCount: 12, image: tacos },
-//   { id: 2, name: 'Pizza', productCount: 0, image: tacos },
-//   { id: 3, name: 'Sandwich', productCount: 6, image: tacos },
-//   { id: 4, name: 'Pasticho', productCount: 0, image: tacos },
-//   { id: 5, name: 'Salade', productCount: 0, image: tacos },
-//   { id: 6, name: 'Boisson', productCount: 0, image: tacos },
-//   { id: 7, name: 'Assiette', productCount: 0, image: null },
-//   { id: 8, name: 'Assiette', productCount: 0, image: null },
-//   { id: 9, name: 'Assiette', productCount: 0, image: null }
-// ]
 const List = () => {
   const [showCreate, setShowCreate] = useState(false)
   const dispatch = useDispatch()
-  const { categories } = useSelector((state) => state.category)
+  const { categories, loadingGet, error } = useSelector((state) => state.category)
   useEffect(() => {
     dispatch(getCategories())
-  }, [])
+  }, [dispatch])
   const [searchItem, setSearchItem] = useState('')
   const [page, setPage] = useState(1)
-  const rowsPerPage = 6
+  const rowsPerPage = 8
 
   const filteredCategories = useMemo(() => {
     return categories?.filter((c) => c.name.toLowerCase().includes(searchItem.toLowerCase()))
@@ -65,7 +57,7 @@ const List = () => {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          dispatch(deleteCentre(itemToDelete))
+          dispatch(deleteCategory(itemToDelete))
         }
         setItemToDelete(null)
       })
@@ -106,12 +98,19 @@ const List = () => {
           />
         </div>
       </div>
-      {categories &&
-        (items ? (
-          <Table items={items} totale={totalFilteredCategories} setItemToDelete={setItemToDelete} />
-        ) : (
-          'loading'
-        ))}
+      {categories && items && (
+        <Table items={items} totale={totalFilteredCategories} setItemToDelete={setItemToDelete} />
+      )}
+      {loadingGet && (
+        <div className="py-5 w-full flex justify-center">
+          <Spinner size="lg" label="Chargement ..." />
+        </div>
+      )}
+      {error && (
+        <div className="w-full ">
+          <ErrorAlert message={error} />
+        </div>
+      )}
       <div className="my-4  w-full flex ">
         {pages > 1 && (
           <Pagination
@@ -133,24 +132,24 @@ export default List
 const Table = ({ items, totale, setItemToDelete }) => {
   return (
     <div className="rounded-lg  h-[450px]  w-full   mt-4 ">
-      <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)]">
-        <table className="min-w-full divide-y-2 divide-gray-200 bg-white  dark:divide-gray-700 dark:bg-[#43474b] text-xl ">
-          <thead className="ltr:text-left rtl:text-right text-2xl">
+      <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
+        <table className="min-w-full divide-y-2 divide-gray-200 bg-white  dark:divide-gray-700 dark:bg-[#43474b]  ">
+          <thead className="ltr:text-left rtl:text-right ">
             <tr className="font-normal ">
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Image
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Nom
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Couleur
               </th>
 
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Produits
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white ">
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white ">
                 <div className="w-full flex justify-end">
                   {true && (
                     <Chip variant="flat" color="success" size="lg">
@@ -165,36 +164,34 @@ const Table = ({ items, totale, setItemToDelete }) => {
             {items.length > 0 ? (
               items.map((f) => (
                 <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={f.id}>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-start  ">
-                    <div className=" self-center  text-center">
-                      {f.image ? (
-                        <img src={f.image} alt="tacos" className="object-cover h-[50px]" />
-                      ) : (
-                        <MdOutlineCategory size={40} className="self-center mx-auto" />
-                      )}
-                    </div>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start  ">
+                    {f.imageFile ? (
+                      <img src={`${imageURI}${f.imageFile}`} alt={f.imageFile} className="w-10" />
+                    ) : (
+                      <img src={defaultImage} alt={f.name} className=" w-20 " />
+                    )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-start ">
-                    <div className="text-xl">{f.name}</div>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start ">
+                    <div className="">{f.name}</div>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200 w-auto ">
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto ">
                     <div
                       className="size-6 rounded-full  mx-auto border-1 border-black"
-                      style={{ background: 'green' }}
+                      style={{ background: f.color }}
                     ></div>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-center">
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
                     <Chip
                       size="lg"
                       variant="flat"
                       startContent={<MdFastfood />}
-                      color={f?.productCount == 0 ? 'danger' : 'default'}
+                      color={f?._count?.products == 0 ? 'danger' : 'default'}
                     >
-                      <span className="font-semibold "> {f.productCount}</span>
+                      <span className="font-semibold "> {f?._count?.products}</span>
                     </Chip>
                   </td>
 
-                  <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200 w-full ">
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-full ">
                     <div className="flex justify-center w-full items-center gap-2">
                       <Button
                         size="sm"
@@ -229,7 +226,7 @@ const Table = ({ items, totale, setItemToDelete }) => {
                         variant="ghost"
                         onClick={() => setItemToDelete(f.id)}
                       >
-                        <BiTrash className='text-danger group-hover:text-white' />
+                        <BiTrash className="text-danger group-hover:text-white" />
                       </Button>
                     </div>
                   </td>

@@ -1,110 +1,42 @@
-import { Button, Chip, Input, Pagination, Select, SelectItem } from '@nextui-org/react'
-import { useMemo, useState } from 'react'
+import { Button, Chip, Input, Pagination, Spinner } from '@nextui-org/react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion' // Import AnimatePresence
-import Create from './Create'
+import Create from './Create' // Create product component
 import { LuPanelTopOpen, LuPanelBottomOpen } from 'react-icons/lu'
-import { MdFastfood, MdOutlineCategory } from 'react-icons/md'
+import { MdFastfood } from 'react-icons/md'
 import { BiSolidEdit, BiTrash } from 'react-icons/bi'
 import { FiEye, FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
-import tacos from '../../assets/images/tacosrm.png'
-import { PiMoneyWavy } from 'react-icons/pi'
+import { deleteProduct, getProducts } from '../../redux/api/productApi' // Replace with actual API
+import { useDispatch, useSelector } from 'react-redux'
+import swal from 'sweetalert'
+import ErrorAlert from '../../components/ErrorAlert'
+import { formatDateToDDMMYY, formatMoney, formatTimestamp } from '../../utils/utils'
+import { IoBagHandleOutline } from 'react-icons/io5'
+import { FaBan } from 'react-icons/fa6'
+import defaultImage from '../../assets/images/dfault-image.png'
+import { imageURI } from '../../utils/axios'
 
-const categories = [
-  { id: 1, name: 'Tacos', productCount: 12, image: tacos },
-  { id: 2, name: 'Pizza', productCount: 0, image: tacos },
-  { id: 3, name: 'Sandwich', productCount: 6, image: tacos },
-  { id: 4, name: 'Pasticho', productCount: 0, image: tacos },
-  { id: 5, name: 'Salade', productCount: 0, image: tacos },
-  { id: 6, name: 'Boisson', productCount: 0, image: tacos },
-  { id: 7, name: 'Assiette', productCount: 0, image: null },
-  { id: 8, name: 'Assiette', productCount: 0, image: null },
-  { id: 9, name: 'Assiette', productCount: 0, image: null }
-]
-const products = [
-  {
-    id: 1,
-    name: 'Tacos mix',
-    category: { id: 1, name: 'Tacos', productCount: 12, image: tacos },
-    image: tacos,
-    price: 30
-  },
-  {
-    id: 2,
-    name: 'Pizza fruit de mére',
-    category: { id: 2, name: 'Pizza', productCount: 0, image: tacos },
-    image: tacos,
-    price: 40
-  },
-  {
-    id: 3,
-    name: 'Sandwich thon',
-    category: { id: 3, name: 'Sandwich', productCount: 6, image: tacos },
-    image: tacos,
-    price: 15
-  },
-  {
-    id: 4,
-    name: 'Pasticho fromage',
-    category: { id: 4, name: 'Pasticho', productCount: 0, image: tacos },
-    image: tacos,
-    price: 20
-  },
-  {
-    id: 5,
-    name: 'Salade nisoize',
-    category: { id: 5, name: 'Salade', productCount: 0, image: tacos },
-    image: tacos,
-    price: 32
-  },
-  {
-    id: 6,
-    name: "juis d'orange ",
-    category: { id: 6, name: 'Boisson', productCount: 0, image: tacos },
-    image: tacos,
-    price: 10
-  },
-  {
-    id: 7,
-    name: 'Assiette polet',
-    category: { id: 7, name: 'Assiette', productCount: 0, image: null },
-    image: tacos,
-    price: 20
-  },
-  {
-    id: 8,
-    name: 'Assiette polet',
-    category: { id: 8, name: 'Assiette', productCount: 0, image: null },
-    image: tacos,
-    price: 20
-  },
-  {
-    id: 9,
-    name: 'Assiette polet',
-    category: { id: 9, name: 'Assiette', productCount: 0, image: null },
-    image: tacos,
-    price: 20
-  }
-]
 const List = () => {
   const [showCreate, setShowCreate] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const dispatch = useDispatch()
+  const { products, loadingGet, error } = useSelector((state) => state.product)
+
+  useEffect(() => {
+    dispatch(getProducts())
+  }, [dispatch])
 
   const [searchItem, setSearchItem] = useState('')
   const [page, setPage] = useState(1)
-  const rowsPerPage = 6
+  const rowsPerPage = 8
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(searchItem.toLowerCase())
-      const matchesCategory = selectedCategory ? product.category.id === selectedCategory : true
-      return matchesSearch && matchesCategory
-    })
-  }, [searchItem, selectedCategory, products])
+    return products?.filter((p) => p.name.toLowerCase().includes(searchItem.toLowerCase()))
+  }, [searchItem, products])
 
   const { totalFilteredProducts, pages } = useMemo(() => {
-    const filteredProducts = products?.filter((c) =>
-      c.name.toLowerCase().includes(searchItem.toLowerCase())
+    const filteredProducts = products?.filter((p) =>
+      p.name.toLowerCase().includes(searchItem.toLowerCase())
     )
 
     const totalFilteredProducts = filteredProducts?.length
@@ -119,11 +51,29 @@ const List = () => {
     return filteredProducts?.slice(start, end)
   }, [page, filteredProducts, rowsPerPage])
 
+  const [itemToDelete, setItemToDelete] = useState(null)
+
+  useEffect(() => {
+    if (itemToDelete) {
+      swal({
+        title: 'Êtes-vous sûr de vouloir supprimer ce produit?',
+        icon: 'warning',
+        buttons: true,
+        dangerMode: true
+      }).then((isOk) => {
+        if (isOk) {
+          dispatch(deleteProduct(itemToDelete))
+        }
+        setItemToDelete(null)
+      })
+    }
+  }, [itemToDelete, dispatch])
+  console.log(products)
   return (
     <section className="w-full flex flex-col gap-3">
       <div className="w-full flex items-center justify-between pb-2">
         <h1 className="text-4xl font-bold underline flex gap-2">
-          <MdOutlineCategory /> Produits :
+          <MdFastfood /> Produits :
         </h1>
         <Button
           color="primary"
@@ -138,61 +88,36 @@ const List = () => {
       <AnimatePresence>
         {showCreate && <Create onClose={() => setShowCreate(false)} />}
       </AnimatePresence>
-      <div className="flex justify-between gap-3 items-center bg-white  shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] p-3 rounded-lg mt-4 dark:bg-[#43474b] dark:text-white">
-        <Input
-          isClearable
-          placeholder="Rechercher par nom..."
-          startContent={<FiSearch />}
-          variant="faded"
-          onChange={(e) => setSearchItem(e.target.value)}
-          value={searchItem}
-          onClear={() => setSearchItem('')}
-          size="lg"
-          className="tracking-widest"
-        />
-        <Select
-          placeholder="filtré par categorie"
-          size="lg"
-          className="tracking-widest"
-          variant="faded"
-          startContent={<MdOutlineCategory />}
-          onChange={(e) => setSelectedCategory(parseInt(e.target.value))}
-          aria-label="sategory"
-        >
-          <SelectItem
-            key="all"
-            value={''}
-            className="dark:text-white"
-            startContent={
-              <div className=" self-center  text-center">
-                <MdOutlineCategory MdFastfood size={40} className="self-center m-1 mx-auto " />
-              </div>
-            }
-          >
-            Tous
-          </SelectItem>
-          {categories.map((category) => (
-            <SelectItem
-              key={category.id}
-              value={category.id}
-              className="dark:text-white"
-              startContent={
-                <div className=" self-center  text-center">
-                  {category.image ? (
-                    <img src={category.image} alt="tacos" className="object-cover h-[50px]" />
-                  ) : (
-                    <MdOutlineCategory MdFastfood size={40} className="self-center m-1 mx-auto" />
-                  )}
-                </div>
-              }
-            >
-              {category.name}
-            </SelectItem>
-          ))}
-        </Select>
+      <div className="flex justify-between gap-3 items-center bg-white shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] p-3 rounded-lg mt-4 dark:bg-[#43474b] dark:text-white">
+        <div className="w-full sm:max-w-[44%]">
+          <Input
+            fullWidth
+            isClearable
+            placeholder="Rechercher par nom..."
+            startContent={<FiSearch />}
+            variant="faded"
+            onChange={(e) => setSearchItem(e.target.value)}
+            value={searchItem}
+            onClear={() => setSearchItem('')}
+            size="lg"
+            className="tracking-widest"
+          />
+        </div>
       </div>
-      {items ? <Table items={items} totale={totalFilteredProducts} /> : 'loading'}
-      <div className="my-4  w-full flex ">
+      {products && (
+        <Table items={items} total={totalFilteredProducts} setItemToDelete={setItemToDelete} />
+      )}
+      {loadingGet && (
+        <div className="py-5 w-full flex justify-center">
+          <Spinner size="lg" label="Chargement ..." />
+        </div>
+      )}
+      {error && (
+        <div className="w-full ">
+          <ErrorAlert message={error} />
+        </div>
+      )}
+      <div className="my-4 w-full flex">
         {pages > 1 && (
           <Pagination
             showControls
@@ -210,31 +135,39 @@ const List = () => {
 
 export default List
 
-const Table = ({ items, totale }) => {
+const Table = ({ items, total, setItemToDelete }) => {
   return (
-    <div className="rounded-lg  h-[450px]   w-full   mt-4 ">
-      <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)]">
-        <table className="min-w-full divide-y-2 divide-gray-200 bg-white  dark:divide-gray-700 dark:bg-[#43474b] text-xl ">
-          <thead className="ltr:text-left rtl:text-right text-2xl">
-            <tr className="font-normal ">
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+    <div className="rounded-lg h-[450px] w-full mt-4"> 
+      <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
+        <table className="min-w-full divide-y-2 divide-gray-200 bg-white dark:divide-gray-700 dark:bg-[#43474b]">
+          <thead className="ltr:text-left rtl:text-right">
+            <tr className="font-normal">
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
                 Image
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
                 Nom
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
-                Category
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Prix
               </th>
-
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white font-semibold">
-                Price
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Disponible
               </th>
-              <th className="whitespace-nowrap px-4 py-2  text-gray-900 dark:text-white ">
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Catégorie
+              </th>
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Commandes
+              </th>
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Crée le
+              </th>
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white">
                 <div className="w-full flex justify-end">
                   {true && (
                     <Chip variant="flat" color="success" size="lg">
-                      Total <span className="font-semibold"> {totale}</span>
+                      Total <span className="font-semibold">{total}</span>
                     </Chip>
                   )}
                 </div>
@@ -243,61 +176,60 @@ const Table = ({ items, totale }) => {
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700 font-sans tracking-wide">
             {items.length > 0 ? (
-              items.map((f) => (
-                <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={f.id}>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-start  ">
-                    <div className=" self-center  text-center">
-                      {f.image ? (
-                        <img src={f.image} alt="tacos" className="object-cover h-[50px]" />
+              items.map((p) => (
+                <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={p.id}>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
+                    <div className="self-center text-center">
+                    {p.imageFile ? (
+                        <img src={`${imageURI}${p.imageFile}` } alt={p.imageFile} className="w-10" />
                       ) : (
-                        <MdFastfood size={40} className="self-center mx-auto" />
-                      )}
+                      <img src={defaultImage} alt={p.name} className=" w-20 " />
+                      )}  
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-start ">
-                    <div className="text-xl">{f.name}</div>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
+                    <div>{p.name}</div>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200 w-auto ">
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto text-lg font-semibold tracking-widest">
+                    {formatMoney(p.price)}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto text-lg text-center">
+                    <Chip color={p.isPublish ? 'success' : 'danger'}>
+                      {p.isPublish ? 'oui' : 'non'}
+                    </Chip>
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
                     <Chip
                       size="lg"
                       variant="bordered"
-                      startContent={<MdOutlineCategory />}
+                      color={p.category ? 'default' : 'danger'}
                       endContent={
-                        <div
-                          className="size-4 rounded-full border-1 border-gray-800"
-                          style={{ backgroundColor: 'chocolate' }}
-                        ></div>
+                        p.category && (
+                          <div
+                            className="size-4 rounded-full  mx-auto "
+                            style={{ background: p.category.color }}
+                          ></div>
+                        )
                       }
                     >
-                      <span className="font-semibold "> {f.category.name}</span>
+                      {p.category ? p.category.name : <FaBan />}
                     </Chip>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white w-auto text-center">
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
                     <Chip
                       size="lg"
-                      variant="flat"
-                      startContent={<PiMoneyWavy color="green" />}
-                      endContent={<span>MAD</span>}
-                      color={f.price == 0 ? 'danger' : 'default'}
+                      variant="bordered"
+                      color={p._count.payments === 0 ? 'danger' : 'primary'}
+                      endContent={<IoBagHandleOutline size={20} />}
                     >
-                      <span className="font-semibold "> {f.price}</span>
+                      {p._count.payments}
                     </Chip>
                   </td>
-
-                  <td className="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200 w-full ">
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
+                    {formatTimestamp(p.createdAt)}
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-full">
                     <div className="flex justify-center w-full items-center gap-2">
-                      <Button
-                        size="sm"
-                        isIconOnly
-                        radius="md"
-                        className="text-xl"
-                        color="primary"
-                        variant="ghost"
-                        as={Link}
-                        to={`/products/show/${f.id}`}
-                      >
-                        <FiEye />
-                      </Button>
                       <Button
                         size="sm"
                         isIconOnly
@@ -306,7 +238,7 @@ const Table = ({ items, totale }) => {
                         color="warning"
                         variant="ghost"
                         as={Link}
-                        to={`/products/update/${f.id}`}
+                        to={`/products/update/${p.id}`}
                       >
                         <BiSolidEdit />
                       </Button>
@@ -317,9 +249,9 @@ const Table = ({ items, totale }) => {
                         className="text-xl group"
                         color="danger"
                         variant="ghost"
-                        // onClick={() => setItemToDelete(f.id)}
+                        onPress={() => setItemToDelete(p.id)}
                       >
-                        <BiTrash className="text-danger group-hover:text-white" />
+                        <BiTrash className=" text-danger group-hover:text-white" />
                       </Button>
                     </div>
                   </td>
@@ -327,10 +259,8 @@ const Table = ({ items, totale }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={6}>
-                  <div className="flex itesm-center justify-center font-semibold text-lg py-5 text-red-500">
-                    aucun Categorie trouvé
-                  </div>
+                <td colSpan="4" className="text-center">
+                  Aucun produit trouvé
                 </td>
               </tr>
             )}

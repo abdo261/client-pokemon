@@ -6,7 +6,8 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { motion } from 'framer-motion'
 import { Button, NextUIProvider, Tooltip } from '@nextui-org/react'
 import pokeemon from '../assets/images/pokeemon-01.png'
-
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 const Layout = () => {
   const usePreviousRoute = () => {
     const location = useLocation()
@@ -48,7 +49,7 @@ const Layout = () => {
         <section className="text-black dark:text-gray-100 grid grid-cols-1 h-full">
           <Header toggleSideBare={toggleSideBare} open={open} />
           <main className="h-full flex flex-col gap-5 w-full">
-            <div className="flex items-center justify-center relative">
+            <div className="flex items-start justify-center relative">
               {' '}
               <div className="size-[32px] absolute left-0">
                 {showBackButton && (
@@ -71,6 +72,7 @@ const Layout = () => {
                           size="sm"
                           variant="bordered"
                           className="text-lg"
+                        
                           onClick={handelNavigate}
                         >
                           <IoIosArrowBack />
@@ -94,6 +96,7 @@ const Layout = () => {
           </main>
         </section>
       </div>
+      <ToastContainer theme="colored" position="top-center" />
     </NextUIProvider>
   )
 }

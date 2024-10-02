@@ -9,6 +9,7 @@ import { commandeRoutes } from './pages/commande/router'
 import { productRoutes } from './pages/product/router'
 import { userRoutes } from './pages/user/router'
 import Settings from './pages/settings/Settings'
+import { dayRoutes } from './pages/day/router'
 
 function App() {
   // const api = import.meta.env.VITE_API_URI
@@ -26,6 +27,7 @@ function App() {
         {commandeRoutes}
         {productRoutes}
         {userRoutes}
+        {dayRoutes}
       </Routes>
     </Router>
   )
