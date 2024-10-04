@@ -11,6 +11,8 @@ import { getCategoriesCounts } from '../../redux/api/categoryApi'
 import TableUsersHome from '../../components/TableUsersHome'
 import { BiSolidShoppingBags } from 'react-icons/bi'
 import ChartProfitsHome from '../../components/ChartProfitsHome'
+import { Spinner } from '@nextui-org/react'
+import ErrorAlert from '../../components/ErrorAlert'
 
 const data = [
   { category: 'Tacos', count: 32, color: '#ff6347' },
@@ -18,7 +20,7 @@ const data = [
 ]
 const Home = () => {
   const dispatch = useDispatch()
-  const { categories } = useSelector((state) => state.category)
+  const { categories,loadingGet,error } = useSelector((state) => state.category)
   useEffect(() => {
     dispatch(getCategoriesCounts())
   }, [dispatch])
@@ -71,6 +73,8 @@ const Home = () => {
         <div className="col-span-1 sm:col-span-2 lg:col-span-1 dark:text-gray-500  rounded-lg p-4 flex justify-center">
           <div className="w-fit  overflow-x-auto flex justify-start">
             {categories && <PieChart data={categories} />}
+            {loadingGet && <Spinner size='lg' label='Chagement Encour...'/>}
+            {error && <ErrorAlert className="h-fit self-center" message={error}/>}
           </div>
         </div>
         <TableUsersHome />

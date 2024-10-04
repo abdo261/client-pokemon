@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion' // Import AnimatePresence
 import Create from './Create' // Create product component
 import { LuPanelTopOpen, LuPanelBottomOpen } from 'react-icons/lu'
-import { MdFastfood } from 'react-icons/md'
+import { MdCompress, MdFastfood } from 'react-icons/md'
 import { BiSolidEdit, BiTrash } from 'react-icons/bi'
 import { FiEye, FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
@@ -16,9 +16,17 @@ import { IoBagHandleOutline } from 'react-icons/io5'
 import { FaBan } from 'react-icons/fa6'
 import defaultImage from '../../assets/images/dfault-image.png'
 import { imageURI } from '../../utils/axios'
-
+import { GiBarbecue } from 'react-icons/gi'
+import { PiOvenFill } from 'react-icons/pi'
+const productTypes = [
+  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue size={18} /> },
+  { value: 'PANINI', label: 'Panini', icon: <MdCompress size={18} /> },
+  { value: 'FOUR', label: 'Four', icon: <PiOvenFill size={18} /> }
+]
 const List = () => {
   const [showCreate, setShowCreate] = useState(false)
+  const [isLOadingDelete, seIsLoadingDelete] = useState(false)
+
   const dispatch = useDispatch()
   const { products, loadingGet, error } = useSelector((state) => state.product)
 
@@ -62,9 +70,12 @@ const List = () => {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          dispatch(deleteProduct(itemToDelete))
+          seIsLoadingDelete(true)
+          dispatch(deleteProduct(itemToDelete, () => seIsLoadingDelete(false)))
+        } else {
+          setItemToDelete(null)
+          seIsLoadingDelete(false)
         }
-        setItemToDelete(null)
       })
     }
   }, [itemToDelete, dispatch])
@@ -105,7 +116,13 @@ const List = () => {
         </div>
       </div>
       {products && (
-        <Table items={items} total={totalFilteredProducts} setItemToDelete={setItemToDelete} />
+        <Table
+          items={items}
+          total={totalFilteredProducts}
+          setItemToDelete={setItemToDelete}
+          itemToDelete={itemToDelete}
+          isLOadingDelete={isLOadingDelete}
+        />
       )}
       {loadingGet && (
         <div className="py-5 w-full flex justify-center">
@@ -135,9 +152,9 @@ const List = () => {
 
 export default List
 
-const Table = ({ items, total, setItemToDelete }) => {
+const Table = ({ items, total, setItemToDelete, isLOadingDelete, itemToDelete }) => {
   return (
-    <div className="rounded-lg h-[450px] w-full mt-4"> 
+    <div className="rounded-lg h-[450px] w-full mt-4">
       <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white dark:divide-gray-700 dark:bg-[#43474b]">
           <thead className="ltr:text-left rtl:text-right">
@@ -147,6 +164,9 @@ const Table = ({ items, total, setItemToDelete }) => {
               </th>
               <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
                 Nom
+              </th>
+              <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
+                Type
               </th>
               <th className="whitespace-nowrap px-2 py-1 text-gray-900 dark:text-white font-semibold">
                 Prix
@@ -180,15 +200,24 @@ const Table = ({ items, total, setItemToDelete }) => {
                 <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={p.id}>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
                     <div className="self-center text-center">
-                    {p.imageFile ? (
-                        <img src={`${imageURI}${p.imageFile}` } alt={p.imageFile} className="w-10" />
+                      {p.imageFile ? (
+                        <img src={`${imageURI}${p.imageFile}`} alt={p.imageFile} className="w-10" />
                       ) : (
-                      <img src={defaultImage} alt={p.name} className=" w-20 " />
-                      )}  
+                        <img src={defaultImage} alt={p.name} className=" w-20 " />
+                      )}
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
                     <div>{p.name}</div>
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
+                    <Chip
+                      color={p.type ? 'secondary' : 'default'}
+                      variant={p.type ? 'bordered' : 'dot'}
+                      startContent={p.type ? productTypes.find((t) => t.value === p.type).icon : ''}
+                    >
+                      {p.type ? productTypes.find((t) => t.value === p.type).label : 'No Type'}
+                    </Chip>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto text-lg font-semibold tracking-widest">
                     {formatMoney(p.price)}
@@ -250,6 +279,8 @@ const Table = ({ items, total, setItemToDelete }) => {
                         color="danger"
                         variant="ghost"
                         onPress={() => setItemToDelete(p.id)}
+                        isLoading={p.id === itemToDelete ? isLOadingDelete : false}
+                        spinner={isLOadingDelete && <Spinner color="danger" size="sm" />}
                       >
                         <BiTrash className=" text-danger group-hover:text-white" />
                       </Button>
@@ -259,8 +290,10 @@ const Table = ({ items, total, setItemToDelete }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center">
-                  Aucun produit trouvé
+                <td colSpan="9" className="text-center">
+                  <div className="flex items-center justify-center font-semibold text-lg py-5 text-red-500">
+                    Aucun produit trouvé
+                  </div>
                 </td>
               </tr>
             )}

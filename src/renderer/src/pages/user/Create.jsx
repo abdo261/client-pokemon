@@ -16,7 +16,7 @@ const Create = ({ onClose }) => {
     email: '',
     password: '',
     role: '',
-    image:null
+    image:null,phone: '' 
   })
 
   const handleChange = (field, value) => {
@@ -36,7 +36,7 @@ const Create = ({ onClose }) => {
             userName: '',
             email: '',
             password: '',
-            role: '',image:null
+            role: '',image:null,phone: '',
           })
          
         },
@@ -51,7 +51,7 @@ const Create = ({ onClose }) => {
       userName: '',
       email: '',
       password: '',
-      role: ''
+      role: '',phone: '',
     })
   }, [])
 
@@ -139,7 +139,27 @@ const Create = ({ onClose }) => {
                 </ol>
               )
             }
-          />
+          /><Input
+          label="Numéro de téléphone"
+          variant="bordered"
+          placeholder="Entrez le numéro de téléphone"
+          fullWidth
+          className="font-bold tracking-wider text-lg"
+          id="phone"
+          onChange={(e) => handleChange('phone', e.target.value)}
+          value={formData.phone}  // Add this line
+          isInvalid={errorValidation && formatErrorField(errorValidation, 'phone') && true}
+          errorMessage={
+            errorValidation &&
+            formatErrorField(errorValidation, 'phone') && (
+              <ol>
+                {formatErrorField(errorValidation, 'phone').map((e) => (
+                  <li key={e}>-{e}</li>
+                ))}
+              </ol>
+            )
+          }
+        />
           <Select
             placeholder="Sélectionnez le rôle"
             className="tracking-widest flex-1"

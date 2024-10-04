@@ -15,6 +15,8 @@ import ErrorAlert from '../../components/ErrorAlert'
 
 const List = () => {
   const [showCreate, setShowCreate] = useState(false)
+  const [isLOadingDelete, seIsLoadingDelete] = useState(false)
+
   const [searchItem, setSearchItem] = useState('')
   const [page, setPage] = useState(1)
   const rowsPerPage = 6
@@ -57,9 +59,13 @@ const List = () => {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          dispatch(deleteUser(itemToDelete)) // Assuming deleteUser is the API action
+          seIsLoadingDelete(true)
+          dispatch(deleteUser(itemToDelete, () => seIsLoadingDelete(false))) // Assuming deleteUser is the API action
         }
-        setItemToDelete(null)
+        else {
+          setItemToDelete(null)
+          seIsLoadingDelete(false)
+        }
       })
     }
   }, [itemToDelete, dispatch])
@@ -107,7 +113,8 @@ const List = () => {
       {error && <ErrorAlert message={error} />}
       {users &&
         (items ? (
-          <Table items={items} total={totalFilteredUsers} setItemToDelete={setItemToDelete} />
+          <Table items={items} total={totalFilteredUsers} setItemToDelete={setItemToDelete} itemToDelete={itemToDelete}
+          isLOadingDelete={isLOadingDelete} />
         ) : (
           'Loading...'
         ))}
@@ -129,7 +136,7 @@ const List = () => {
 
 export default List
 
-const Table = ({ items, totale, setItemToDelete }) => {
+const Table = ({ items, totale, setItemToDelete ,isLOadingDelete, itemToDelete}) => {
   return (
     <div className="rounded-lg  h-[450px]  w-full   mt-4 ">
       <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)]">
@@ -141,6 +148,9 @@ const Table = ({ items, totale, setItemToDelete }) => {
               </th>
               <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Nom
+              </th>
+              <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
+                Téléphone
               </th>
               <th className="whitespace-nowrap px-2 py-1  text-gray-900 dark:text-white font-semibold">
                 Email
@@ -175,6 +185,9 @@ const Table = ({ items, totale, setItemToDelete }) => {
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start ">
                     <div className="">{f.userName}</div>
+                  </td>
+                  <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start ">
+                    <div className="">{f.phone}</div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto ">
                     {f.email}
@@ -213,6 +226,8 @@ const Table = ({ items, totale, setItemToDelete }) => {
                         color="danger"
                         variant="ghost"
                         onClick={() => setItemToDelete(f.id)}
+                        isLoading={f.id === itemToDelete ? isLOadingDelete : false}
+                        spinner={isLOadingDelete && <Spinner color="danger" size="sm" />}
                       >
                         <BiTrash className="text-danger group-hover:text-white" />
                       </Button>

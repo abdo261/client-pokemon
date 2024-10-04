@@ -96,11 +96,12 @@ export const updateUser = (id, userData, cb, cbLoading) => async (dispatch) => {
 };
 
 // Delete User by ID
-export const deleteUser = (id) => async (dispatch) => {
+export const deleteUser = (id,cb) => async (dispatch) => {
   try {
     const response = await request.delete(`/users/${id}`);
     dispatch(userActions.removeUser(id));
     toast.success(response.data.message);
+    cb && cb()
   } catch (error) {
     if (error?.response) {
       toast.error(error.response.data.message);

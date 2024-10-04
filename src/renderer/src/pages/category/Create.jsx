@@ -93,6 +93,7 @@ const Create = ({ onClose }) => {
         <h1 className="font-bold text-2xl underline ">Créer une nouvelle catégorie</h1>
         <form className="w-full flex flex-col gap-2" onSubmit={handelSubmit}>
           <Input
+            
             label="Nom"
             variant="bordered"
             placeholder=" Entrez le nom de la catégorie"
@@ -164,7 +165,11 @@ const Create = ({ onClose }) => {
             <label htmlFor="image" className="font-bold">
               Image
             </label>
-            <LuImagePlus className="cursor-pointer" onClick={() => fileInputRef.current.click()} size={40} />
+            <LuImagePlus
+              className="cursor-pointer"
+              onClick={() => fileInputRef.current.click()}
+              size={40}
+            />
             <input
               type="file"
               id="image"

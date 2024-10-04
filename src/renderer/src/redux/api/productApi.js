@@ -94,11 +94,12 @@ export const updateProduct = (id, productData, cb, cbLoading) => async (dispatch
 };
 
 // Supprimer un produit par ID
-export const deleteProduct = (id) => async (dispatch) => {
+export const deleteProduct = (id,cb) => async (dispatch) => {
   try {
     const response = await request.delete(`/products/${id}`);
     dispatch(productActions.removeProduct(id));
     toast.success('Produit supprimé avec succès');
+    cb && cb()
   } catch (error) {
     if (error?.response) {
       toast.error(error.response.data.message);

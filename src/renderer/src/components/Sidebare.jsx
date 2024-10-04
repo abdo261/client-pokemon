@@ -8,6 +8,7 @@ import { FaHandHoldingUsd } from 'react-icons/fa'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { FaHome } from 'react-icons/fa'
 import { FaCalendarDays } from "react-icons/fa6";
+import { BiSolidOffer } from "react-icons/bi";
 
 import { MdFastfood } from 'react-icons/md'
 import pokeemon from "../assets/images/pokeemon-01.png"
@@ -19,6 +20,7 @@ const Links = [
   { name: 'Journée ', href: '/days', icon: <FaCalendarDays /> },
   { name: 'Catégories', href: '/categories', icon: <MdOutlineCategory /> },
   { name: 'Produits', href: '/products', icon: <MdFastfood /> },
+  { name: 'Packes', href: '/offers', icon: <BiSolidOffer /> },
   { name: 'Commande', href: '/commandes', icon: <FaHandHoldingUsd /> },
   { name: 'Factures', href: '/invoices', icon: <IoDocumentTextOutline /> },
 ]

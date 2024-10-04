@@ -1,7 +1,7 @@
 import { Button, Checkbox, Input, Select, SelectItem, Spinner } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
-import { MdClose, MdOutlineCategory } from 'react-icons/md'
+import { MdClose, MdCompress, MdOutlineCategory } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import { createProduct } from '../../redux/api/productApi' // Assuming this action exists
 import { getCategories } from '../../redux/api/categoryApi' // Fetch categories
@@ -10,6 +10,13 @@ import { formatErrorField } from '../../utils/utils'
 import { imageURI } from '../../utils/axios'
 import defaultImage from '../../assets/images/dfault-image.png'
 import { LuImagePlus } from 'react-icons/lu'
+import { GiBarbecue } from 'react-icons/gi'
+import { PiOvenFill } from 'react-icons/pi'
+const productTypes = [
+  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue /> },
+  { value: 'PANINI', label: 'Panini', icon: <MdCompress /> },
+  { value: 'FOUR', label: 'Four', icon: <PiOvenFill /> }
+]
 
 const Create = ({ onClose }) => {
   const dispatch = useDispatch()
@@ -22,21 +29,22 @@ const Create = ({ onClose }) => {
     price: '',
     image: null,
     isPublish: true,
-    imageFile:null
+    imageFile: null,
+    type: ''
   })
   const [imagePreview, setImagePreview] = useState(null)
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null)
   const handleImageChange = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
     if (file) {
-      setFormData((prev) => ({ ...prev, image: file }));
-      const reader = new FileReader();
+      setFormData((prev) => ({ ...prev, image: file }))
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
   useEffect(() => {
     dispatch(getCategories()) // Fetch categories when component mounts
   }, [dispatch])
@@ -58,13 +66,14 @@ const Create = ({ onClose }) => {
   const handelSubmit = (e) => {
     e.preventDefault()
     console.log(formData)
-    const newFormData= new FormData()
-    newFormData.append('name',formData.name)
-    newFormData.append('categoryId',formData.categoryId)
-    newFormData.append('price',formData.price)
-    newFormData.append('isPublish',formData.isPublish)
-    newFormData.append('imageFile',formData.imageFile)
-    
+    const newFormData = new FormData()
+    newFormData.append('name', formData.name)
+    newFormData.append('categoryId', formData.categoryId)
+    newFormData.append('price', formData.price)
+    newFormData.append('isPublish', formData.isPublish)
+    newFormData.append('type', formData.type)
+    newFormData.append('imageFile', formData.imageFile)
+
     if (formData.image) {
       newFormData.append('image', formData.image)
     }
@@ -73,14 +82,14 @@ const Create = ({ onClose }) => {
       createProduct(
         newFormData,
         () => {
-          
           setFormData({
             name: '',
             categoryId: '',
             price: '',
             image: null,
-            imageFile:null,
-            isPublish: true
+            imageFile: null,
+            isPublish: true,
+            type: ''
           })
         },
         setIsLoading(false)
@@ -94,8 +103,9 @@ const Create = ({ onClose }) => {
       categoryId: '',
       price: '',
       image: null,
-      imageFile:null,
-      isPublish: true
+      imageFile: null,
+      isPublish: true,
+      type: ''
     })
   }, [])
   return (
@@ -183,10 +193,10 @@ const Create = ({ onClose }) => {
                           />
                         ) : (
                           <img
-                              src={defaultImage}
-                              alt={category.name}
-                              className="object-cover h-[50px]"
-                            />
+                            src={defaultImage}
+                            alt={category.name}
+                            className="object-cover h-[50px]"
+                          />
                         )}
                       </div>
                     }
@@ -219,6 +229,21 @@ const Create = ({ onClose }) => {
               }
             />
           </div>
+          <Select
+            placeholder="Sélectionnez le type"
+            className="tracking-widest"
+            variant="bordered"
+            value={formData.type}
+            onChange={(e) => handelChange('type', e.target.value)} // Update to handle type change
+            aria-label="type"
+            label="Type de Produit"
+          >
+            {productTypes.map((type) => (
+              <SelectItem key={type.value} value={type.value} startContent={type.icon}>
+                {type.label}
+              </SelectItem>
+            ))}
+          </Select>
           <Checkbox
             value={formData.isPublish}
             checked={formData.isPublish}
@@ -235,12 +260,12 @@ const Create = ({ onClose }) => {
                 <Button
                   isIconOnly
                   onClick={() => {
-                    setImagePreview(null);
-                    setFormData((prev) => ({ ...prev, image: null}));
-                    fileInputRef.current.value = null; 
+                    setImagePreview(null)
+                    setFormData((prev) => ({ ...prev, image: null }))
+                    fileInputRef.current.value = null
                   }}
                   className="absolute top-2 right-2"
-                  size='sm'
+                  size="sm"
                 >
                   x
                 </Button>
@@ -258,14 +283,18 @@ const Create = ({ onClose }) => {
             <label htmlFor="image" className="font-bold">
               Image
             </label>
-            <LuImagePlus className="cursor-pointer" onClick={() => fileInputRef.current.click()} size={40} />
+            <LuImagePlus
+              className="cursor-pointer"
+              onClick={() => fileInputRef.current.click()}
+              size={40}
+            />
             <input
-            type="file"
-            id="image"
-            ref={fileInputRef} // Add the ref here
-            accept="image/*"
-            className="rounded-lg cursor-pointer hidden"
-            onChange={handleImageChange} // Handle image input change
+              type="file"
+              id="image"
+              ref={fileInputRef} // Add the ref here
+              accept="image/*"
+              className="rounded-lg cursor-pointer hidden"
+              onChange={handleImageChange} // Handle image input change
             />
           </div>
           <div className="flex items-center justify-end gap-2">

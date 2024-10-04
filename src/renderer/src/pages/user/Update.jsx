@@ -30,7 +30,7 @@ const UpdateUser = () => {
         id,
         formData,
         () => {
-          navigate(-1) 
+          navigate(-1)
         },
         () => setIsLoading(false)
       )
@@ -80,7 +80,6 @@ const UpdateUser = () => {
               label="Nom d'utilisateur"
               variant="bordered"
               placeholder="Entrez le nom d'utilisateur"
-              
               className="font-bold tracking-wider text-lg"
               id="userName"
               onChange={(e) => handleChange('userName', e.target.value)}
@@ -101,7 +100,6 @@ const UpdateUser = () => {
               label="Email"
               variant="bordered"
               placeholder="Entrez l'email"
-              
               className="font-bold tracking-wider text-lg"
               id="email"
               onChange={(e) => handleChange('email', e.target.value)}
@@ -122,11 +120,10 @@ const UpdateUser = () => {
               label="Mot de passe"
               variant="bordered"
               placeholder="Entrez le mot de passe (laisser vide pour ne pas changer)"
-              
               className="font-bold tracking-wider text-lg"
               id="password"
               onChange={(e) => handleChange('password', e.target.value)}
-              value={formData?.password || ""}
+              value={formData?.password || ''}
               type="password"
               isInvalid={errorValidation && formatErrorField(errorValidation, 'password') && true}
               errorMessage={
@@ -140,10 +137,30 @@ const UpdateUser = () => {
                 )
               }
             />
+            <Input
+              label="Numéro de téléphone"
+              variant="bordered"
+              placeholder="Entrez le numéro de téléphone"
+              fullWidth
+              className="font-bold tracking-wider text-lg"
+              id="phone"
+              onChange={(e) => handleChange('phone', e.target.value)}
+              value={formData.phone} // Add this line
+              isInvalid={errorValidation && formatErrorField(errorValidation, 'phone') && true}
+              errorMessage={
+                errorValidation &&
+                formatErrorField(errorValidation, 'phone') && (
+                  <ol>
+                    {formatErrorField(errorValidation, 'phone').map((e) => (
+                      <li key={e}>-{e}</li>
+                    ))}
+                  </ol>
+                )
+              }
+            />
             <Select
               placeholder="Sélectionnez le rôle"
               className="tracking-widest flex-1"
-              
               variant="bordered"
               onChange={(e) => handleChange('role', e.target.value)}
               aria-label="role"

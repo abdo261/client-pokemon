@@ -11,12 +11,14 @@ import { MdPhoneInTalk } from 'react-icons/md'
 import { GiPayMoney } from 'react-icons/gi'
 import { FcMoneyTransfer } from 'react-icons/fc'
 import { FaDeleteLeft } from 'react-icons/fa6'
+import { useDispatch } from 'react-redux'
+import { createPayment } from '../../redux/api/paymentApi'
 
 const Results = ({ formData, products, handelSelect }) => {
   const [details, setDetails] = useState([])
   const [payePrice, setPayedPrice] = useState('')
   const printRef = useRef(null)
-
+  const dispatch = useDispatch()
   useEffect(() => {
     const selectedItems = products
       ?.filter((p) => formData.productsIds.includes(p.id))
@@ -51,7 +53,18 @@ const Results = ({ formData, products, handelSelect }) => {
   const handleDecrement = (id, currentQuantity) => {
     addQ(id, currentQuantity > 0 ? currentQuantity - 1 : 0) // Ensure quantity doesn't go below 0
   }
-
+  const toggleBonus = (id) => {
+    if (details?.find((p) => p.id === id).q === 0) return
+    setDetails((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? p.price === 0
+            ? { ...p, price: products.find((p) => p.id === id).price }
+            : { ...p, price: 0 }
+          : p
+      )
+    )
+  }
   const handleRemove = (id) => {
     setDetails((prevDetails) => prevDetails.filter((item) => item.id !== id))
     handelSelect(id) // Ensure this correctly toggles the selection
@@ -72,192 +85,210 @@ const Results = ({ formData, products, handelSelect }) => {
     fetchImage()
   }, [])
   const handlePrint = () => {
-    // Create HTML content for printing
-    const content = `
-     <html>
-  <head>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-         width: 80mm;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-
-      th {
-        background-color: #f2f2f2;
-      }
-
-      .text-center {
-        text-align: center;
-      }
-
-      .font-bold {
-        font-weight: bold;
-      }
-
-      .mt-2 {
-        margin-top: 2em;
-      }
-
-      .mb-2 {
-        margin-bottom: 2em;
-      }
-
-      .container {
-        padding-left: 3px;
-        padding-right: 3px;
-        padding-top: 3px;
-        padding-bottom: 3px;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        width: 400px;
-        color: #333;
-        font-size: 12px;
-        font-family: monospace;
-      }
-
-      .container.dark {
-        background-color: #333;
-        color: #ddd;
-      }
-
-      .image-container {
-        margin-left: auto;
-        margin-right: auto;
-        width: 100px;
-        height: auto;
-      }
-
-      .image {
-        width: 100%;
-        object-fit: cover;
-      }
-
-      .address, .city {
-        text-align: center;
-        font-size: 10px;
-      }
-
-      .border-top {
-        border-top: 1px solid #ccc;
-        margin-top: 8px;
-        margin-bottom: 8px;
-      }
-
-      .table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-      }
-
-      .table thead th {
-        border: 1px solid #ccc;
-        padding: 4px;
-        font-weight: bold;
-        background-color: #e5e7eb;
-      }
-
-      .table tbody td {
-        border: 1px solid #ccc;
-        padding: 4px;
-      }
-
-      .table tbody td.truncate {
-        width: 100%;
-      }
-
-      .table tbody td.text-center {
-        text-align: center;
-      }
-
-      .table tbody td.text-right {
-        text-align: right;
-      }
-
-      .table tfoot td {
-        border-top: 1px solid #ccc;
-        padding: 4px;
-      }
-
-      .thank-you {
-        text-align: center;
-        font-size: 10px;
-        margin-top: 8px;
-      }
-
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="image-container">
-        <img src="../../assets/images/pokeemon-01.png" class="image" />
-      </div>
-      <p class="address">123 Adresse de la rue</p>
-      <p class="city mb-2">Tan-Tan, Maroc</p>
-      <div class="border-top"></div>
-      <p class="text-xs">
-        Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}
-      </p>
-      <p class="text-xs mb-2">Facture #12345</p>
-      <div class="border-top"></div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Article</th>
-            <th>Qté</th>
-            <th>Prix</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${details
-            .map(
-              (item) => `
-            <tr>
-              <td class="truncate">${item.name}</td>
-              <td class="text-center">${item.q}</td>
-              <td class="text-right">${item.price} MAD</td>
-            </tr>
-          `
-            )
-            .join('')}
-        </tbody>
-        <tfoot>
-          <tr class="font-semibold">
-            <td class="text-left">Total</td>
-            <td colspan="2" class="text-right">
-              ${formatMoney(details.reduce((total, item) => total + item.price, 0))}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-      <div class="border-top"></div>
-      <p class="thank-you">Merci pour votre achat !</p>
-    </div>
-  </body>
-</html>
-
-    `
-    try {
-      if (window.api && window.api.print) {
-        window.api.print(content)
-        toast.success('printing success')
-      } else {
-        toast.error('eror printing')
-      }
-    } catch (error) {
-      toast.error('eror printing')
+    if (details.some((p) => p.q === 0)){
+      toast.error("Un ou plusieurs produits ont une quantité de 0. Veuillez mettre à jour les quantités.")
+      return 
     }
+      console.log({
+        ...formData,
+        details: details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price })),
+        isPayed: true,
+        totalePrice: details?.reduce((total, item) => total + item.price, 0)
+      })
+    dispatch(
+      createPayment({
+        ...formData,
+        details: details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price })),
+        isPayed: true,
+        totalePrice: details?.reduce((total, item) => total + item.price, 0)
+      })
+    )
+    //     const content = `
+    //      <html>
+    //   <head>
+    //     <style>
+    //       body {
+    //         font-family: Arial, sans-serif;
+    //          width: 80mm;
+    //       }
+
+    //       table {
+    //         width: 100%;
+    //         border-collapse: collapse;
+    //       }
+
+    //       th, td {
+    //         border: 1px solid #ddd;
+    //         padding: 8px;
+    //       }
+
+    //       th {
+    //         background-color: #f2f2f2;
+    //       }
+
+    //       .text-center {
+    //         text-align: center;
+    //       }
+
+    //       .font-bold {
+    //         font-weight: bold;
+    //       }
+
+    //       .mt-2 {
+    //         margin-top: 2em;
+    //       }
+
+    //       .mb-2 {
+    //         margin-bottom: 2em;
+    //       }
+
+    //       .container {
+    //         padding-left: 3px;
+    //         padding-right: 3px;
+    //         padding-top: 3px;
+    //         padding-bottom: 3px;
+    //         background-color: white;
+    //         border: 1px solid #ccc;
+    //         border-radius: 6px;
+    //         width: 400px;
+    //         color: #333;
+    //         font-size: 12px;
+    //         font-family: monospace;
+    //       }
+
+    //       .container.dark {
+    //         background-color: #333;
+    //         color: #ddd;
+    //       }
+
+    //       .image-container {
+    //         margin-left: auto;
+    //         margin-right: auto;
+    //         width: 100px;
+    //         height: auto;
+    //       }
+
+    //       .image {
+    //         width: 100%;
+    //         object-fit: cover;
+    //       }
+
+    //       .address, .city {
+    //         text-align: center;
+    //         font-size: 10px;
+    //       }
+
+    //       .border-top {
+    //         border-top: 1px solid #ccc;
+    //         margin-top: 8px;
+    //         margin-bottom: 8px;
+    //       }
+
+    //       .table {
+    //         width: 100%;
+    //         border-collapse: collapse;
+    //         font-size: 12px;
+    //       }
+
+    //       .table thead th {
+    //         border: 1px solid #ccc;
+    //         padding: 4px;
+    //         font-weight: bold;
+    //         background-color: #e5e7eb;
+    //       }
+
+    //       .table tbody td {
+    //         border: 1px solid #ccc;
+    //         padding: 4px;
+    //       }
+
+    //       .table tbody td.truncate {
+    //         width: 100%;
+    //       }
+
+    //       .table tbody td.text-center {
+    //         text-align: center;
+    //       }
+
+    //       .table tbody td.text-right {
+    //         text-align: right;
+    //       }
+
+    //       .table tfoot td {
+    //         border-top: 1px solid #ccc;
+    //         padding: 4px;
+    //       }
+
+    //       .thank-you {
+    //         text-align: center;
+    //         font-size: 10px;
+    //         margin-top: 8px;
+    //       }
+
+    //     </style>
+    //   </head>
+    //   <body>
+    //     <div class="container">
+    //       <div class="image-container">
+    //         <img src="../../assets/images/pokeemon-01.png" class="image" />
+    //       </div>
+    //       <p class="address">123 Adresse de la rue</p>
+    //       <p class="city mb-2">Tan-Tan, Maroc</p>
+    //       <div class="border-top"></div>
+    //       <p class="text-xs">
+    //         Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}
+    //       </p>
+    //       <p class="text-xs mb-2">Facture #12345</p>
+    //       <div class="border-top"></div>
+    //       <table class="table">
+    //         <thead>
+    //           <tr>
+    //             <th>Article</th>
+    //             <th>Qté</th>
+    //             <th>Prix</th>
+    //           </tr>
+    //         </thead>
+    //         <tbody>
+    //           ${details
+    //             .map(
+    //               (item) => `
+    //             <tr>
+    //               <td class="truncate">${item.name}</td>
+    //               <td class="text-center">${item.q}</td>
+    //               <td class="text-right">${item.price} MAD</td>
+    //             </tr>
+    //           `
+    //             )
+    //             .join('')}
+    //         </tbody>
+    //         <tfoot>
+    //           <tr class="font-semibold">
+    //             <td class="text-left">Total</td>
+    //             <td colspan="2" class="text-right">
+    //               ${formatMoney(details.reduce((total, item) => total + item.price, 0))}
+    //             </td>
+    //           </tr>
+    //         </tfoot>
+    //       </table>
+    //       <div class="border-top"></div>
+    //       <p class="thank-you">Merci pour votre achat !</p>
+    //     </div>
+    //   </body>
+    // </html>
+
+    //     `
+    //     try {
+    //       if (window.api && window.api.print) {
+    //         window.api.print(content)
+    //         toast.success('printing success')
+    //       } else {
+    //         toast.error('eror printing')
+    //       }
+    //     } catch (error) {
+    //       toast.error('eror printing')
+    //     }
   }
+
   const handelNumberClick = (e) => {
     const value = e.target.value
     if (value !== 'delete') {
@@ -277,9 +308,8 @@ const Results = ({ formData, products, handelSelect }) => {
     }
   }
 
-  console.log(payePrice)
   return (
-    <div className="h-fit max-h-[600px] bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
+    <div className="h-fit max-h-[500px] bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
       <div className="flex items-center w-full  dark:bg-[#242526] bg-white p-3 shadow-lg sticky top-0 z-30">
         <div>
           <Chip
@@ -373,7 +403,6 @@ const Results = ({ formData, products, handelSelect }) => {
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white dark:divide-gray-700 dark:bg-[#43474b] rounded-lg">
               <thead className="ltr:text-left rtl:text-right text-xs lg:text-xs">
                 <tr className="font-normal">
-                
                   <th className="whitespace-nowrap px-1 py-1 text-gray-900 dark:text-white font-semibold">
                     Nom
                   </th>
@@ -388,11 +417,10 @@ const Results = ({ formData, products, handelSelect }) => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700 font-sans tracking-wide">
                 {details?.length > 0 ? (
-                  details?.map((item,index) => (
+                  details?.map((item, index) => (
                     <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={item.id}>
-                      
                       <td className="whitespace-nowrap px-1 py-1 font-medium text-xs lg:text-xs text-gray-900 dark:text-white w-full text-start">
-                      {item.name}
+                        {item.name}
                       </td>
                       <td className="whitespace-nowrap px-1 py-1 text-gray-700 dark:text-gray-200 w-auto text-center text-xs lg:text-xs">
                         <div className="w-[130px] flex justify-center items-center gap-2">
@@ -440,21 +468,33 @@ const Results = ({ formData, products, handelSelect }) => {
                         <Chip
                           size="sm"
                           variant="flat"
-                         
-                          endContent={<span>MAD</span>}
-                          color={item.price === 0 ? 'danger' : 'default'}
+                          className="cursor-pointer"
+                          onClick={() => toggleBonus(item.id)}
+                          endContent={item.price !== 0 && <span>MAD</span>}
+                          color={
+                            item.price === 0 ? (item.q === 0 ? 'danger' : 'warning') : 'success'
+                          }
                         >
-                          <span className="font-semibold">{item.price}</span>
+                          {item.price === 0 ? (
+                            item.q === 0 ? (
+                              <span className="font-semibold">invalide </span>
+                            ) : (
+                              <span className="font-semibold">Bonus</span>
+                            )
+                          ) : (
+                            <span className="font-semibold">{item.price}</span>
+                          )}
                         </Chip>
                       </td>
                       <td className=" px-1 py-1 text-gray-700 dark:text-gray-200 w-auto ">
-                       <div className='w-full h-full flex items-center justify-center'><button
-                          onClick={() => handleRemove(item.id)}
-                           className='rounded-lg  hover:bg-danger/40 text-danger p-1'
-                        >
-                          <IoCloseOutline size={18}  />
-                        </button>
-                        </div> 
+                        <div className="w-full h-full flex items-center justify-center">
+                          <button
+                            onClick={() => handleRemove(item.id)}
+                            className="rounded-lg  hover:bg-danger/40 text-danger p-1"
+                          >
+                            <IoCloseOutline size={18} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -474,7 +514,7 @@ const Results = ({ formData, products, handelSelect }) => {
       </div>
 
       <div className="sticky bottom-0 w-full flex items-center justify-between bg-white dark:bg-[#242526] p-2">
-        <Popover placement="top" shouldCloseOnInteractOutside={()=>false}>
+        <Popover placement="top" shouldCloseOnInteractOutside={() => false}>
           <PopoverTrigger>
             <Button color="secondary">
               <PiInvoice size={20} />

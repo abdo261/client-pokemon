@@ -24,6 +24,28 @@ export const getCategories = () => async (dispatch) => {
     dispatch(categoryActions.setLoadingGet(false))
   }
 }
+export const getCategoriesWithProducts = () => async (dispatch) => {
+  dispatch(categoryActions.setLoadingGet(true))
+  dispatch(categoryActions.setCategories(null))
+  try {
+    // await new Promise(resolve => setTimeout(resolve, 3000));
+    const response = await request.get('/categories/products')
+    console.log(response)
+    dispatch(categoryActions.setCategories(response.data))
+  } catch (error) {
+    console.log(error)
+
+    if (error?.response) {
+      dispatch(categoryActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        categoryActions.setError('Le serveur est en panne, vérifiez si votre serveur est démarré ?')
+      )
+    }
+  } finally {
+    dispatch(categoryActions.setLoadingGet(false))
+  }
+}
 export const getCategoriesCounts = () => async (dispatch) => {
   dispatch(categoryActions.setLoadingGet(true))
   dispatch(categoryActions.setCategories(null))
@@ -119,11 +141,12 @@ export const updateCategory = (id, categoryData, cb, cbLoading) => async (dispat
 }
 
 // Delete a Category by ID
-export const deleteCategory = (id) => async (dispatch) => {
+export const deleteCategory = (id,cb) => async (dispatch) => {
   try {
     const response = await request.delete(`/categories/${id}`)
     dispatch(categoryActions.removeCategory(id))
     toast.success(response.data.message)
+    cb && cb()
   } catch (error) {
     if (error?.response) {
       toast.error(error.response.data.message)

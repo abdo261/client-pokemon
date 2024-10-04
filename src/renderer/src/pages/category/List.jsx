@@ -25,6 +25,7 @@ const List = () => {
   const [searchItem, setSearchItem] = useState('')
   const [page, setPage] = useState(1)
   const rowsPerPage = 8
+  const [isLOadingDelete, seIsLoadingDelete] = useState(false)
 
   const filteredCategories = useMemo(() => {
     return categories?.filter((c) => c.name.toLowerCase().includes(searchItem.toLowerCase()))
@@ -57,9 +58,13 @@ const List = () => {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          dispatch(deleteCategory(itemToDelete))
+          seIsLoadingDelete(true)
+          dispatch(deleteCategory(itemToDelete,() => seIsLoadingDelete(false)))
+        }else {
+          setItemToDelete(null)
+          seIsLoadingDelete(false)
         }
-        setItemToDelete(null)
+        
       })
     }
   }, [itemToDelete, dispatch])
@@ -99,7 +104,9 @@ const List = () => {
         </div>
       </div>
       {categories && items && (
-        <Table items={items} totale={totalFilteredCategories} setItemToDelete={setItemToDelete} />
+        <Table items={items} totale={totalFilteredCategories} setItemToDelete={setItemToDelete}    
+        itemToDelete={itemToDelete}
+        isLOadingDelete={isLOadingDelete} />
       )}
       {loadingGet && (
         <div className="py-5 w-full flex justify-center">
@@ -129,7 +136,7 @@ const List = () => {
 
 export default List
 
-const Table = ({ items, totale, setItemToDelete }) => {
+const Table = ({ items, totale, setItemToDelete, isLOadingDelete, itemToDelete }) => {
   return (
     <div className="rounded-lg  h-[450px]  w-full   mt-4 ">
       <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
@@ -225,6 +232,8 @@ const Table = ({ items, totale, setItemToDelete }) => {
                         color="danger"
                         variant="ghost"
                         onClick={() => setItemToDelete(f.id)}
+                        isLoading={f.id === itemToDelete ? isLOadingDelete : false}
+                        spinner={isLOadingDelete && <Spinner color="danger" size="sm" />}
                       >
                         <BiTrash className="text-danger group-hover:text-white" />
                       </Button>

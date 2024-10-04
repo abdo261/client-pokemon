@@ -106,7 +106,6 @@ const Update = () => {
           <BiSolidEdit /> Modifier Produit
         </h1>
       </div>
-
       <div className="bg-white dark:bg-[#43474b] rounded-lg p-4 w-[320px] md:w-[450px] h-fit overflow-hidden flex flex-col gap-4 items-center relative">
         <Button
           className="absolute top-2 right-2 text-danger"
@@ -120,12 +119,6 @@ const Update = () => {
         </Button>
 
         <h1 className="font-bold text-2xl underline">Modifier</h1>
-
-        {loadingGet && (
-          <div className="w-full flex justify-center py-3">
-            <Spinner label="Chargement..." size="lg" />
-          </div>
-        )}
 
         {product && formData && (
           <form className="w-full flex flex-col gap-2" onSubmit={handelSubmit}>
@@ -192,10 +185,10 @@ const Update = () => {
                             />
                           ) : (
                             <img
-                            src={defaultImage}
-                            alt={category.name}
-                            className="object-cover h-[50px]"
-                          />
+                              src={defaultImage}
+                              alt={category.name}
+                              className="object-cover h-[50px]"
+                            />
                           )}
                         </div>
                       }
@@ -257,7 +250,11 @@ const Update = () => {
               <label htmlFor="image" className="font-bold">
                 Image
               </label>
-              <LuImagePlus className="cursor-pointer" onClick={() => fileInputRef.current.click()} size={40} />
+              <LuImagePlus
+                className="cursor-pointer"
+                onClick={() => fileInputRef.current.click()}
+                size={40}
+              />
               <input
                 type="file"
                 id="image"
@@ -287,6 +284,11 @@ const Update = () => {
               </Button>
             </div>
           </form>
+        )}
+        {loadingGet && (
+          <div className="w-full flex justify-center py-3">
+            <Spinner label="Chargement..." size="lg" />
+          </div>
         )}
       </div>
     </div>

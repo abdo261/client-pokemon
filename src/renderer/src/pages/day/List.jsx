@@ -15,6 +15,7 @@ import CurrenChipTime from '../../components/currenChipTime'
 
 export default function List() {
   const dispatch = useDispatch()
+  const [isLOadingDelete, seIsLoadingDelete] = useState(false)
   const { days, loadingGet, error, day } = useSelector((state) => state.day)
   const [page, setPage] = useState(1)
   const rowsPerPage = 8
@@ -41,13 +42,16 @@ export default function List() {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          dispatch(deleteDay(itemToDelete))
+          seIsLoadingDelete(true)
+          dispatch(deleteDay(itemToDelete , () => seIsLoadingDelete(false)))
+        } else {
+          setItemToDelete(null)
+          seIsLoadingDelete(false)
         }
-        setItemToDelete(null)
       })
     }
   }, [itemToDelete, dispatch])
-
+  console.log(isLOadingDelete)
   const handleStart = () => {
     dispatch(createDay({ startAt: new Date().toISOString() }))
   }
@@ -62,8 +66,13 @@ export default function List() {
   }
   console.log(days)
   return (
-    <div className="flex flex-col items-center">
-      {days && days.length === 0 ? (
+    <section className="w-full flex flex-col items-center gap-3">
+      <div className="w-full flex items-center justify-between pb-2">
+        <h1 className="text-4xl font-bold underline flex gap-2">
+          <FaCalendarDays /> Journées :
+        </h1>
+      </div>
+      {days && day && days.length === 0 ? (
         <Button
           size="lg"
           variant="shadow"
@@ -121,51 +130,52 @@ export default function List() {
           </div>
         )
       ) : (
-        <Button
-          size="lg"
-          variant="shadow"
-          className="bg-gradient-to-br from-orange-700 to-yellow-500 border-small border-white/50 shadow-warning-500/30 text-white font-semibold"
-          onClick={handleStart}
-        >
-          Démarrer
-        </Button>
+        (day || days) && (
+          <Button
+            size="lg"
+            variant="shadow"
+            className="bg-gradient-to-br from-orange-700 to-yellow-500 border-small border-white/50 shadow-warning-500/30 text-white font-semibold"
+            onClick={handleStart}
+          >
+            Démarrer
+          </Button>
+        )
       )}
-      <section className="w-full flex flex-col gap-3">
-        <div className="w-full flex items-center justify-between pb-2">
-          <h1 className="text-4xl font-bold underline flex gap-2">
-            <FaCalendarDays /> Journées :
-          </h1>
+      {days && items && (
+        <Table
+          items={items}
+          setItemToDelete={setItemToDelete}
+          itemToDelete={itemToDelete}
+          isLOadingDelete={isLOadingDelete}
+        />
+      )}
+      {loadingGet && (
+        <div className="py-5 w-full flex justify-center">
+          <Spinner size="lg" label="Chargement ..." />
         </div>
-
-        {days && items && <Table items={items} setItemToDelete={setItemToDelete} />}
-        {loadingGet && (
-          <div className="py-5 w-full flex justify-center">
-            <Spinner size="lg" label="Chargement ..." />
-          </div>
-        )}
-        {error && (
-          <div className="w-full">
-            <ErrorAlert message={error} />
-          </div>
-        )}
-        <div className="my-4  w-full flex ">
-          {pages > 1 && (
-            <Pagination
-              showControls
-              isCompact
-              total={pages}
-              page={page}
-              onChange={(page) => setPage(page)}
-              showShadow
-            />
-          )}
+      )}
+      {error && (
+        <div className="w-full">
+          <ErrorAlert message={error} />
         </div>
-      </section>
-    </div>
+      )}
+      <div className="my-4  w-full flex ">
+        {pages > 1 && (
+          <Pagination
+            showControls
+            isCompact
+            total={pages}
+            page={page}
+            onChange={(page) => setPage(page)}
+            showShadow
+          />
+        )}
+      </div>
+    </section>
   )
 }
 
-const Table = ({ items, setItemToDelete }) => {
+const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
   return (
     <div className="rounded-lg h-[450px] w-full mt-4">
       <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
@@ -248,30 +258,34 @@ const Table = ({ items, setItemToDelete }) => {
                   <td className="whitespace-nowrap px-2 py-1">
                     <div className="flex justify-center w-full items-center gap-2">
                       {' '}
-                      <Button
-                        size="sm"
-                        isIconOnly
-                        radius="md"
-                        className="text-xl"
-                        color="primary"
-                        variant="ghost"
-                        as={Link}
-                        to={`/days/show/${day.id}`}
-                      >
-                        <FiEye />
-                      </Button>
-                      <Button
-                        size="sm"
-                        isIconOnly
-                        radius="md"
-                        className="text-xl"
-                        color="warning"
-                        variant="ghost"
-                        as={Link}
-                        to={`/days/update/${day.id}`}
-                      >
-                        <BiSolidEdit />
-                      </Button>
+                      {day.stopeAt && (
+                        <>
+                          <Button
+                            size="sm"
+                            isIconOnly
+                            radius="md"
+                            className="text-xl"
+                            color="primary"
+                            variant="ghost"
+                            as={Link}
+                            to={`/days/show/${day.id}`}
+                          >
+                            <FiEye />
+                          </Button>
+                          <Button
+                            size="sm"
+                            isIconOnly
+                            radius="md"
+                            className="text-xl"
+                            color="warning"
+                            variant="ghost"
+                            as={Link}
+                            to={`/days/update/${day.id}`}
+                          >
+                            <BiSolidEdit />
+                          </Button>
+                        </>
+                      )}
                       <Button
                         size="sm"
                         isIconOnly
@@ -280,6 +294,8 @@ const Table = ({ items, setItemToDelete }) => {
                         color="danger"
                         variant="ghost"
                         onClick={() => setItemToDelete(day.id)}
+                        isLoading={day.id === itemToDelete ? isLOadingDelete : false}
+                        spinner={isLOadingDelete && <Spinner color="danger" size="sm" />}
                       >
                         <BiTrash className="text-danger group-hover:text-white" />
                       </Button>
