@@ -53,7 +53,7 @@ const Update = () => {
     if (formData.image) {
       newFormData.append('image', formData.image)
     }
-    console.log(newFormData.get('imageFile'))
+    
     dispatch(
       updateCategory(
         id,
@@ -124,8 +124,8 @@ const Update = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'name') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'name').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'name').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -145,8 +145,8 @@ const Update = () => {
               <div className="text-danger font-bold text-small">
                 {errorValidation && formatErrorField(errorValidation, 'color') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'color').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'color').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )}

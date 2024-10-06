@@ -11,6 +11,7 @@ export const getPaymentsOffer = () => async (dispatch) => {
     const response = await request.get('/paymentsOffer')
     dispatch(paymentOfferActions.setPaymentsOffer(response.data))
   } catch (error) {
+    dispatch(paymentOfferActions.setPaymentsOffer(null))
     if (error?.response) {
       dispatch(paymentOfferActions.setError(error.response.data.message))
     } else {
@@ -30,6 +31,7 @@ export const getPaymentOfferById = (id) => async (dispatch) => {
     const response = await request.get(`/payments/${id}`)
     dispatch(paymentOfferActions.setPaymentOffer(response.data))
   } catch (error) {
+    dispatch(paymentOfferActions.setPayment(null))
     if (error?.response) {
       dispatch(paymentOfferActions.setError(error.response.data.message))
     } else {
@@ -48,7 +50,7 @@ export const createPaymentOffer = (paymentData, cb, cbLoading) => async (dispatc
     toast.success('Paiement créé avec succès')
     cb && cb()
   } catch (error) {
-    console.log(error)
+    
     if (error?.response) {
       if (error.response.status === 400) {
         toast.error('Erreur de validation')

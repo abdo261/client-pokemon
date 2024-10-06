@@ -24,7 +24,7 @@ const UpdateUser = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     setIsLoading(true)
-    console.log(formData)
+ 
     dispatch(
       updateUser(
         id,
@@ -89,8 +89,8 @@ const UpdateUser = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'userName') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'userName').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'userName').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -109,8 +109,8 @@ const UpdateUser = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'email') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'email').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'email').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -130,8 +130,8 @@ const UpdateUser = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'password') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'password').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'password').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -151,8 +151,8 @@ const UpdateUser = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'phone') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'phone').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'phone').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -172,8 +172,8 @@ const UpdateUser = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'role') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'role').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'role').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )

@@ -50,7 +50,7 @@ const Create = ({ onClose }) => {
         setFormData((prev) => ({ ...prev, [field]: numericValue }))
       } else {
         // Optionally, you can show an error message or reset the field
-        console.error('Le prix doit être un nombre positif.')
+        toast.error('Le prix doit être un nombre positif.')
       }
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }))
@@ -82,8 +82,7 @@ const Create = ({ onClose }) => {
     formData.selectedProducts.forEach((product) => {
       newFormData.append('products[]', product)
     })
-    console.log(newFormData.getAll('products[]'))
-    console.log(formData.selectedProducts)
+   
     dispatch(
       createOffer(
         newFormData,
@@ -136,8 +135,8 @@ const Create = ({ onClose }) => {
               errorValidation &&
               formatErrorField(errorValidation, 'name') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'name').map((e) => (
-                    <li>-{e}</li>
+                  {formatErrorField(errorValidation, 'name').map((e,i) => (
+                    <li key={i}>-{e}</li>
                   ))}
                 </ol>
               )
@@ -173,6 +172,7 @@ const Create = ({ onClose }) => {
                     heading:
                       'flex w-full sticky top-1 z-20 py-1.5 px-2 bg-default-100 shadow-small rounded-small'
                   }}
+                  key={c.id}
                 >
                   {c.products?.map((p) => (
                     <SelectItem
@@ -257,7 +257,7 @@ const Create = ({ onClose }) => {
               products
                 .filter((p) => formData.selectedProducts.includes(p.id + ''))
                 .map((p) => (
-                  <Chip radius="sm" endContent={p.price}>
+                  <Chip radius="sm" endContent={p.price} key={p.id}>
                     {p.name}
                   </Chip>
                 ))}

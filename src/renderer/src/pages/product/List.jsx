@@ -79,7 +79,7 @@ const List = () => {
       })
     }
   }, [itemToDelete, dispatch])
-  console.log(products)
+  
   return (
     <section className="w-full flex flex-col gap-3">
       <div className="w-full flex items-center justify-between pb-2">

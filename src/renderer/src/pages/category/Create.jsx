@@ -107,8 +107,8 @@ const Create = ({ onClose }) => {
               errorValidation &&
               formatErrorField(errorValidation, 'name') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'name').map((e) => (
-                    <li>-{e}</li>
+                  {formatErrorField(errorValidation, 'name').map((e,i) => (
+                    <li key={i}>-{e}</li>
                   ))}
                 </ol>
               )
@@ -128,8 +128,8 @@ const Create = ({ onClose }) => {
             <div className="text-danger font-bold text-small">
               {errorValidation && formatErrorField(errorValidation, 'color') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'color').map((e) => (
-                    <li>-{e}</li>
+                  {formatErrorField(errorValidation, 'color').map((e,i) => (
+                    <li key={i}>-{e}</li>
                   ))}
                 </ol>
               )}
@@ -154,8 +154,8 @@ const Create = ({ onClose }) => {
                 <div className="text-danger font-bold text-small">
                   {errorValidation && formatErrorField(errorValidation, 'image') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'image').map((e) => (
-                        <li>-{e}</li>
+                      {formatErrorField(errorValidation, 'image').map((e,i) => (
+                        <li key={i}>-{e}</li>
                       ))}
                     </ol>
                   )}

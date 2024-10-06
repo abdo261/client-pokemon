@@ -6,6 +6,7 @@ import { dayReducer } from './slices/daySlice'
 import { offerReducer } from './slices/offerSlice'
 import { paymentReducer } from './slices/paymentSlice'
 import { paymentOfferReducer } from './slices/paymentOfferSlice'
+import { paymentStatusReducer } from './slices/paymentStatusSlice'
 
 const store = configureStore({
   reducer: {
@@ -16,7 +17,7 @@ const store = configureStore({
     offer: offerReducer,
     payment: paymentReducer,
     paymentOffer: paymentOfferReducer,
-    
+    paymentStatus: paymentStatusReducer
   }
 })
 export default store

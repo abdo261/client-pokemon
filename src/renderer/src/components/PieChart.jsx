@@ -1,42 +1,51 @@
+// PieChart.js
 import React from 'react'
 import Chart from 'react-apexcharts'
 
 const PieChart = ({ data }) => {
-  const categories = data.map((item) => item.name)
-  const counts = data.map((item) => item.productCount)
-  const colors = data.map((item) => item.color)
+  // Prepare data for the chart
+  const series = Object.values(data)
+  const labels = Object.keys(data)
+
+  // Calculate the total sum of the data series for percentage calculation
+  const total = series.reduce((acc, value) => acc + value, 0)
 
   const chartOptions = {
     chart: {
-      type: 'donut'
+      type: 'pie'
     },
-    colors: colors,
-    labels: categories,
+    labels: labels,
+    tooltip: {
+      enabled: true,
+      y: {
+        formatter: function (value) {
+          // Calculate percentage
+          const percentage = ((value / total) * 100).toFixed(2)
+          return `${value}  (${percentage}%)` // Show value and percentage in tooltip
+        }
+      }
+    },
+    legend: {
+      show: false
+    },
     responsive: [
       {
         breakpoint: 480,
         options: {
           chart: {
-            width: 350
+            width: 300
           },
           legend: {
             position: 'bottom'
           }
         }
       }
-    ],
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '55%' // Adjust this for inner radius
-        }
-      }
-    }
+    ]
   }
 
   return (
-    <div className="w-full  flex justify-start items-center h-full">
-      <Chart options={chartOptions} series={counts} type="donut" width="360" />
+    <div className="w-full h-full flex justify-center items-center">
+      <Chart options={chartOptions} series={series} type="pie" width="350" />
     </div>
   )
 }

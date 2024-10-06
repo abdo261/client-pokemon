@@ -56,7 +56,7 @@ const Sidebare = ({ open }) => {
         dangerMode: true
       }).then((isOk) => {
         if (isOk) {
-          console.log('ok')
+          
         }
         setIsLogout(false)
       })
@@ -82,6 +82,7 @@ const Sidebare = ({ open }) => {
             <ul className="space-y-1  pb-4 pt-4">
               {Links.map((l, i) => (
                 <Tooltip
+                
                   content={l.name}
                   showArrow
                   placement="right"

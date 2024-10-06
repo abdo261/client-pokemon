@@ -140,3 +140,15 @@ export const formatDateToLocaleString = (dateString) => {
   return `${day}/${month}/${year} à ${hours}:${minutes}`;
 };
 
+export function calculateSumsInObjects(objects) {
+  const result = {};
+
+  // Loop through each object in the provided 'objects' array
+  for (const key in objects) {
+      // Calculate the sum of values in each object and store in the result
+      const sum = Object.values(objects[key]).reduce((acc, value) => acc + value, 0);
+      result[key] = sum;
+  }
+
+  return result;
+}

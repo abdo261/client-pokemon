@@ -30,7 +30,7 @@ const Create = ({ onClose }) => {
     image: null,
     isPublish: true,
     imageFile: null,
-    type: ''
+    type: null
   })
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
@@ -65,13 +65,14 @@ const Create = ({ onClose }) => {
 
   const handelSubmit = (e) => {
     e.preventDefault()
-    console.log(formData)
     const newFormData = new FormData()
     newFormData.append('name', formData.name)
     newFormData.append('categoryId', formData.categoryId)
     newFormData.append('price', formData.price)
     newFormData.append('isPublish', formData.isPublish)
-    newFormData.append('type', formData.type)
+   if(formData.type){
+     newFormData.append('type', formData.type)
+   }
     newFormData.append('imageFile', formData.imageFile)
 
     if (formData.image) {
@@ -87,9 +88,9 @@ const Create = ({ onClose }) => {
             categoryId: '',
             price: '',
             image: null,
-            imageFile: null,
             isPublish: true,
-            type: ''
+            imageFile: null,
+            type: null
           })
         },
         setIsLoading(false)
@@ -103,9 +104,9 @@ const Create = ({ onClose }) => {
       categoryId: '',
       price: '',
       image: null,
-      imageFile: null,
       isPublish: true,
-      type: ''
+      imageFile: null,
+      type: null
     })
   }, [])
   return (
@@ -143,8 +144,8 @@ const Create = ({ onClose }) => {
               errorValidation &&
               formatErrorField(errorValidation, 'name') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'name').map((e) => (
-                    <li key={e}>-{e}</li>
+                  {formatErrorField(errorValidation, 'name').map((e,i) => (
+                    <li key={i}>-{e}</li>
                   ))}
                 </ol>
               )
@@ -156,7 +157,7 @@ const Create = ({ onClose }) => {
             {categories && (
               <Select
                 placeholder="Filtré par catégorie"
-                className="tracking-widest"
+                className="tracking-widest flex-1"
                 variant="bordered"
                 value={formData.categoryId}
                 startContent={<MdOutlineCategory />}
@@ -169,8 +170,8 @@ const Create = ({ onClose }) => {
                   errorValidation &&
                   formatErrorField(errorValidation, 'categoryId') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'categoryId').map((e) => (
-                        <li key={e}>-{e}</li>
+                      {formatErrorField(errorValidation, 'categoryId').map((e,i) => (
+                        <li key={i}>-{e}</li>
                       ))}
                     </ol>
                   )
@@ -212,7 +213,7 @@ const Create = ({ onClose }) => {
               variant="bordered"
               placeholder="Entrez le prix"
               fullWidth
-              className="font-bold tracking-wider text-lg"
+              className="font-bold tracking-wider text-lg flex-1"
               id="prix"
               onChange={(e) => handelChange('price', e.target.value)}
               value={formData.price}
@@ -221,8 +222,8 @@ const Create = ({ onClose }) => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'price') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'price').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'price').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
@@ -239,7 +240,7 @@ const Create = ({ onClose }) => {
             label="Type de Produit"
           >
             {productTypes.map((type) => (
-              <SelectItem key={type.value} value={type.value} startContent={type.icon}>
+              <SelectItem key={type.value} value={type.value} startContent={type.icon} className='dark:text-white'>
                 {type.label}
               </SelectItem>
             ))}
@@ -272,8 +273,8 @@ const Create = ({ onClose }) => {
                 <div className="text-danger font-bold text-small">
                   {errorValidation && formatErrorField(errorValidation, 'image') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'image').map((e) => (
-                        <li>-{e}</li>
+                      {formatErrorField(errorValidation, 'image').map((e,i) => (
+                        <li key={i}>-{e}</li>
                       ))}
                     </ol>
                   )}

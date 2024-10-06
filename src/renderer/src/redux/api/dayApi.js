@@ -10,6 +10,7 @@ export const getDays = () => async (dispatch) => {
     const response = await request.get('/days')
     dispatch(dayActions.setDays(response.data))
   } catch (error) {
+    dispatch(dayActions.setDays(null))
     if (error?.response) {
       dispatch(dayActions.setError(error.response.data.message))
     } else {
@@ -31,6 +32,7 @@ export const getDayById = (id) => async (dispatch) => {
     const response = await request.get(`/days/${id}`)
     dispatch(dayActions.setDay(response.data))
   } catch (error) {
+    dispatch(dayActions.setDay(null))
     if (error?.response) {
       dispatch(dayActions.setError(error.response.data.message))
     } else {
@@ -52,6 +54,7 @@ export const getLatestDay = () => async (dispatch) => {
 
     dispatch(dayActions.setDay(response.data))
   } catch (error) {
+    dispatch(dayActions.setDay(null))
     if (error?.response) {
       dispatch(dayActions.setError(error.response.data.message))
     } else {

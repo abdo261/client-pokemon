@@ -1,6 +1,6 @@
 import { Button, Checkbox, Input, Select, SelectItem, Spinner } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
-import { MdClose, MdOutlineCategory } from 'react-icons/md'
+import { MdClose, MdCompress, MdOutlineCategory } from 'react-icons/md'
 import { BiSolidEdit } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,7 +11,13 @@ import { getCategories } from '../../redux/api/categoryApi'
 import { imageURI } from '../../utils/axios'
 import defaultImage from '../../assets/images/dfault-image.png'
 import { LuImagePlus } from 'react-icons/lu'
-
+import { GiBarbecue } from 'react-icons/gi'
+import { PiOvenFill } from 'react-icons/pi'
+const productTypes = [
+  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue /> },
+  { value: 'PANINI', label: 'Panini', icon: <MdCompress /> },
+  { value: 'FOUR', label: 'Four', icon: <PiOvenFill /> }
+]
 const Update = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
@@ -48,12 +54,15 @@ const Update = () => {
 
   const handelSubmit = (e) => {
     e.preventDefault()
-    console.log(formData)
+   
     const newFormData = new FormData()
     newFormData.append('name', formData.name)
     if (formData.categoryId) {
       newFormData.append('categoryId', formData.categoryId)
     }
+
+    newFormData.append('type', formData.type)
+
     newFormData.append('price', formData.price)
     newFormData.append('isPublish', formData.isPublish)
     newFormData.append('imageFile', formData.imageFile)
@@ -73,8 +82,9 @@ const Update = () => {
             categoryId: '',
             price: '',
             image: null,
+            isPublish: true,
             imageFile: null,
-            isPublish: true
+            type: null
           })
           setImagePreview(null)
         },
@@ -98,7 +108,7 @@ const Update = () => {
       }
     }
   }, [product, id])
-
+  
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-full flex items-center justify-between pb-2">
@@ -136,18 +146,17 @@ const Update = () => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'name') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'name').map((e) => (
-                      <li key={e}>-{e}</li>
+                    {formatErrorField(errorValidation, 'name').map((e,i) => (
+                      <li key={i}>-{e}</li>
                     ))}
                   </ol>
                 )
               }
             />
-
             <div className="flex items-start gap-2 w-full">
               <Select
                 placeholder="Filtré par catégorie"
-                className="tracking-widest"
+                className="tracking-widest flex-1"
                 variant="bordered"
                 selectedKeys={['' + formData.categoryId]}
                 startContent={<MdOutlineCategory />}
@@ -162,8 +171,8 @@ const Update = () => {
                   errorValidation &&
                   formatErrorField(errorValidation, 'categoryId') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'categoryId').map((e) => (
-                        <li key={e}>-{e}</li>
+                      {formatErrorField(errorValidation, 'categoryId').map((e,i) => (
+                        <li key={i}>-{e}</li>
                       ))}
                     </ol>
                   )
@@ -203,7 +212,7 @@ const Update = () => {
                 variant="bordered"
                 placeholder="Entrez le prix"
                 fullWidth
-                className="font-bold tracking-wider text-lg"
+                className="font-bold tracking-wider text-lg flex-1"
                 id="price"
                 onChange={(e) => handelChange('price', e.target.value)}
                 value={formData.price}
@@ -212,14 +221,32 @@ const Update = () => {
                   errorValidation &&
                   formatErrorField(errorValidation, 'price') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'price').map((e) => (
-                        <li key={e}>-{e}</li>
+                      {formatErrorField(errorValidation, 'price').map((e,i) => (
+                        <li key={i}>-{e}</li>
                       ))}
                     </ol>
                   )
                 }
               />
-            </div>
+            </div>{' '}
+            <Select
+              placeholder="Sélectionnez le type"
+              className="tracking-widest"
+              variant="bordered"
+              defaultSelectedKeys={[
+                product.type && productTypes.find((e) => product.type === e.value)?.value
+              ]}
+              value={formData.type}
+              onChange={(e) => handelChange('type', e.target.value)} // Update to handle type change
+              aria-label="type"
+              label="Type de Produit"
+            >
+              {productTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value} startContent={type.icon} className='dark:text-white'>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </Select>
             <Checkbox
               value={formData.isPublish}
               checked={formData.isPublish}

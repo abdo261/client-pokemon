@@ -70,225 +70,189 @@ const Results = ({ formData, products, handelSelect }) => {
     handelSelect(id) // Ensure this correctly toggles the selection
   }
   const [base64Image, setBase64Image] = useState('')
-  useEffect(() => {
-    const fetchImage = async () => {
-      try {
-        // If the image is in the `public` folder, use the relative path
-        const imagePath = '/images/pokeemon-01.png' // Path from the `public` folder
-        const base64 = await convertImageToBase64(imagePath)
-        setBase64Image(base64)
-      } catch (error) {
-        console.error('Failed to convert image to Base64', error)
-      }
-    }
+  // useEffect(() => {
+  //   const fetchImage = async () => {
+  //     try {
+  //       // If the image is in the `public` folder, use the relative path
+  //       const imagePath = '/images/pokeemon-01.png' // Path from the `public` folder
+  //       const base64 = await convertImageToBase64(imagePath)
+  //       setBase64Image(base64)
+  //     } catch (error) {
+  //       toast.error(error.messge)
+  //     }
+  //   }
 
-    fetchImage()
-  }, [])
-  const handlePrint = () => {
-    if (details.some((p) => p.q === 0)){
-      toast.error("Un ou plusieurs produits ont une quantité de 0. Veuillez mettre à jour les quantités.")
-      return 
+  //   fetchImage()
+  // }, [])
+  const convertImageToBase64 = (imagePath) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          resolve(reader.result); // This is the Base64 string
+        };
+        reader.readAsDataURL(xhr.response); // Convert the blob to Base64
+      };
+      xhr.open('GET', imagePath);
+      xhr.responseType = 'blob';
+      xhr.send();
+    });
+  };
+  const handlePrint = async () => {
+    if (details.some((p) => p.q === 0)) {
+      toast.error('Un ou plusieurs produits ont une quantité de 0. Veuillez mettre à jour les quantités.');
+      return;
     }
-      console.log({
-        ...formData,
-        details: details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price })),
-        isPayed: true,
-        totalePrice: details?.reduce((total, item) => total + item.price, 0)
-      })
+  
+    // Calculate the total price
+    const totalePrice = details?.reduce((total, item) => total + item.price, 0);
+  
+    // Fetch the base64 image
+    const base64Image = await convertImageToBase64(pokeemon); // Ensure 'pokeemon' is the correct image path or use your relative path
+  
+    // Dispatch the payment creation action
     dispatch(
       createPayment({
         ...formData,
         details: details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price })),
         isPayed: true,
-        totalePrice: details?.reduce((total, item) => total + item.price, 0)
+        totalePrice,
       })
-    )
-    //     const content = `
-    //      <html>
-    //   <head>
-    //     <style>
-    //       body {
-    //         font-family: Arial, sans-serif;
-    //          width: 80mm;
-    //       }
-
-    //       table {
-    //         width: 100%;
-    //         border-collapse: collapse;
-    //       }
-
-    //       th, td {
-    //         border: 1px solid #ddd;
-    //         padding: 8px;
-    //       }
-
-    //       th {
-    //         background-color: #f2f2f2;
-    //       }
-
-    //       .text-center {
-    //         text-align: center;
-    //       }
-
-    //       .font-bold {
-    //         font-weight: bold;
-    //       }
-
-    //       .mt-2 {
-    //         margin-top: 2em;
-    //       }
-
-    //       .mb-2 {
-    //         margin-bottom: 2em;
-    //       }
-
-    //       .container {
-    //         padding-left: 3px;
-    //         padding-right: 3px;
-    //         padding-top: 3px;
-    //         padding-bottom: 3px;
-    //         background-color: white;
-    //         border: 1px solid #ccc;
-    //         border-radius: 6px;
-    //         width: 400px;
-    //         color: #333;
-    //         font-size: 12px;
-    //         font-family: monospace;
-    //       }
-
-    //       .container.dark {
-    //         background-color: #333;
-    //         color: #ddd;
-    //       }
-
-    //       .image-container {
-    //         margin-left: auto;
-    //         margin-right: auto;
-    //         width: 100px;
-    //         height: auto;
-    //       }
-
-    //       .image {
-    //         width: 100%;
-    //         object-fit: cover;
-    //       }
-
-    //       .address, .city {
-    //         text-align: center;
-    //         font-size: 10px;
-    //       }
-
-    //       .border-top {
-    //         border-top: 1px solid #ccc;
-    //         margin-top: 8px;
-    //         margin-bottom: 8px;
-    //       }
-
-    //       .table {
-    //         width: 100%;
-    //         border-collapse: collapse;
-    //         font-size: 12px;
-    //       }
-
-    //       .table thead th {
-    //         border: 1px solid #ccc;
-    //         padding: 4px;
-    //         font-weight: bold;
-    //         background-color: #e5e7eb;
-    //       }
-
-    //       .table tbody td {
-    //         border: 1px solid #ccc;
-    //         padding: 4px;
-    //       }
-
-    //       .table tbody td.truncate {
-    //         width: 100%;
-    //       }
-
-    //       .table tbody td.text-center {
-    //         text-align: center;
-    //       }
-
-    //       .table tbody td.text-right {
-    //         text-align: right;
-    //       }
-
-    //       .table tfoot td {
-    //         border-top: 1px solid #ccc;
-    //         padding: 4px;
-    //       }
-
-    //       .thank-you {
-    //         text-align: center;
-    //         font-size: 10px;
-    //         margin-top: 8px;
-    //       }
-
-    //     </style>
-    //   </head>
-    //   <body>
-    //     <div class="container">
-    //       <div class="image-container">
-    //         <img src="../../assets/images/pokeemon-01.png" class="image" />
-    //       </div>
-    //       <p class="address">123 Adresse de la rue</p>
-    //       <p class="city mb-2">Tan-Tan, Maroc</p>
-    //       <div class="border-top"></div>
-    //       <p class="text-xs">
-    //         Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}
-    //       </p>
-    //       <p class="text-xs mb-2">Facture #12345</p>
-    //       <div class="border-top"></div>
-    //       <table class="table">
-    //         <thead>
-    //           <tr>
-    //             <th>Article</th>
-    //             <th>Qté</th>
-    //             <th>Prix</th>
-    //           </tr>
-    //         </thead>
-    //         <tbody>
-    //           ${details
-    //             .map(
-    //               (item) => `
-    //             <tr>
-    //               <td class="truncate">${item.name}</td>
-    //               <td class="text-center">${item.q}</td>
-    //               <td class="text-right">${item.price} MAD</td>
-    //             </tr>
-    //           `
-    //             )
-    //             .join('')}
-    //         </tbody>
-    //         <tfoot>
-    //           <tr class="font-semibold">
-    //             <td class="text-left">Total</td>
-    //             <td colspan="2" class="text-right">
-    //               ${formatMoney(details.reduce((total, item) => total + item.price, 0))}
-    //             </td>
-    //           </tr>
-    //         </tfoot>
-    //       </table>
-    //       <div class="border-top"></div>
-    //       <p class="thank-you">Merci pour votre achat !</p>
-    //     </div>
-    //   </body>
-    // </html>
-
-    //     `
-    //     try {
-    //       if (window.api && window.api.print) {
-    //         window.api.print(content)
-    //         toast.success('printing success')
-    //       } else {
-    //         toast.error('eror printing')
-    //       }
-    //     } catch (error) {
-    //       toast.error('eror printing')
-    //     }
-  }
-
+    );
+  
+    // Define the HTML content
+    const content = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              width: 80mm;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+            .text-center {
+              text-align: center;
+            }
+            .font-bold {
+              font-weight: bold;
+            }
+            .mt-2 {
+              margin-top: 2em;
+            }
+            .mb-2 {
+              margin-bottom: 2em;
+            }
+            .container {
+              padding: 3px;
+              background-color: white;
+              border: 1px solid #ccc;
+              border-radius: 6px;
+              width: 302px;
+              color: #333;
+              font-size: 12px;
+              font-family: monospace;
+            }
+            .image-container {
+              margin-left: auto;
+              margin-right: auto;
+              width: 100px;
+              height: auto;
+            }
+            .image {
+              width: 100%;
+              object-fit: cover;
+            }
+            .address, .city {
+              text-align: center;
+              font-size: 10px;
+            }
+            .border-top {
+              border-top: 1px solid #ccc;
+              margin-top: 8px;
+              margin-bottom: 8px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 12px;
+            }
+            .thank-you {
+              text-align: center;
+              font-size: 10px;
+              margin-top: 8px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="image-container">
+              <img src="${base64Image}" class="image" />
+            </div>
+            <p class="address">123 Adresse de la rue</p>
+            <p class="city mb-2">Tan-Tan, Maroc</p>
+            <div class="border-top"></div>
+            <p>Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}</p>
+            <p class="mb-2">Facture #12345</p>
+            <div class="border-top"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Article</th>
+                  <th>Qté</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${details
+                  .map(
+                    (item) => `
+                    <tr>
+                      <td>${item.name}</td>
+                      <td class="text-center">${item.q}</td>
+                      <td class="text-right">${item.price} MAD</td>
+                    </tr>
+                  `
+                  )
+                  .join('')}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td colspan="2" class="text-right">${totalePrice} MAD</td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="border-top"></div>
+            <p class="thank-you">Merci pour votre achat !</p>
+          </div>
+        </body>
+      </html>
+    `;
+  
+    // Print the content
+    try {
+      if (window.api && window.api.print) {
+        window.api.print(content);
+        toast.success('Impression réussie');
+      } else {
+        toast.error('Erreur d\'impression');
+      }
+    } catch (error) {
+      toast.error('Erreur d\'impression');
+    }
+  };
+  
   const handelNumberClick = (e) => {
     const value = e.target.value
     if (value !== 'delete') {
@@ -324,6 +288,7 @@ const Results = ({ formData, products, handelSelect }) => {
           </Chip>
         </div>
       </div>
+
       <div className="w-full p-3 flex flex-col gap-2">
         <div className=" grid grid-cols-4 sm:grid-cols-7 md:grid-cols-6  gap-2">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((e) => (
@@ -417,7 +382,7 @@ const Results = ({ formData, products, handelSelect }) => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700 font-sans tracking-wide">
                 {details?.length > 0 ? (
-                  details?.map((item, index) => (
+                  details?.map((item) => (
                     <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={item.id}>
                       <td className="whitespace-nowrap px-1 py-1 font-medium text-xs lg:text-xs text-gray-900 dark:text-white w-full text-start">
                         {item.name}

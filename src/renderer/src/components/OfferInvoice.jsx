@@ -74,7 +74,7 @@ const OfferInvoice = () => {
   useEffect(() => {
     dispatch(getPaymentsOffer())
   }, [])
-  console.log(paymentsOffer)
+
   return (
     <>
       <div className="flex justify-between gap-3 items-center bg-white  shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] p-3 rounded-lg mt-4 dark:bg-[#43474b] dark:text-white">

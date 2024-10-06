@@ -60,5 +60,24 @@
     "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.11",
     "vite": "^5.3.1"
+  },
+  "build": {
+    "appId": "com.example.test",
+    "productName": "TestApp",
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/uninstall-icon.ico",
+      "shortcutName": "TestApp",
+      "artifactName": "${productName}-Setup-${version}.exe"
+    }
   }
 }

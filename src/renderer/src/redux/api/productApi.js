@@ -11,6 +11,8 @@ export const getProducts = () => async (dispatch) => {
     const response = await request.get('/products');
     dispatch(productActions.setProducts(response.data));
   } catch (error) {
+    dispatch(productActions.setProducts(null));
+
     if (error?.response) {
       dispatch(productActions.setError(error.response.data.message));
     } else {
@@ -32,6 +34,8 @@ export const getProductById = (id) => async (dispatch) => {
     const response = await request.get(`/products/${id}`);
     dispatch(productActions.setProduct(response.data));
   } catch (error) {
+    dispatch(productActions.setProduct(null));
+
     if (error?.response) {
       dispatch(productActions.setError(error.response.data.message));
     } else {
@@ -52,6 +56,7 @@ export const createProduct = (productData, cb, cbLoading) => async (dispatch) =>
     toast.success('Produit créé avec succès');
     cb && cb();
   } catch (error) {
+    
     if (error?.response) {
       if (error.response.status === 400) {
         toast.error('Erreur de validation');
@@ -78,6 +83,7 @@ export const updateProduct = (id, productData, cb, cbLoading) => async (dispatch
     toast.success('Produit mis à jour avec succès');
     cb && cb();
   } catch (error) {
+   
     if (error?.response) {
       if (error.response.status === 400) {
         toast.error('Erreur de validation');

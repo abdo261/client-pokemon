@@ -177,7 +177,7 @@ const Table = ({ items, total, setItemToDelete }) => {
                         <div className="px-1 py-2 flex flex-col items-start dark:text-white ">
                           {o.products &&
                             o.products.map((p) => (
-                              <div className=" flex items-center justify-start gap-2 w-fit">
+                              <div className=" flex items-center justify-start gap-2 w-fit" key={p.id}>
                                 {p.imageFile ? (
                                   <img
                                     src={`${imageURI}${p.imageFile}`}

@@ -51,7 +51,7 @@ export default function List() {
       })
     }
   }, [itemToDelete, dispatch])
-  console.log(isLOadingDelete)
+
   const handleStart = () => {
     dispatch(createDay({ startAt: new Date().toISOString() }))
   }
@@ -64,7 +64,7 @@ export default function List() {
       })
     )
   }
-  console.log(days)
+
   return (
     <section className="w-full flex flex-col items-center gap-3">
       <div className="w-full flex items-center justify-between pb-2">

@@ -8,11 +8,10 @@ export const getCategories = () => async (dispatch) => {
   try {
     // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories')
-    console.log(response)
+
     dispatch(categoryActions.setCategories(response.data))
   } catch (error) {
-    console.log(error)
-
+    dispatch(categoryActions.setCategories(null))
     if (error?.response) {
       dispatch(categoryActions.setError(error.response.data.message))
     } else {
@@ -30,10 +29,10 @@ export const getCategoriesWithProducts = () => async (dispatch) => {
   try {
     // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories/products')
-    console.log(response)
+    
     dispatch(categoryActions.setCategories(response.data))
   } catch (error) {
-    console.log(error)
+    dispatch(categoryActions.setCategories(null))
 
     if (error?.response) {
       dispatch(categoryActions.setError(error.response.data.message))
@@ -52,10 +51,10 @@ export const getCategoriesCounts = () => async (dispatch) => {
   try {
     // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories/counts')
-    console.log(response)
+    
     dispatch(categoryActions.setCategories(response.data))
   } catch (error) {
-    console.log(error)
+    dispatch(categoryActions.setCategories(null))
 
     if (error?.response) {
       dispatch(categoryActions.setError(error.response.data.message))
@@ -78,6 +77,7 @@ export const getCategoryById = (id) => async (dispatch) => {
     const response = await request.get(`/categories/${id}`)
     dispatch(categoryActions.setCategory(response.data))
   } catch (error) {
+    dispatch(categoryActions.setCategory(null))
     if (error?.response) {
       dispatch(categoryActions.setError(error.response.data.message))
     } else {
@@ -96,7 +96,7 @@ export const createCategory = (categoryData, cb, cbLoading) => async (dispatch) 
     toast.success(response.data.message)
     cb && cb()
   } catch (error) {
-    console.log(error)
+    
     if (error?.response) {
       if (error.response.status === 400) {
         toast.error('error validation')
@@ -121,10 +121,10 @@ export const updateCategory = (id, categoryData, cb, cbLoading) => async (dispat
     const response = await request.put(`/categories/${id}`, categoryData)
     dispatch(categoryActions.updateCategory({ category: response.data.category, id }))
     toast.success(response.data.message)
-    console.log(response.data)
+    
     cb && cb()
   } catch (error) {
-    console.log(error)
+    
     if (error?.response) {
       if (error.response.status === 400) {
         toast.error('ereur de validation')
@@ -141,7 +141,7 @@ export const updateCategory = (id, categoryData, cb, cbLoading) => async (dispat
 }
 
 // Delete a Category by ID
-export const deleteCategory = (id,cb) => async (dispatch) => {
+export const deleteCategory = (id, cb) => async (dispatch) => {
   try {
     const response = await request.delete(`/categories/${id}`)
     dispatch(categoryActions.removeCategory(id))

@@ -31,12 +31,12 @@ const ChartProfitsHome = () => {
   }
 
   const handleTypeChange = (e) => {
-    console.log(e.target.value)
+    
     setOrderType(e.target.value) // Update selected order type
   }
 
   // const handleMergeChange = (e) => {
-  //   console.log(e.target.value)
+ 
 
   //   setMergeCharts(e.target.value === 'true')
   // }

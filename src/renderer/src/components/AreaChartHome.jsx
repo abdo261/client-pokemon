@@ -15,7 +15,7 @@ for (let i = 0; i < 24; i++) {
     createdAt: i < 9 ? '2024-09-29T0' + i + ':00:00Z' : '2024-09-29T00:00:00Z'
   })
 }
-console.log(examplePayments)
+
 
 const AreaChartHome = ({
   fromDate,

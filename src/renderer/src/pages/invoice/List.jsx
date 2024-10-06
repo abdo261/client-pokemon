@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from 'react'
 import pokeemon from '../../assets/images/pokeemon-01.png'
 
 import { MdFastfood, MdPhoneInTalk } from 'react-icons/md'
-import { BiSolidEdit, BiTrash } from 'react-icons/bi'
+import { BiSolidEdit, BiSolidOffer, BiTrash } from 'react-icons/bi'
 import { FiEye, FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import { deleteCategory } from '../../redux/api/categoryApi'
@@ -53,7 +53,7 @@ import OfferInvoice from '../../components/OfferInvoice'
 //     isLocal: false,
 //     type: 'offre',
 //     createdAt: new Date()
-//   }
+//   }è
 //   // Add more static payment objects as needed
 // ]
 const List = () => {
@@ -64,11 +64,29 @@ const List = () => {
           <IoDocumentTextOutline /> Factures :
         </h1>
       </div>
-      <Tabs aria-label="Options" size='lg'>
-        <Tab key="produits" title="Produits" className="w-full">
+      <Tabs aria-label="Options" size="lg">
+        <Tab
+          key="produits"
+          title={
+            <div className="flex items-center space-x-2">
+              <MdFastfood size={20} />
+              <span>Produits</span>
+            </div>
+          }
+          className="w-full"
+        >
           <ProductInvoice />
         </Tab>
-        <Tab key="packes" title="Packes" className="w-full">
+        <Tab
+          key="packes"
+          title={
+            <div className="flex items-center space-x-2">
+              <BiSolidOffer size={20} />
+              <span>Packes</span>
+            </div>
+          }
+          className="w-full"
+        >
           <OfferInvoice />
         </Tab>
       </Tabs>

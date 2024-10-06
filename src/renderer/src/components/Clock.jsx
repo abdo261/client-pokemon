@@ -20,7 +20,7 @@ export function ClockCm() {
   }, [])
 
   return (
-    <div className='text-small md:text-medium overflow-hidden'>
+    <div className='text-[10px] md:text-medium overflow-hidden'>
       <h1 className="tracking-widest">{time}</h1>
       <h2 className="tracking-widest whitespace-nowrap overflow-hidden text-ellipsis">
         <span className="capitalize">{dayName}</span> : {date}

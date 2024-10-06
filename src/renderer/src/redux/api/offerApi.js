@@ -10,6 +10,7 @@ export const getOffers = () => async (dispatch) => {
     const response = await request.get('/offers')
     dispatch(offerActions.setOffers(response.data))
   } catch (error) {
+    dispatch(offerActions.setOffers(null))
     if (error?.response) {
       dispatch(offerActions.setError(error.response.data.message))
     } else {
@@ -30,6 +31,7 @@ export const getOfferById = (id) => async (dispatch) => {
     const response = await request.get(`/offers/${id}`)
     dispatch(offerActions.setOffer(response.data))
   } catch (error) {
+    dispatch(offerActions.setOffer(null))
     if (error?.response) {
       dispatch(offerActions.setError(error.response.data.message))
     } else {
@@ -50,7 +52,7 @@ export const createOffer = (offerData, cb, cbLoading) => async (dispatch) => {
     toast.success(response.data.message)
     cb && cb()
   } catch (error) {
-    console.log(error)
+
 
     if (error?.response) {
       if (error.response.status === 400) {
