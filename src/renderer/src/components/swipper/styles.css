@@ -1,7 +1,21 @@
-
-
-.swiper {
+.swiperHomeContainer .swiper {
   width: 300px;
   height: 320px;
 }
+.swipperSelect .swiper {
+  width: 100%;
+}
+.swiper-button-prev {
+  transform: scale(0.6); /* Adjust the scale as needed */
+}
 
+/* Scale up the default next arrow */
+.swiper-button-next {
+  transform: scale(0.6); /* Adjust the scale as needed */
+}
+
+/* Optional: Increase hitbox area without changing the arrow size */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 20px; /* Increase this value for a bigger icon */
+}

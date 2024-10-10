@@ -25,6 +25,29 @@ export const getPaymentsCountStatus = () => async (dispatch) => {
     dispatch(paymentStatusActions.setLoadingGet(false))
   }
 }
+export const getPaymentsCountStatusWithQuantity = () => async (dispatch) => {
+  dispatch(paymentStatusActions.setLoadingGet(true))
+  dispatch(paymentStatusActions.setPaymentStatusWithQuantity(null))
+  try {
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    const response = await request.get('/payment/status/countAllWitheQuantity')
+   
+    dispatch(paymentStatusActions.setPaymentStatusWithQuantity(response.data))
+  } catch (error) {
+    dispatch(paymentStatusActions.setPaymentStatusWithQuantity(null))
+    if (error?.response) {
+      dispatch(paymentStatusActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        paymentStatusActions.setError(
+          'Le serveur est en panne, vérifiez si votre serveur est démarré ?'
+        )
+      )
+    }
+  } finally {
+    dispatch(paymentStatusActions.setLoadingGet(false))
+  }
+}
 export const getPaymentsCountByProductsStatus = () => async (dispatch) => {
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusProduts(null))
@@ -48,6 +71,29 @@ export const getPaymentsCountByProductsStatus = () => async (dispatch) => {
     dispatch(paymentStatusActions.setLoadingGet(false))
   }
 }
+export const getPaymentsCountByProductsStatusWithQuantity = () => async (dispatch) => {
+  // dispatch(paymentStatusActions.setLoadingGet(true))
+  dispatch(paymentStatusActions.setPaymentStatusProdutsWithQuantity(null))
+  try {
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    const response = await request.get('/payment/status/countByProductsWithQuantity')
+   
+    dispatch(paymentStatusActions.setPaymentStatusProdutsWithQuantity(response.data))
+  } catch (error) {
+    dispatch(paymentStatusActions.setPaymentStatusProdutsWithQuantity(null))
+    if (error?.response) {
+      dispatch(paymentStatusActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        paymentStatusActions.setError(
+          'Le serveur est en panne, vérifiez si votre serveur est démarré ?'
+        )
+      )
+    }
+  } finally {
+    dispatch(paymentStatusActions.setLoadingGet(false))
+  }
+}
 export const getPaymentsCountByOffersStatus = () => async (dispatch) => {
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusOffers(null))
@@ -58,6 +104,29 @@ export const getPaymentsCountByOffersStatus = () => async (dispatch) => {
     dispatch(paymentStatusActions.setPaymentStatusOffers(response.data))
   } catch (error) {
     dispatch(paymentStatusActions.setPaymentStatusOffers(null))
+    if (error?.response) {
+      dispatch(paymentStatusActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        paymentStatusActions.setError(
+          'Le serveur est en panne, vérifiez si votre serveur est démarré ?'
+        )
+      )
+    }
+  } finally {
+    dispatch(paymentStatusActions.setLoadingGet(false))
+  }
+}
+export const getPaymentsCountByOffersStatusWithQuantity = () => async (dispatch) => {
+  // dispatch(paymentStatusActions.setLoadingGet(true))
+  dispatch(paymentStatusActions.setPaymentStatusOffersWithQuantity(null))
+  try {
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+    const response = await request.get('/payment/status/countByOffersWithQuantity')
+
+    dispatch(paymentStatusActions.setPaymentStatusOffersWithQuantity(response.data))
+  } catch (error) {
+    dispatch(paymentStatusActions.setPaymentStatusOffersWithQuantity(null))
     if (error?.response) {
       dispatch(paymentStatusActions.setError(error.response.data.message))
     } else {

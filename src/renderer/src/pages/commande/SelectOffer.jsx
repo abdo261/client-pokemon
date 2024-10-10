@@ -21,7 +21,7 @@ import { LuShoppingBag } from 'react-icons/lu'
 import { checkIfSelected, formatMoney } from '../../utils/utils'
 import { getOffers } from '../../redux/api/offerApi'
 import ResultOffers from './ResultOffers'
-const SelectOffer = () => {
+const SelectOffer = ({ users, loadingUsers }) => {
   //   const exemple = {
   //     offersIds: [5],
   //     totalePrice: 150.5,
@@ -61,105 +61,130 @@ const SelectOffer = () => {
           details: [...prev.details, offers.find((o) => o.id === id)]
         }))
   }
-  useEffect(() => {
-    dispatch(getOffers())
-  }, [dispatch])
- 
+
   return (
     <>
       <div className="h-fit  rounded-lg overflow-hidden  p-2 relative bg-white dark:bg-[#242526] dark:text-white  border-1 border-gray-600 grid custemXsm:grid-cols-1  custem2Xsm:grid-cols-2 custemSm:grid-cols-3 custemMd:grid-cols-4 custemLg:grid-cols-3 custemXl:grid-cols-4 custem2xl:grid-cols-6 gap-2">
-        {loadingGetOffers && <Spinner size="lg" />}
+        {loadingGetOffers && (
+          <div className="flex items-center justify-center col-span-full w-full ">
+            <Spinner size="lg" label="Changement Encoure ..." />
+          </div>
+        )}
         {offers &&
-          offers.map((o) => (
-            <Card
-            key={o.id}
-              className={`relative border-2 border-gray-400 ${checkIfSelected(o.id, formData.offersIds) && 'bg-success-300'}`}
-              // Close when hover ends
-            >
-              <Popover placement="top-end" showArrow isOpen={o.id === isPopoverOpen}>
-                <PopoverTrigger>
-                  {checkIfSelected(o.id, formData.offersIds) ? (
-                    <Checkbox
-                      isSelected={true}
-                      color="success"
-                      className="absolute top-1 right-0 z-40"
-                      size="lg"
-                      radius="full"
-                      onClick={(e) => {
-                        e.stopPropagation() // Prevent the click event from bubbling up
-                        // Toggle popover on click
-                        setIsPopoverOpen((prev) => (prev === o.id ? null : o.id))
-                      }}
-                    />
-                  ) : (
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation() // Prevent the click event from bubbling up
-                        // Toggle popover on click
-                        setIsPopoverOpen((prev) => (prev === o.id ? null : o.id))
-                      }}
-                      className="absolute top-1 right-1 z-40 text-primary cursor-pointer border-primary border-1 rounded-full p-1 hover:bg-primary bg-primary-50 hover:text-white"
-                    >
-                      <LuShoppingBag />
-                    </div>
-                  )}
-                </PopoverTrigger>
-                <PopoverContent className="dark:text-white border-2 border-gray-400">
-                  <div className="px-1 py-2 flex flex-col gap-2">
-                    {o.products.map((p) => (
-                      <motion.span
-                        whileHover={{ scale: 1.07 }}
-                        transition={{
-                          type: 'tween', // You can use 'tween' for a smoother effect
-                          duration: 0.2 // Use seconds, not milliseconds
-                        }}
-                        className="w-fit h-fit p-0 "
-                        key={p.id}
-                      >
-                        <Chip
-                          className={`cursor-pointer w-fit  dark:text-gray-400  `}
-                          key={p.id}
-                          variant="solid"
-                          color={checkIfSelected(o.id, formData.offersIds) ? 'success' : 'default'}
+          (offers.filter((p) => p.isPublish).length > 0 ? (
+            offers
+              .filter((p) => p.isPublish)
+              .map((o) => (
+                <Card
+                  key={o.id}
+                  className={`relative border-2 border-gray-400 ${checkIfSelected(o.id, formData.offersIds) && 'bg-success-300'}`}
+                  // Close when hover ends
+                >
+                  <Popover placement="top-end" showArrow isOpen={o.id === isPopoverOpen}>
+                    <PopoverTrigger>
+                      {checkIfSelected(o.id, formData.offersIds) ? (
+                        <Checkbox
+                          isSelected={true}
+                          color="success"
+                          className="absolute top-1 right-0 z-40"
+                          size="lg"
+                          radius="full"
+                          onClick={(e) => {
+                            e.stopPropagation() // Prevent the click event from bubbling up
+                            // Toggle popover on click
+                            setIsPopoverOpen((prev) => (prev === o.id ? null : o.id))
+                          }}
+                        />
+                      ) : (
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation() // Prevent the click event from bubbling up
+                            // Toggle popover on click
+                            setIsPopoverOpen((prev) => (prev === o.id ? null : o.id))
+                          }}
+                          className="absolute top-1 right-1 z-40 text-primary cursor-pointer border-primary border-1 rounded-full p-1 hover:bg-primary bg-primary-50 hover:text-white"
                         >
-                          {' '}
-                          <div className=" flex items-center">
-                            <span
-                              className={` text-xs lg:text-small  font-semibold  ${checkIfSelected(o.id, formData.offersIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                          <LuShoppingBag />
+                        </div>
+                      )}
+                    </PopoverTrigger>
+                    <PopoverContent className="dark:text-white border-2 border-gray-400">
+                      <div className="px-1 py-2 flex flex-col gap-2">
+                        {o.products.map((p) => (
+                          <motion.span
+                            whileHover={{ scale: 1.07 }}
+                            transition={{
+                              type: 'tween', // You can use 'tween' for a smoother effect
+                              duration: 0.2 // Use seconds, not milliseconds
+                            }}
+                            className="w-fit h-fit p-0 "
+                            key={p.id}
+                          >
+                            <Chip
+                              className={`cursor-pointer w-fit  dark:text-gray-400  `}
+                              key={p.id}
+                              variant="solid"
+                              color={
+                                checkIfSelected(o.id, formData.offersIds) ? 'success' : 'default'
+                              }
                             >
-                              {p.name}
-                            </span>
-                          </div>{' '}
-                        </Chip>
-                      </motion.span>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
+                              {' '}
+                              <div className=" flex items-center">
+                                <span
+                                  className={` text-xs lg:text-small  font-semibold  ${checkIfSelected(o.id, formData.offersIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                >
+                                  {p.name}
+                                </span>
+                              </div>{' '}
+                            </Chip>
+                          </motion.span>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
 
-              <CardHeader className="pb-0  px-4 flex-col items-start">
-                <h4 className="font-bold text-large">{o.name}</h4>
-                {/* <small className="text-default-500">{o.products.length} Produits </small> */}
-                <span>{formatMoney(o.price) }</span>
-              </CardHeader>
-              <CardBody
-                className="overflow-visible cursor-pointer "
-                onClick={() => handelSelect(o.id)}
-              >
-                <Image
-                  alt="Card background"
-                  className="object-cover rounded-xl"
-                  src={o.imageFile ? `${imageURI}${o.imageFile}` : defaultImage}
-                  width={'100%'}
-                  onMouseEnter={() => setIsPopoverOpen(o.id)} // Open on hover
-                  onMouseLeave={() => setIsPopoverOpen(null)}
-                />
-              </CardBody>
-            </Card>
+                  <CardHeader className="pb-0  px-4 flex-col items-start">
+                    <h4 className="font-bold text-large">{o.name}</h4>
+                    {/* <small className="text-default-500">{o.products.length} Produits </small> */}
+                    <span>{formatMoney(o.price)}</span>
+                  </CardHeader>
+                  <CardBody
+                    className="overflow-visible cursor-pointer "
+                    onClick={() => handelSelect(o.id)}
+                  >
+                    <Image
+                      alt="Card background"
+                      className="object-cover rounded-xl"
+                      src={o.imageFile ? `${imageURI}${o.imageFile}` : defaultImage}
+                      width={'100%'}
+                      onMouseEnter={() => setIsPopoverOpen(o.id)} // Open on hover
+                      onMouseLeave={() => setIsPopoverOpen(null)}
+                    />
+                  </CardBody>
+                </Card>
+              ))
+          ) : (
+            <div className=" flex items-center justify-center py-2 w-full col-span-full ">
+              <h1 className="text-3xl font-semibold text-danger">Aucun pack disponible</h1>
+            </div>
           ))}
       </div>
-      <div className=" h-fit sticky   bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600  p-2">
-        <ResultOffers formData={formData} offers={offers} handelSelect={handelSelect} />
+      <div className=" h-fit sticky  top-[70px]  bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600  p-2">
+        {loadingGetOffers || loadingUsers ? (
+          <div className="flex items-center justify-center col-span-full w-full ">
+            <Spinner size="lg" label="Changement Encoure ..." />
+          </div>
+        ) : (
+          offers &&
+          users && (
+            <ResultOffers
+              users={users}
+              formData={formData}
+              offers={offers}
+              handelSelect={handelSelect}
+            />
+          )
+        )}
       </div>
     </>
   )

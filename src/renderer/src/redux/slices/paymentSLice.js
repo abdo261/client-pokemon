@@ -29,11 +29,9 @@ const paymentSlice = createSlice({
     updatePayment(state, action) {
       state.error = null;
       state.payments = state.payments.map(payment =>
-        payment.id === action.payload.id ? action.payload : payment
+        payment.id === action.payload.id ? action.payload.payment : payment
       );
-      if (state.payment && state.payment.id === action.payload.id) {
-        state.payment = action.payload;
-      }
+     
     },
     setError(state, action) {
       state.error = action.payload;

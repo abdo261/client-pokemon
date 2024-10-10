@@ -20,20 +20,18 @@ const paymentOfferSlice = createSlice({
     },
     addPaymentOffer(state, action) {
       state.error = null
-      state.paymentsOffer = [action.payload, ...state.payments]
+      state.paymentsOffer = [action.payload, ...state.paymentsOffer]
     },
     removePaymentOffer(state, action) {
       state.error = null
-      state.paymentsOffer = state.payments.filter((payment) => payment.id !== action.payload)
+      state.paymentsOffer = state.paymentsOffer.filter((payment) => payment.id !== action.payload)
     },
     updatePaymentOffer(state, action) {
       state.error = null
-      state.paymentsOffer = state.payments.map((payment) =>
-        payment.id === action.payload.id ? action.payload : payment
+      state.paymentsOffer = state.paymentsOffer.map((payment) =>
+        payment.id === action.payload.id ? action.payload.payment : payment
       )
-      if (state.payment && state.payment.id === action.payload.id) {
-        state.payment = action.payload
-      }
+      
     },
     setError(state, action) {
       state.error = action.payload

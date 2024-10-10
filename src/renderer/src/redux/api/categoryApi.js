@@ -6,7 +6,6 @@ export const getCategories = () => async (dispatch) => {
   dispatch(categoryActions.setLoadingGet(true))
   dispatch(categoryActions.setCategories(null))
   try {
-    // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories')
 
     dispatch(categoryActions.setCategories(response.data))

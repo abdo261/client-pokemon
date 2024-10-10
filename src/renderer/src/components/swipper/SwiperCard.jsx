@@ -7,7 +7,7 @@ import 'swiper/css'
 import 'swiper/css/effect-cards'
 
 import './styles.css'
-import { TiFlowSwitch } from "react-icons/ti";
+import { TiFlowSwitch } from 'react-icons/ti'
 
 // import required modules
 import { EffectCards } from 'swiper/modules'
@@ -40,31 +40,41 @@ export default function SwipperCardShart() {
         grabCursor={true}
         modules={[EffectCards]}
         className=" w-[250px] h-[300px]"
+        
       >
         {!error && paymentStatusProduts && paymentStatusOffers && (
           <>
             <SwiperSlide className="bg-default  w-full  rounded-xl border-3 border-gray-400">
-              <div className=" flex flex-col justify-evenly items-center  h-full pt-4">
+              <div
+                className=" flex flex-col justify-evenly items-center  h-full pt-4 "
+                
+              >
                 <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2">
-                <MdFastfood /> <span>Produits</span>  
+                  <MdFastfood /> <span>Produits</span>
                 </h1>
                 {<PieChart data={paymentStatusProduts} />}
               </div>
             </SwiperSlide>
             <SwiperSlide className="bg-default  w-full  rounded-xl border-3 border-gray-400">
               <div className=" flex flex-col justify-evenly items-center  h-full pt-4">
-                <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2"> <BiSolidOffer /><span>Packes</span> </h1>
+                <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2">
+                  {' '}
+                  <BiSolidOffer />
+                  <span>Packes</span>{' '}
+                </h1>
                 {<PieChart data={paymentStatusOffers} />}{' '}
               </div>
             </SwiperSlide>
             <SwiperSlide className="bg-default  w-full  rounded-xl border-3 border-gray-400">
               <div className=" flex flex-col justify-evenly items-center  h-full pt-4">
-                <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2"><TiFlowSwitch /> <span>Comparer</span></h1>
+                <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2">
+                  <TiFlowSwitch /> <span>Comparer</span>
+                </h1>
                 {
                   <PieChart
                     data={calculateSumsInObjects({
-                      products: paymentStatusProduts,
-                      offers: paymentStatusOffers
+                      Produits: paymentStatusProduts,
+                      Packes: paymentStatusOffers
                     })}
                   />
                 }{' '}

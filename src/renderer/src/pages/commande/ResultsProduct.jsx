@@ -28,35 +28,34 @@ import { toast } from 'react-toastify'
 import { MdPhoneInTalk } from 'react-icons/md'
 import { GiPayMoney } from 'react-icons/gi'
 import { FcMoneyTransfer } from 'react-icons/fc'
-import { FaDeleteLeft } from 'react-icons/fa6'
+import { FaDeleteLeft, FaMotorcycle } from 'react-icons/fa6'
 import { useDispatch } from 'react-redux'
 import { createPayment } from '../../redux/api/paymentApi'
-import { createPaymentOffer } from '../../redux/api/paymentOfferApi'
 
-const ResultOffers = ({ formData, offers, handelSelect, users }) => {
+const ResultsProduct = ({ formData, products, handelSelect, users }) => {
   const [details, setDetails] = useState([])
-  const [payePrice, setPayedPrice] = useState('')
   const [haveDelevry, setHaveDelevry] = useState(false)
   const [delevryId, setDelevryId] = useState(null)
+  const [payePrice, setPayedPrice] = useState('')
   const [clientNumber, setClientNumber] = useState('')
   const [delevryPrice, setDelevryPrice] = useState('')
   const [focusedInput, setFocusedInput] = useState('payedPrice')
-  const dispatch = useDispatch()
 
+  const dispatch = useDispatch()
   useEffect(() => {
-    const selectedItems = offers
-      ?.filter((p) => formData.offersIds.includes(p.id))
+    const selectedItems = products
+      ?.filter((p) => formData.productsIds.includes(p.id))
       ?.map((p) => {
         const existing = details.find((item) => item.id === p.id)
         return {
           ...p,
           q: existing ? existing.q : 1,
           unitPrice: existing ? existing.unitPrice : p.price,
-          price: existing ? parseInt(existing.price) : parseInt(p.price)
+          price: existing ? existing.price : p.price
         }
       })
     setDetails(selectedItems)
-  }, [formData.offersIds, offers])
+  }, [formData.productsIds, products])
 
   const addQ = (id, quantity) => {
     setDetails((prevDetails) =>
@@ -77,11 +76,23 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
   const handleDecrement = (id, currentQuantity) => {
     addQ(id, currentQuantity > 0 ? currentQuantity - 1 : 0) // Ensure quantity doesn't go below 0
   }
-
+  const toggleBonus = (id) => {
+    if (details?.find((p) => p.id === id).q === 0) return
+    setDetails((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? p.price === 0
+            ? { ...p, price: products.find((p) => p.id === id).price }
+            : { ...p, price: 0 }
+          : p
+      )
+    )
+  }
   const handleRemove = (id) => {
     setDetails((prevDetails) => prevDetails.filter((item) => item.id !== id))
     handelSelect(id) // Ensure this correctly toggles the selection
   }
+
 
   const handlePrint = async () => {
     if (details.some((p) => p.q === 0)) {
@@ -90,184 +101,181 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
       )
       return
     }
-    const totalePrice = details?.reduce(
-      (total, item) => parseFloat(total) + parseFloat(item.price),
-      0
-    )
+
+    // Calculate the total price
+    const totalePrice = details?.reduce((total, item) => total + item.price, 0)
+    console.log({
+      ...formData,
+      details: [...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price }))],
+      totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
+      isPayed: !haveDelevry,
+      clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
+      delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
+      delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null
+    })
+    // Fetch the base64 image
     const base64Image = await convertImageToBase64(pokeemon) // Ensure 'pokeemon' is the correct image path or use your relative path
 
-    // console.log({
-    //   ...formData,
-    //   details: [...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price }))],
-    //   totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
-    //   isPayed: !haveDelevry,
-    //   clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
-    //   delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
-    //   delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null
-    // })
+    // Dispatch the payment creation action
     dispatch(
-      createPaymentOffer({
+      createPayment({
         ...formData,
         details: [
-          ...details.map((p) => ({
-            id: p.id,
-            name: p.name,
-            q: p.q,
-            totalePrice: parseFloat(p.price)
-          }))
+          ...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price,category:p.category.name }))
         ],
         totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
         isPayed: !haveDelevry,
         clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
         delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
         delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
-        isDelevry: haveDelevry
+        isDelevry:haveDelevry
       })
     )
+
     // Define the HTML content
     const content = `
-     <html>
-       <head>
-         <style>
-           body {
-             font-family: Arial, sans-serif;
-             width: 80mm;
-           }
-           table {
-             width: 100%;
-             border-collapse: collapse;
-           }
-           th, td {
-             border: 1px solid #ddd;
-             padding: 8px;
-           }
-           th {
-             background-color: #f2f2f2;
-           }
-           .text-center {
-             text-align: center;
-           }
-           .font-bold {
-             font-weight: bold;
-           }
-           .mt-2 {
-             margin-top: 2em;
-           }
-           .mb-2 {
-             margin-bottom: 2em;
-           }
-           .container {
-             padding: 3px;
-             background-color: white;
-             border: 1px solid #ccc;
-             border-radius: 6px;
-             width: 302px;
-             color: #333;
-             font-size: 12px;
-             font-family: monospace;
-           }
-           .image-container {
-             margin-left: auto;
-             margin-right: auto;
-             width: 100px;
-             height: auto;
-           }
-           .image {
-             width: 100%;
-             object-fit: cover;
-           }
-           .address {
-             text-align: center;
-             font-size: 10px;
-             
-           }
-             .city {
-             text-align: center;
-             font-size: 10px;
-             display: flex;
-             align-items: center;
-             justify-content: center; 
-             gap: 4px;
-           }
-             .city img {
-              width:14px;
-              height: 14px; 
-              object-fit: contain;
-             }
-           .border-top {
-             border-top: 1px solid #ccc;
-             margin-top: 8px;
-             margin-bottom: 8px;
-           }
-           .table {
-             width: 100%;
-             border-collapse: collapse;
-             font-size: 12px;
-           }
-           .thank-you {
-             text-align: center;
-             font-size: 10px;
-             margin-top: 8px;
-           }
-         </style>
-       </head>
-       <body>
-         <div class="container">
-           <div class="image-container">
-             <img src="${base64Image}" class="image" />
-           </div>
-           <p class="address">123 Adresse de la rue Tan-Tan, Maroc</p>
-           <p class="city ">
-           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMy40NDUgMTcuODI3Yy0zLjY4NCAxLjY4NC05LjQwMS05LjQzLTUuOC0xMS4zMDhsMS4wNTMtLjUxOSAxLjc0NiAzLjQwOS0xLjA0Mi41MTNjLTEuMDk1LjU4NyAxLjE4NSA1LjA0IDIuMzA1IDQuNDk3bDEuMDMyLS41MDUgMS43NiAzLjM5Ny0xLjA1NC41MTZ6Ii8+PC9zdmc+">
-            0666666666</p>
-           <div class="border-top"></div>
-           <p>Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}</p>
-          ${haveDelevry ? (clientNumber ? '<p>Client : ' + clientNumber + '</p>' : '') : ''}
-           <p class="">Facture #12345</p>
-           <div class="border-top"></div>
-           <table class="table">
-             <thead>
-               <tr>
-                 <th>Article</th>
-                 <th>Qté</th>
-                 <th>Prix</th>
-               </tr>
-             </thead>
-             <tbody>
-               ${details
-                 .map(
-                   (item) => `
-                   <tr>
-                     <td>${item.name}</td>
-                     <td class="text-center">${item.q}</td>
-                     <td class="text-right">${item.price} MAD</td>
-                   </tr>
-                 `
-                 )
-                 .join('')}
-                 ${
-                   haveDelevry &&
-                   `
-                     <tr>
-                       <td className="truncate w-full">livraison</td>
-                       <td className="text-center">...</td>
-                       <td className="text-right">${!delevryPrice ? 0 : delevryPrice} MAD</td>
-                     </tr>`
-                 }
-             </tbody>
-             <tfoot>
-               <tr>
-                 <td>Total</td>
-                 <td colspan="2" class="text-right">${totalePrice + (!delevryPrice ? 0 : delevryPrice)} MAD</td>
-               </tr>
-             </tfoot>
-           </table>
-           <div class="border-top"></div>
-           <p class="thank-you">Merci pour votre achat !</p>
-         </div>
-       </body>
-     </html>
-   `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              width: 80mm;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+            .text-center {
+              text-align: center;
+            }
+            .font-bold {
+              font-weight: bold;
+            }
+            .mt-2 {
+              margin-top: 2em;
+            }
+            .mb-2 {
+              margin-bottom: 2em;
+            }
+            .container {
+              padding: 3px;
+              background-color: white;
+              border: 1px solid #ccc;
+              border-radius: 6px;
+              width: 302px;
+              color: #333;
+              font-size: 12px;
+              font-family: monospace;
+            }
+            .image-container {
+              margin-left: auto;
+              margin-right: auto;
+              width: 100px;
+              height: auto;
+            }
+            .image {
+              width: 100%;
+              object-fit: cover;
+            }
+            .address {
+              text-align: center;
+              font-size: 10px;
+              
+            }
+              .city {
+              text-align: center;
+              font-size: 10px;
+              display: flex;
+              align-items: center;
+              justify-content: center; 
+              gap: 4px;
+            }
+              .city img {
+               width:14px;
+               height: 14px; 
+               object-fit: contain;
+              }
+            .border-top {
+              border-top: 1px solid #ccc;
+              margin-top: 8px;
+              margin-bottom: 8px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 12px;
+            }
+            .thank-you {
+              text-align: center;
+              font-size: 10px;
+              margin-top: 8px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="image-container">
+              <img src="${base64Image}" class="image" />
+            </div>
+            <p class="address">123 Adresse de la rue Tan-Tan, Maroc</p>
+            <p class="city ">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMy40NDUgMTcuODI3Yy0zLjY4NCAxLjY4NC05LjQwMS05LjQzLTUuOC0xMS4zMDhsMS4wNTMtLjUxOSAxLjc0NiAzLjQwOS0xLjA0Mi41MTNjLTEuMDk1LjU4NyAxLjE4NSA1LjA0IDIuMzA1IDQuNDk3bDEuMDMyLS41MDUgMS43NiAzLjM5Ny0xLjA1NC41MTZ6Ii8+PC9zdmc+">
+             0666666666</p>
+            <div class="border-top"></div>
+            <p>Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}</p>
+           ${haveDelevry ? (clientNumber ? '<p>Client : ' + clientNumber + '</p>' : '') : ''}
+            <p class="">Facture #12345</p>
+            <div class="border-top"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Article</th>
+                  <th>Qté</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${details
+                  .map(
+                    (item) => `
+                    <tr>
+                      <td>${item.name}</td>
+                      <td class="text-center">${item.q}</td>
+                      <td class="text-right">${item.price} MAD</td>
+                    </tr>
+                  `
+                  )
+                  .join('')}
+                  ${
+                    haveDelevry &&
+                    `
+                      <tr>
+                        <td className="truncate w-full">livraison</td>
+                        <td className="text-center">...</td>
+                        <td className="text-right">${!delevryPrice ? 0 : delevryPrice} MAD</td>
+                      </tr>`
+                  }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td colspan="2" class="text-right">${totalePrice + (!delevryPrice ? 0 : delevryPrice)} MAD</td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="border-top"></div>
+            <p class="thank-you">Merci pour votre achat !</p>
+          </div>
+        </body>
+      </html>
+    `
 
     // Print the content
     try {
@@ -288,7 +296,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
     if (focusedInput === 'payedPrice') {
       setPayedPrice(numericValue)
     } else if (focusedInput === 'clientNumber') {
-      const numeric = value.replace(/\D/g, '')
+      const numeric = value.replace(/\D/g, '');
       setClientNumber(numeric)
     } else if (focusedInput === 'delevryPrice') {
       setDelevryPrice(numericValue)
@@ -339,7 +347,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
   }
 
   return (
-    <div className="h-fit max-h-[500px]  rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
+    <div className=" h-fit max-h-[500px] bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
       <div className="flex items-center w-full  dark:bg-[#242526] bg-white p-3 shadow-lg sticky top-0 z-30">
         <div>
           <Chip
@@ -349,11 +357,9 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
             size="lg"
             endContent={<IoBagHandleOutline size={25} />}
           >
-            {details?.length} offers |{' '}
-            {details?.reduce((total, item) => parseInt(total) + parseInt(item.q), 0)}{' '}
+            {details?.length} Products | {details?.reduce((total, item) => total + item.q, 0)}{' '}
             Quantity
           </Chip>
-   
         </div>
       </div>
 
@@ -396,7 +402,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
           value={payePrice || ''}
         />
 
-        <div className="flex  items-center justify-between w-full">
+        <div className=" w-full flex  items-center justify-between">
           <Chip
             className="font-semibold bg- "
             variant="bordered"
@@ -406,7 +412,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
             endContent={
               <span className="tracking-widest text-xs md:text-medium">
                 {formatMoney(
-                  details?.reduce((total, item) => parseFloat(total) + parseFloat(item.price), 0) +
+                  details?.reduce((total, item) => total + item.price, 0) +
                     (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0)
                 )}
               </span>
@@ -415,11 +421,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
           <Chip
             className="font-semibold "
             color={getVariantOfRest(
-              formatMoney(
-                payePrice -
-                  (details?.reduce((total, item) => parseInt(total) + parseInt(item.price), 0) +
-                    (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0))
-              )
+              formatMoney(payePrice - details?.reduce((total, item) => total + item.price, 0))
             )}
             variant="flat"
             size="md"
@@ -427,13 +429,13 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
               <span className="tracking-widest text-xs md:text-medium">
                 {formatMoney(
                   payePrice -
-                    (details?.reduce((total, item) => parseInt(total) + parseInt(item.price), 0) +
+                    (details?.reduce((total, item) => total + item.price, 0) +
                       (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0))
-                )}
+                )}{' '}
               </span>
             }
             startContent={<GiPayMoney size={20} />}
-          ></Chip>{' '}
+          ></Chip>
         </div>
       </div>
       <div className="w-full flex flex-col gap-1 px-4 mb-2">
@@ -508,8 +510,8 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
         )}
       </div>
       <div className="px-3 pb-3 w-full flex flex-col gap-3 items-center">
-        <div className="  w-full overflow-hidden">
-          <div className="overflow-x-auto  rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
+        <div className="  w-full ">
+          <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)] rounded-lg">
             <table className="min-w-full divide-y-2 divide-gray-200 bg-white dark:divide-gray-700 dark:bg-[#43474b] rounded-lg">
               <thead className="ltr:text-left rtl:text-right text-xs lg:text-xs">
                 <tr className="font-normal">
@@ -525,61 +527,115 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
                   <th className="whitespace-nowrap  text-gray-900 dark:text-white"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 font-sans tracking-wide text-xs lg:text-sm text-center">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 font-sans tracking-wide">
                 {details?.length > 0 ? (
-                  details?.map((e) => (
-                    <tr key={e.id} className="dark:bg-[#242526] ">
-                      <td className="whitespace-nowrap px-1 py-1 text-gray-900 dark:text-white ">
-                        {e.name}{' '}
-                      </td>
-                      <td className="whitespace-nowrap px-1 py-1 text-gray-900 dark:text-white ">
-                        <div className="flex items-center justify-center gap-1">
-                          <Button
-                            isIconOnly
-                            className="p-0.5"
-                            color="danger"
+                  <>
+                    {' '}
+                    {details?.map((item) => (
+                      <tr className="hover:bg-blue-200 dark:hover:bg-gray-900" key={item.id}>
+                        <td className="whitespace-nowrap px-1 py-1 font-medium text-xs lg:text-xs text-gray-900 dark:text-white w-full text-start">
+                          {item.name}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1 text-gray-700 dark:text-gray-200 w-auto text-center text-xs lg:text-xs">
+                          <div className="w-[130px] flex justify-center items-center gap-2">
+                            {/* Decrement Button */}
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              color={item.q <= 0 ? 'default' : 'primary'}
+                              onClick={() => handleDecrement(item.id, item.q)}
+                              disabled={item.q <= 0}
+                              variant="flat"
+                            >
+                              <IoRemoveOutline />
+                            </Button>
+
+                            {/* Input Field */}
+                            <Input
+                              className="flex-grow text-right"
+                              variant="faded"
+                              size="sm"
+                              value={item.q === 0 ? '' : item.q} // Show an empty field if quantity is 0 to allow user input
+                              onChange={(e) => {
+                                const inputValue =
+                                  e.target.value === '' ? 0 : parseInt(e.target.value) // Handle empty input as 0
+                                if (!isNaN(inputValue)) {
+                                  addQ(item.id, inputValue) // Update both quantity and price based on the new value
+                                }
+                              }}
+                              placeholder="0"
+                            />
+
+                            {/* Increment Button */}
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              color="primary"
+                              variant="flat"
+                              onClick={() => handleIncrement(item.id, item.q)}
+                            >
+                              <IoAddOutline />
+                            </Button>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1 font-medium text-gray-900 dark:text-white w-full text-center text-xs lg:text-xs">
+                          <Chip
                             size="sm"
-                            variant="faded"
-                            onPress={() => handleDecrement(e.id, e.q)}
+                            variant="flat"
+                            className="cursor-pointer"
+                            onClick={() => toggleBonus(item.id)}
+                            endContent={item.price !== 0 && <span>MAD</span>}
+                            color={
+                              item.price === 0 ? (item.q === 0 ? 'danger' : 'warning') : 'success'
+                            }
                           >
-                            <IoRemoveOutline />
-                          </Button>
-
-                          <Input
-                            variant="bordered"
-                            value={e.q}
-                            size="sm"
-                            className="w-[60px] text-center font-semibold"
-                            onChange={(val) => addQ(e.id, val)}
-                          />
-
-                          <Button
-                            isIconOnly
-                            className="p-0.5"
-                            size="sm"
-                            onPress={() => handleIncrement(e.id, e.q)}
-                          >
-                            <IoAddOutline />
-                          </Button>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-1 py-1 text-gray-900 dark:text-white">
-                        {formatMoney(e.price)}
-                      </td>
-
-                      <td className="whitespace-nowrap px-1 py-1 text-gray-900 dark:text-white ">
-                        <Button
-                          size="sm"
-                          color="danger"
-                          isIconOnly
-                          variant="flat"
-                          onPress={() => handleRemove(e.id)}
-                        >
-                          <IoCloseOutline />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
+                            {item.price === 0 ? (
+                              item.q === 0 ? (
+                                <span className="font-semibold">invalide </span>
+                              ) : (
+                                <span className="font-semibold">Bonus</span>
+                              )
+                            ) : (
+                              <span className="font-semibold">{item.price}</span>
+                            )}
+                          </Chip>
+                        </td>
+                        <td className=" px-1 py-1 text-gray-700 dark:text-gray-200 w-auto ">
+                          <div className="w-full h-full flex items-center justify-center">
+                            <button
+                              onClick={() => handleRemove(item.id)}
+                              className="rounded-lg  hover:bg-danger/40 text-danger p-1"
+                            >
+                              <IoCloseOutline size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}{' '}
+                    {haveDelevry && (
+                      <tr className="hover:bg-blue-200 dark:hover:bg-gray-900">
+                        <td className="whitespace-nowrap px-1 py-1 font-medium text-xs lg:text-xs text-gray-900 dark:text-white w-full text-start">
+                          livraison
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1 text-gray-700 dark:text-gray-200 w-auto text-center text-xs lg:text-xs">
+                          ...
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1 font-medium text-gray-900 dark:text-white w-full text-center text-xs lg:text-xs">
+                          <span className="whitespace-nowrap">
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              endContent={<span>MAD</span>}
+                              color={'success'}
+                            >
+                              {!delevryPrice ? 0 : delevryPrice}
+                            </Chip>
+                          </span>
+                        </td>
+                        <td className=" px-1 py-1 text-gray-700 dark:text-gray-200 w-auto "></td>
+                      </tr>
+                    )}
+                  </>
                 ) : (
                   <tr>
                     <td colSpan={4}>
@@ -594,8 +650,9 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
           </div>
         </div>
       </div>
+
       <div className="sticky bottom-0 w-full flex items-center justify-between bg-white dark:bg-[#242526] p-2">
-        <Popover placement="top" shouldCloseOnInteractOutside={() => false}>
+        <Popover placement="left-end" shouldCloseOnInteractOutside={() => false}>
           <PopoverTrigger>
             <Button color="secondary">
               <PiInvoice size={20} />
@@ -690,4 +747,4 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
   )
 }
 
-export default ResultOffers
+export default ResultsProduct

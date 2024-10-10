@@ -163,21 +163,24 @@ const Table = ({ items, total, setItemToDelete }) => {
                       <img src={defaultImage} alt={o.name} className="w-20" />
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto">
+                  <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto capitalize">
                     {o.name}
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
-                    <Popover placement="right-start">
+                    <Popover placement="bottom">
                       <PopoverTrigger>
                         <Button isIconOnly color="warning" variant="shadow">
                           <MdFastfood size={20} />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="border-gray-400 border-2">
-                        <div className="px-1 py-2 flex flex-col items-start dark:text-white ">
+                        <div className="flex flex-col items-start dark:text-white gap-1">
                           {o.products &&
                             o.products.map((p) => (
-                              <div className=" flex items-center justify-start gap-2 w-fit" key={p.id}>
+                              <div
+                                className=" flex items-center justify-start gap-2 w-full rounded-lg border-1 p-1 border-gray-300 "
+                                key={p.id}
+                              >
                                 {p.imageFile ? (
                                   <img
                                     src={`${imageURI}${p.imageFile}`}
@@ -188,7 +191,9 @@ const Table = ({ items, total, setItemToDelete }) => {
                                   <img src={defaultImage} alt={p.name} className=" w-12 " />
                                 )}
                                 <p>
-                                  {p.name}{' '}
+                                  <p className="text-lg font-semibold capitalize">
+                                    {p.category.name + ' ' + p.name}
+                                  </p>{' '}
                                   <Chip
                                     size="sm"
                                     color={p.type ? 'secondary' : 'default'}

@@ -6,6 +6,9 @@ const payentStatusSlice = createSlice({
     paymentStatus: null,
     paymentStatusProduts: null,
     paymentStatusOffers: null,
+    paymentStatusWithQuantity: null,
+    paymentStatusProdutsWithQuantity: null,
+    paymentStatusOffersWithQuantity: null,
     loadingGet: false,
     error: null
   },
@@ -21,6 +24,18 @@ const payentStatusSlice = createSlice({
     setPaymentStatusOffers(state, action) {
       state.error = null
       state.paymentStatusOffers = action.payload
+    },
+    setPaymentStatusWithQuantity(state, action) {
+      state.error = null
+      state.paymentStatusWithQuantity = action.payload
+    },
+    setPaymentStatusProdutsWithQuantity(state, action) {
+      state.error = null
+      state.paymentStatusProdutsWithQuantity = action.payload
+    },
+    setPaymentStatusOffersWithQuantity(state, action) {
+      state.error = null
+      state.paymentStatusOffersWithQuantity = action.payload
     },
     setLoadingGet(state, action) {
       state.loadingGet = action.payload

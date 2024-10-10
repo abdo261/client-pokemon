@@ -9,6 +9,7 @@ export const getOffers = () => async (dispatch) => {
   try {
     const response = await request.get('/offers')
     dispatch(offerActions.setOffers(response.data))
+ 
   } catch (error) {
     dispatch(offerActions.setOffers(null))
     if (error?.response) {

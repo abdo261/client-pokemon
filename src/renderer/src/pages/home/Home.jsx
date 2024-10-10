@@ -138,7 +138,7 @@ const Home = () => {
 
             <div className="col-span-1 sm:col-span-2 lg:col-span-1 dark:text-gray-500  rounded-lg p-4 flex justify-center">
               {/* <div className="w-fit  overflow-x-auto flex justify-start"> */}
-              <div className="w-fit   flex justify-start">
+              <div className="swiperHomeContainer w-fit   flex justify-start">
                 <SwipperCardShart />
               </div>
             </div>

@@ -1,53 +1,53 @@
 // PieChart.js
-import React from 'react'
-import Chart from 'react-apexcharts'
+import React, { useState } from 'react';
+import Chart from 'react-apexcharts';
 
 const PieChart = ({ data }) => {
-  // Prepare data for the chart
-  const series = Object.values(data)
-  const labels = Object.keys(data)
-
-  // Calculate the total sum of the data series for percentage calculation
-  const total = series.reduce((acc, value) => acc + value, 0)
-
+  const series = Object.values(data);
+  const labels = Object.keys(data);
+  const total = series.reduce((acc, value) => acc + value, 0);
+  
+  const [selectedSlice, setSelectedSlice] = useState(null);
+  
   const chartOptions = {
     chart: {
-      type: 'pie'
+      type: 'pie',
+      events: {
+        dataPointSelection: (event, chartContext, { dataPointIndex }) => {
+          // Stop propagation to prevent Swiper from intercepting the click
+          event.stopPropagation();
+          // Toggle selection
+          setSelectedSlice(selectedSlice === dataPointIndex ? null : dataPointIndex);
+        },
+      },
     },
     labels: labels,
     tooltip: {
       enabled: true,
       y: {
         formatter: function (value) {
-          // Calculate percentage
-          const percentage = ((value / total) * 100).toFixed(2)
-          return `${value}  (${percentage}%)` // Show value and percentage in tooltip
-        }
-      }
+          const percentage = ((value / total) * 100).toFixed(2);
+          return `${value} (${percentage}%)`;
+        },
+      },
     },
     legend: {
-      show: false
+      show: false,
     },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 300
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    ]
-  }
-
+  };
+console.log(selectedSlice)
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <Chart options={chartOptions} series={series} type="pie" width="350" />
+    <div className="w-full h-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+      <Chart options={chartOptions} series={series} type="pie" width="320" />
+      
+      {selectedSlice !== null && (
+        <div className="mt-2 text-center">
+          <h3 className="font-semibold">{labels[selectedSlice]}: {series[selectedSlice]}</h3>
+          <p>Percentage: {((series[selectedSlice] / total) * 100).toFixed(2)}%</p>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default PieChart
+export default PieChart;

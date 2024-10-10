@@ -5,6 +5,9 @@ const daySlice = createSlice({
   initialState: {
     days: [],
     day: null,
+    dayDetails: null,
+    dayCount: null,
+    dayCountQ: null,
     error: null,
     errorValidation: null,
     loadingGet: false
@@ -17,6 +20,18 @@ const daySlice = createSlice({
     setDay(state, action) {
       state.error = null
       state.day = action.payload
+    },
+    setDayDetails(state, action) {
+      state.error = null
+      state.dayDetails = action.payload
+    },
+    setDayCount(state, action) {
+      state.error = null
+      state.dayCount = action.payload
+    },
+    setDayCountQ(state, action) {
+      state.error = null
+      state.dayCountQ = action.payload
     },
     setError(state, action) {
       state.error = action.payload

@@ -11,6 +11,8 @@ import { userRoutes } from './pages/user/router'
 import Settings from './pages/settings/Settings'
 import { dayRoutes } from './pages/day/router'
 import { offreRoutes } from './pages/offre/router'
+import Sharts from './pages/charts/Sharts'
+import { orderRoutes } from './pages/order/routes'
 
 function App() {
   // const api = import.meta.env.VITE_API_URI
@@ -23,6 +25,9 @@ function App() {
         <Route path="/settings" element={<Layout />}>
           <Route index element={<Settings />} />
         </Route>
+        <Route path="/sharts" element={<Layout/>}>
+          <Route index element={<Sharts  />} />
+        </Route>
         {categoryRoutes}
         {invoiceRoutes}
         {commandeRoutes}
@@ -30,6 +35,7 @@ function App() {
         {userRoutes}
         {dayRoutes}
         {offreRoutes}
+        {orderRoutes}
       </Routes>
     </Router>
   )

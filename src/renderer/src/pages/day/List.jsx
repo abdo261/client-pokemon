@@ -265,18 +265,6 @@ const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
                             isIconOnly
                             radius="md"
                             className="text-xl"
-                            color="primary"
-                            variant="ghost"
-                            as={Link}
-                            to={`/days/show/${day.id}`}
-                          >
-                            <FiEye />
-                          </Button>
-                          <Button
-                            size="sm"
-                            isIconOnly
-                            radius="md"
-                            className="text-xl"
                             color="warning"
                             variant="ghost"
                             as={Link}
@@ -285,7 +273,18 @@ const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
                             <BiSolidEdit />
                           </Button>
                         </>
-                      )}
+                      )} <Button
+                      size="sm"
+                      isIconOnly
+                      radius="md"
+                      className="text-xl"
+                      color="primary"
+                      variant="ghost"
+                      as={Link}
+                      to={`/days/show/${day.id}`}
+                    >
+                      <FiEye />
+                    </Button>
                       <Button
                         size="sm"
                         isIconOnly
@@ -318,3 +317,4 @@ const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
     </div>
   )
 }
+

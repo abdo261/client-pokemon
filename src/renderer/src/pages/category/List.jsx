@@ -179,7 +179,7 @@ const Table = ({ items, totale, setItemToDelete, isLOadingDelete, itemToDelete }
                     )}
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start ">
-                    <div className="">{f.name}</div>
+                    <div className="capitalize">{f.name}</div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 text-gray-700 dark:text-gray-200 w-auto ">
                     <div

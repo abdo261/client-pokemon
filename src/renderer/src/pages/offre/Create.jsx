@@ -23,6 +23,7 @@ const Create = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [formData, setFormData] = useState({
+    name: "",
     selectedProducts: [],
     price: '',
     image: null,
@@ -41,21 +42,28 @@ const Create = ({ onClose }) => {
 
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
-
   const handleChange = (field, value) => {
+    dispatch(offerActions.setErrorValidation({ [field]: null }));
+  
     if (field === 'price') {
-      const numericValue = parseFloat(value)
-      if (numericValue >= 0) {
-        // Ensure positive value
-        setFormData((prev) => ({ ...prev, [field]: numericValue }))
+      // Allow empty input to clear the field
+      if (value === '') {
+        setFormData((prev) => ({ ...prev, [field]: '' })); // or set to null if preferred
+        return; // Exit early if the input is empty
+      }
+      
+      const numericValue = parseFloat(value);
+  
+      // Check if numericValue is a number and is non-negative
+      if (!isNaN(numericValue) && numericValue >= 0) {
+        setFormData((prev) => ({ ...prev, [field]: numericValue }));
       } else {
-        // Optionally, you can show an error message or reset the field
-        toast.error('Le prix doit être un nombre positif.')
+        toast.error('Le prix doit être un nombre positif.');
       }
     } else {
-      setFormData((prev) => ({ ...prev, [field]: value }))
+      setFormData((prev) => ({ ...prev, [field]: value }));
     }
-  }
+  };
   const handleImageChange = (event) => {
     const file = event.target.files[0]
     if (file) {
@@ -82,12 +90,18 @@ const Create = ({ onClose }) => {
     formData.selectedProducts.forEach((product) => {
       newFormData.append('products[]', product)
     })
-   
+
     dispatch(
       createOffer(
         newFormData,
         () => {
-          setFormData({ selectedProducts: [], price: '', image: null })
+          setFormData({
+            name: "",
+            selectedProducts: [],
+            price: '',
+            image: null,
+            isPublish: true
+          })
           setImagePreview(null)
         },
         () => setIsLoading(false)
@@ -135,7 +149,7 @@ const Create = ({ onClose }) => {
               errorValidation &&
               formatErrorField(errorValidation, 'name') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'name').map((e,i) => (
+                  {formatErrorField(errorValidation, 'name').map((e, i) => (
                     <li key={i}>-{e}</li>
                   ))}
                 </ol>
@@ -146,6 +160,7 @@ const Create = ({ onClose }) => {
             label="Sélectionnez des produits"
             selectionMode="multiple"
             value={formData.selectedProducts}
+            selectedKeys={formData.selectedProducts}
             onChange={(e) => {
               handleChange('selectedProducts', e.target.value.split(','))
             }}

@@ -24,6 +24,9 @@ module.exports = {
         custemLg: '1024px', // Large screens, 1200px and up
         custemXl: '1321px', // Extra large screens, 1536px and up
         custem2xl: '1600px' // Custom large screen size at 1920px
+      },
+      boxShadow: {
+        'soft-black': '0 0px 7px rgba(0, 0, 0, 1)'
       }
     }
   },

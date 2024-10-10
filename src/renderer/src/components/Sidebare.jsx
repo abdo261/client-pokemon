@@ -1,5 +1,5 @@
 import { IoSettingsOutline } from 'react-icons/io5'
-import { MdOutlineCategory } from 'react-icons/md'
+import { MdOutlineCategory, MdOutlineShop2 } from 'react-icons/md'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { IoIosLogOut } from 'react-icons/io'
 import { Tooltip } from '@nextui-org/react'
@@ -14,6 +14,7 @@ import { MdFastfood } from 'react-icons/md'
 import pokeemon from "../assets/images/pokeemon-01.png"
 import swal from 'sweetalert'
 import { useEffect, useState } from 'react'
+import { FaChartPie } from "react-icons/fa";
 
 const Links = [
   { name: 'Accueil', href: '/', icon: <FaHome /> },
@@ -21,8 +22,9 @@ const Links = [
   { name: 'Catégories', href: '/categories', icon: <MdOutlineCategory /> },
   { name: 'Produits', href: '/products', icon: <MdFastfood /> },
   { name: 'Packes', href: '/offers', icon: <BiSolidOffer /> },
-  { name: 'Commande', href: '/commandes', icon: <FaHandHoldingUsd /> },
+  { name: 'Paiements', href: '/commandes', icon: <FaHandHoldingUsd /> },
   { name: 'Factures', href: '/invoices', icon: <IoDocumentTextOutline /> },
+  { name: 'Commandes', href: '/orders', icon: <MdOutlineShop2 /> },
 ]
 
 const AdminLinks = [
@@ -36,6 +38,13 @@ const AdminLinks = [
     name: 'Paramètres',
     href: '/settings',
     icon: <IoSettingsOutline />,
+    isShow: true
+  
+  },
+  {
+    name: 'Statistiques',
+    href: '/sharts',
+    icon: <FaChartPie />,
     isShow: true
   }
 ]

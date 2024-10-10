@@ -39,12 +39,18 @@ const List = () => {
   const rowsPerPage = 8
 
   const filteredProducts = useMemo(() => {
-    return products?.filter((p) => p.name.toLowerCase().includes(searchItem.toLowerCase()))
+    return products?.filter((p) =>
+      (p.category ? p.category.name + ' ' + p.name : p.name)
+        .toLowerCase()
+        .includes(searchItem.toLowerCase())
+    )
   }, [searchItem, products])
 
   const { totalFilteredProducts, pages } = useMemo(() => {
     const filteredProducts = products?.filter((p) =>
-      p.name.toLowerCase().includes(searchItem.toLowerCase())
+      (p.category ? p.category.name + ' ' + p.name : p.name)
+        .toLowerCase()
+        .includes(searchItem.toLowerCase())
     )
 
     const totalFilteredProducts = filteredProducts?.length
@@ -79,7 +85,7 @@ const List = () => {
       })
     }
   }, [itemToDelete, dispatch])
-  
+
   return (
     <section className="w-full flex flex-col gap-3">
       <div className="w-full flex items-center justify-between pb-2">
@@ -208,7 +214,7 @@ const Table = ({ items, total, setItemToDelete, isLOadingDelete, itemToDelete })
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
-                    <div>{p.name}</div>
+                    <div className="capitalize">{p.category ? p.category.name + ' ' + p.name : p.name}</div>
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-start">
                     <Chip

@@ -2,7 +2,9 @@ import pokeemon from '../../src/assets/images/pokeemon-01.png'
 import { FaMotorcycle } from 'react-icons/fa6'
 import React from 'react'
 import { GrUserAdmin } from "react-icons/gr";
-import { MdAdminPanelSettings } from "react-icons/md";
+import { MdAdminPanelSettings, MdCompress } from "react-icons/md";
+import { GiBarbecue } from 'react-icons/gi';
+import { PiOvenFill } from 'react-icons/pi';
 
 export const checkIfSelected = (id, selectedProducts = []) => {
   return selectedProducts.includes(id)
@@ -28,27 +30,7 @@ export function calculateHourDifference(date1, date2) {
 }
 
 
-export const convertImageToBase64 = () => {
-  return new Promise((resolve, reject) => {
-    const image = new Image()
 
-    // This assumes that `pokeemon` is a valid URL or base64 string
-    image.src = pokeemon
-
-    image.onload = () => {
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      canvas.width = image.width
-      canvas.height = image.height
-      ctx.drawImage(image, 0, 0)
-      resolve(canvas.toDataURL())
-    }
-
-    image.onerror = (error) => {
-      reject(error)
-    }
-  })
-}
 
 export const getVariantOfRest = (price) => {
   const nemirique = parseInt(price)
@@ -151,4 +133,53 @@ export function calculateSumsInObjects(objects) {
   }
 
   return result;
+}
+export const transformDataShart = (data) => {
+  return Object.entries(data).reduce((acc, [name, { totalQuantity }]) => {
+    acc[name] = totalQuantity; // Set the name as key and totalQuantity as value
+    return acc; // Return the accumulator
+  }, {});
+};
+export const transformDataShartSonQuantity = (data) => {
+  return Object.entries(data).reduce((acc, [name, { count }]) => {
+    acc[name] = count; // Set the name as key and totalQuantity as value
+    return acc; // Return the accumulator
+  }, {});
+};
+export const calculateTotal = (obj) => {
+  // Initialize the total variable
+  let total = 0;
+
+  // Iterate through the object properties and sum the values
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      total += obj[key]; // Add each value to the total
+    }
+  }
+
+  return total; // Return the calculated total
+};
+export const productTypes = [
+  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue /> },
+  { value: 'PANINI', label: 'Panini', icon: <MdCompress /> },
+  { value: 'FOUR', label: 'Four', icon: <PiOvenFill /> }
+]
+
+export const filterProductsByType =(products=[],type="")=>{
+return products.filter(p=>p.type === type)
+}
+export  const convertImageToBase64 = (imagePath) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.onload = function () {
+      const reader = new FileReader()
+      reader.onloadend = function () {
+        resolve(reader.result) // This is the Base64 string
+      }
+      reader.readAsDataURL(xhr.response) // Convert the blob to Base64
+    }
+    xhr.open('GET', imagePath)
+    xhr.responseType = 'blob'
+    xhr.send()
+  })
 }

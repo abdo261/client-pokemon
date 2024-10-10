@@ -26,13 +26,55 @@ export const getDays = () => async (dispatch) => {
 // Get Day by ID
 export const getDayById = (id) => async (dispatch) => {
   dispatch(dayActions.setLoadingGet(true))
-  dispatch(dayActions.setDay(null))
+  dispatch(dayActions.setDayDetails(null))
 
   try {
     const response = await request.get(`/days/${id}`)
-    dispatch(dayActions.setDay(response.data))
+    dispatch(dayActions.setDayDetails(response.data))
   } catch (error) {
-    dispatch(dayActions.setDay(null))
+    dispatch(dayActions.setDayDetails(null))
+    if (error?.response) {
+      dispatch(dayActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        dayActions.setError('Le serveur est en panne, vérifiez si votre serveur est démarré ?')
+      )
+    }
+  } finally {
+    dispatch(dayActions.setLoadingGet(false))
+  }
+}
+// Get Day by ID
+export const getDayCountStatusById = (id) => async (dispatch) => {
+  dispatch(dayActions.setLoadingGet(true))
+  dispatch(dayActions.setDayCount(null))
+
+  try {
+    const response = await request.get(`/days/count/${id}`)
+    dispatch(dayActions.setDayCount(response.data))
+  } catch (error) {
+    dispatch(dayActions.setDayCount(null))
+    if (error?.response) {
+      dispatch(dayActions.setError(error.response.data.message))
+    } else {
+      dispatch(
+        dayActions.setError('Le serveur est en panne, vérifiez si votre serveur est démarré ?')
+      )
+    }
+  } finally {
+    dispatch(dayActions.setLoadingGet(false))
+  }
+}
+// Get Day by ID
+export const getDayCountQuantityStatusById = (id) => async (dispatch) => {
+  dispatch(dayActions.setLoadingGet(true))
+  dispatch(dayActions.setDayCountQ(null))
+
+  try {
+    const response = await request.get(`/days/countAllPaymentWithQ/${id}`)
+    dispatch(dayActions.setDayCountQ(response.data))
+  } catch (error) {
+    dispatch(dayActions.setDayCountQ(null))
     if (error?.response) {
       dispatch(dayActions.setError(error.response.data.message))
     } else {
