@@ -7,14 +7,16 @@ import { FaUserShield } from 'react-icons/fa6'
 import { FaHandHoldingUsd } from 'react-icons/fa'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { FaHome } from 'react-icons/fa'
-import { FaCalendarDays } from "react-icons/fa6";
-import { BiSolidOffer } from "react-icons/bi";
+import { FaCalendarDays } from 'react-icons/fa6'
+import { BiSolidOffer } from 'react-icons/bi'
 
 import { MdFastfood } from 'react-icons/md'
-import pokeemon from "../assets/images/pokeemon-01.png"
+import pokeemon from '../assets/images/pokeemon-01.png'
 import swal from 'sweetalert'
 import { useEffect, useState } from 'react'
-import { FaChartPie } from "react-icons/fa";
+import { FaChartPie } from 'react-icons/fa'
+import { logoutUser } from '../redux/api/authApi'
+import { useDispatch } from 'react-redux'
 
 const Links = [
   { name: 'Accueil', href: '/', icon: <FaHome /> },
@@ -24,7 +26,7 @@ const Links = [
   { name: 'Packes', href: '/offers', icon: <BiSolidOffer /> },
   { name: 'Paiements', href: '/commandes', icon: <FaHandHoldingUsd /> },
   { name: 'Factures', href: '/invoices', icon: <IoDocumentTextOutline /> },
-  { name: 'Commandes', href: '/orders', icon: <MdOutlineShop2 /> },
+  { name: 'Commandes', href: '/orders', icon: <MdOutlineShop2 /> }
 ]
 
 const AdminLinks = [
@@ -39,7 +41,6 @@ const AdminLinks = [
     href: '/settings',
     icon: <IoSettingsOutline />,
     isShow: true
-  
   },
   {
     name: 'Statistiques',
@@ -55,7 +56,7 @@ const Sidebare = ({ open }) => {
   const handelLogout = () => {
     setIsLogout(true)
   }
-
+const dispatch=useDispatch()
   useEffect(() => {
     if (isLogout) {
       swal({
@@ -64,10 +65,15 @@ const Sidebare = ({ open }) => {
         buttons: true,
         dangerMode: true
       }).then((isOk) => {
-        if (isOk) {
-          
+        if (isOk) {dispatch(
+          logoutUser(() => {
+            setIsLogout(false);
+            navigate("/");
+          })
+        );
         }
-        setIsLogout(false)
+        setIsLogout(false);
+
       })
     }
   }, [isLogout, navigate])
@@ -77,7 +83,7 @@ const Sidebare = ({ open }) => {
         open ? 'w-16' : 'w-0  '
       } overflow-hidden duration-500 ease-in-out  flex-col justify-between border-e dark:border-gray-800 dark:bg-[#242526] dark:text-white bg-white fixed top-0 left-0 `}
     >
-      <div>
+      <div className=' flex-1 flex flex-col max-h-screen'>
         <div className="inline-flex size-16 items-center justify-center">
           <Link to="/" className="grid size-10 place-content-center ">
             <div className="w-14">
@@ -85,64 +91,64 @@ const Sidebare = ({ open }) => {
             </div>
           </Link>
         </div>
-
-        <div className="border-b border-gray-100">
-          <div className="px-2">
-            <ul className="space-y-1  pb-4 pt-4">
-              {Links.map((l, i) => (
-                <Tooltip
-                
-                  content={l.name}
-                  showArrow
-                  placement="right"
-                  size="lg"
-                  color="foreground"
-                  radius="sm"
-                  delay={0}
-                  closeDelay={0}
-                  key={i}
-                >
-                  <li>
-                    <NavLink
-                      to={l.href}
-                      className="group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700  text-2xl"
-                    >
-                      {l.icon}
-                    </NavLink>{' '}
-                  </li>
-                </Tooltip>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="py-4 px-2  space-y-2 ">
-              {AdminLinks.map(
-                (l, i) =>
-                  l.isShow && (
-                    <Tooltip
-                      content={l.name}
-                      showArrow
-                      placement="right"
-                      size="lg"
-                      color="foreground"
-                      radius="sm"
-                      delay={0}
-                      closeDelay={0}
-                      key={i}
-                    >
+        <div className='custom-scroll flex flex-1 flex-col overflow-y-auto h-full pb-20'>
+          <div >
+            <div className="px-2">
+              <ul className="space-y-1  pb-1 pt-4">
+                {Links.map((l, i) => (
+                  <Tooltip
+                    content={l.name}
+                    showArrow
+                    placement="right"
+                    size="lg"
+                    color="foreground"
+                    radius="sm"
+                    delay={0}
+                    closeDelay={0}
+                    key={i}
+                  >
+                    <li>
                       <NavLink
                         to={l.href}
-                        className={` group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700 text-2xl `}
+                        className="group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700  text-2xl"
                       >
                         {l.icon}
-                      </NavLink>
-                    </Tooltip>
-                  )
-              )}
+                      </NavLink>{' '}
+                    </li>
+                  </Tooltip>
+                ))}
+              </ul>
             </div>
+          </div>
+          <div className=" px-2  space-y-1 ">
+            {AdminLinks.map(
+              (l, i) =>
+                l.isShow && (
+                  <Tooltip
+                    content={l.name}
+                    showArrow
+                    placement="right"
+                    size="lg"
+                    color="foreground"
+                    radius="sm"
+                    delay={0}
+                    closeDelay={0}
+                    key={i}
+                  >
+                    <NavLink
+                      to={l.href}
+                      className={` group relative flex justify-center rounded p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-700 text-2xl `}
+                    >
+                      {l.icon}
+                    </NavLink>
+                  </Tooltip>
+                )
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 p-2">
+      <div className="sticky bg-gradient-to-r from-red-300 to-red-50 dark:from-red-700  inset-x-0 bottom-0 border-t border-gray-100 p-2">
         <div>
           <Tooltip
             content={'Déconnecter'}

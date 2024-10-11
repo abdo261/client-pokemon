@@ -7,6 +7,7 @@ import { offerReducer } from './slices/offerSlice'
 import { paymentReducer } from './slices/paymentSlice'
 import { paymentOfferReducer } from './slices/paymentOfferSlice'
 import { paymentStatusReducer } from './slices/paymentStatusSlice'
+import { authReducer } from './slices/authSlice'
 
 const store = configureStore({
   reducer: {
@@ -17,7 +18,8 @@ const store = configureStore({
     offer: offerReducer,
     payment: paymentReducer,
     paymentOffer: paymentOfferReducer,
-    paymentStatus: paymentStatusReducer
+    paymentStatus: paymentStatusReducer,
+    auth:authReducer
   }
 })
 export default store
