@@ -3,7 +3,7 @@ import { FaRegMoon } from 'react-icons/fa'
 import { MdOutlineLightMode } from 'react-icons/md'
 import { Button } from '@nextui-org/react'
 
-const ToggleThem = ({ size = 'sm',className="cursor-none hidden sm:flex",dark ,  }) => {
+const ToggleThem = ({ size = 'sm',className="cursor-none hidden sm:flex",dark ,toggleDark  }) => {
  
  
   return (
@@ -14,7 +14,7 @@ const ToggleThem = ({ size = 'sm',className="cursor-none hidden sm:flex",dark , 
         radius="full"
         variant="bordered"
         size={size}
-       
+       onClick={toggleDark}
       >
         {dark ? <MdOutlineLightMode />: <FaRegMoon /> }
       </Button>

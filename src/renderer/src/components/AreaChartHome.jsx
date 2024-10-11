@@ -2,19 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
 import { getLocalTimeZone } from '@internationalized/date'
 
-const examplePayments = []
-const date = new Date()
-
-for (let i = 0; i < 24; i++) {
-  examplePayments.push({
-    id: i + 5,
-    totalPrice: i+10,
-    // totalPrice: Math.floor(Math.random() * 300) + 50,
-    isPayed: true,
-    isLocal: i % 2 === 0,
-    createdAt: i < 9 ? '2024-09-29T0' + i + ':00:00Z' : '2024-09-29T00:00:00Z'
-  })
-}
 
 
 const AreaChartHome = ({
@@ -22,8 +9,11 @@ const AreaChartHome = ({
   toDate,
   orderType,
   mergeCharts = false,
-  timeRange = 'hourly'
+  timeRange = 'hourly',
+  payments
 }) => {
+ 
+
   const [chartData, setChartData] = useState({
     series: [],
     options: {
@@ -89,44 +79,45 @@ const AreaChartHome = ({
     updateChartData()
     updateCountChartData() // Update the count chart
   }, [fromDate, toDate, orderType, mergeCharts, timeRange])
-
   const updateChartData = () => {
-    const filteredPayments = examplePayments.filter((payment) => {
+    const filteredPayments = payments.filter((payment) => {
       const createdAt = new Date(payment.createdAt).getTime()
       const from = fromDate.toDate(getLocalTimeZone()).getTime()
       const to = toDate.toDate(getLocalTimeZone()).getTime()
-
-      if (orderType === 'true' && !payment.isLocal) return false
-      if (orderType === 'false' && payment.isLocal) return false
-
+  
+      // Order type filtering logic (offline/online)
+      if (orderType === 'true' && !payment.order) return false
+      if (orderType === 'false' && payment.order) return false
+  
       return createdAt >= from && createdAt <= to
     })
-
+  
     const categories = []
     const totalPriceData = {}
-
+  
     filteredPayments.forEach((payment) => {
       const createdAt = new Date(payment.createdAt)
-
+  
       let key
       if (timeRange === 'hourly') {
-        key = createdAt.toISOString().slice(0, 13)
+        key = createdAt.toISOString().slice(0, 13) // Group by hour (YYYY-MM-DDTHH)
       } else if (timeRange === 'daily') {
-        key = createdAt.toISOString().slice(0, 10)
+        key = createdAt.toISOString().slice(0, 10) // Group by day (YYYY-MM-DD)
       } else if (timeRange === 'monthly') {
-        key = createdAt.toISOString().slice(0, 7)
+        key = createdAt.toISOString().slice(0, 7) // Group by month (YYYY-MM)
       }
-
+  
       if (!totalPriceData[key]) {
         totalPriceData[key] = 0
-        categories.push(key)
+        categories.push(key) // Add key as a category for the x-axis
       }
-
-      totalPriceData[key] += payment.totalPrice
+  
+      // Parse the `totalePrice` as a number before adding it
+      totalPriceData[key] += parseFloat(payment.totalePrice || 0)
     })
-
+  
     const totalPrices = categories.map((key) => totalPriceData[key])
-
+  
     setChartData({
       series: [{ name: 'Total Price', data: totalPrices }],
       options: {
@@ -142,12 +133,13 @@ const AreaChartHome = ({
       }
     })
   }
+  
 
   const updateCountChartData = () => {
     const paymentCounts = {}
     const categories = []
 
-    const filteredPayments = examplePayments.filter((payment) => {
+    const filteredPayments = payments.filter((payment) => {
       const createdAt = new Date(payment.createdAt).getTime()
       const from = fromDate.toDate(getLocalTimeZone()).getTime()
       const to = toDate.toDate(getLocalTimeZone()).getTime()

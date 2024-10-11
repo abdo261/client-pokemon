@@ -1,16 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DatePicker, Select, SelectItem } from '@nextui-org/react'
 import { parseAbsoluteToLocal, getLocalTimeZone, today } from '@internationalized/date'
 import AreaChartHome from './AreaChartHome'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { useSelect } from '@nextui-org/react'
+import { getPayments } from '../redux/api/paymentApi'
 const ChartProfitsHome = () => {
+  const dispatch = useDispatch()
+  const {payments}= useSelector(state=>state.payment)
+  useEffect(()=>{
+    dispatch(getPayments())
+  },[])
   const [fromDate, setFromDate] = useState(
     parseAbsoluteToLocal(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
   )
   const [toDate, setToDate] = useState(parseAbsoluteToLocal(new Date().toISOString()))
   const [orderType, setOrderType] = useState('') // State for selected order type
   // const [mergeCharts, setMergeCharts] = useState(false) // State for merging charts
-
+console.log(payments)
   const handleFromChange = (date) => {
     if (date) {
       setFromDate(date)
@@ -91,12 +98,13 @@ const ChartProfitsHome = () => {
           </SelectItem>
         </Select> */}
       </div>
-      <AreaChartHome
+    { payments &&  <AreaChartHome
         fromDate={fromDate}
         toDate={toDate}
         orderType={orderType}
+        payments={payments}
         // mergeCharts={mergeCharts} // Pass mergeCharts to AreaChartHome
-      />
+      />}
     </div>
   )
 }

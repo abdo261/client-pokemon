@@ -77,7 +77,7 @@ const Header = ({ toggleSideBare, open }) => {
           <DropdownMenu>
             <DropdownItem key="theme" onPress={toggleDark}>
               <div className="flex items-center gap-2">
-                <ToggleThem className="cursor-none" dark={dark} /> <span className=' dark:text-white text-gray-900'> {dark ? "light mode":"dark mode"} </span>
+                <ToggleThem className="cursor-none" dark={dark} toggleDark={toggleDark} /> <span className=' dark:text-white text-gray-900'> {dark ? "light mode":"dark mode"} </span>
               </div>
             </DropdownItem>
           </DropdownMenu>
