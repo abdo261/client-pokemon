@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -11,8 +11,11 @@ import {
   Spinner
 } from '@nextui-org/react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUsers } from '../redux/api/userApi'
+import { getUserById, getUsers } from '../redux/api/userApi'
 import { getRoleColor, getRoleIcon, getRoleLabel } from '../utils/utils'
+import io from 'socket.io-client'
+import { FaWifi } from 'react-icons/fa'
+import { FiWifiOff } from 'react-icons/fi'
 
 const columns = [
   { name: 'USERNAME', uid: 'userName' },
@@ -50,45 +53,40 @@ const columns = [
 //     role: 'ADMIN'
 //   }
 // ]
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL_PUR
 
 export default function UserTable() {
   const dispatch = useDispatch()
-  const { users, loadingGet } = useSelector((state) => state.user)
-  useEffect(() => {
-    dispatch(getUsers())
-  }, [dispatch])
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey]
+  const { users, loadingGet, user } = useSelector((state) => state.user)
+  const { user: loginUser } = useSelector((state) => state.auth)
 
-    switch (columnKey) {
-      case 'userName':
-        return (
-          <User
-            avatarProps={{ radius: 'lg', src: user.image || undefined }}
-            description={user.email}
-            name={cellValue}
-            className="dark:text-white"
-          />
-        )
-      case 'status':
-        return (
-          <Chip variant="bordered">
-            <span className="capitalize text-success">online</span>
-          </Chip>
-        )
-      default:
-        return (
-          <Chip
-            size="sm"
-            variant="flat"
-            startContent={getRoleIcon(cellValue)}
-            color={getRoleColor(cellValue)}
-          >
-            {getRoleLabel(cellValue)}
-          </Chip>
-        )
+  useEffect(() => {
+    if (loginUser) {
+      dispatch(getUserById(loginUser.id))
+      dispatch(getUsers())
     }
-  }, [])
+  }, [dispatch, loginUser])
+  const token = localStorage.getItem('session_user')
+    ? JSON.parse(localStorage.getItem('session_user')).token
+    : null
+
+  const [connectedClients, setConnectedClients] = useState([])
+  useEffect(() => {
+    if (token) {
+      const newSocket = io(SOCKET_SERVER_URL)
+      newSocket.on('connect', () => {
+        newSocket.emit('conectCLintId', token)
+      })
+      newSocket.on('connectedClients', (clients) => {
+        setConnectedClients(clients)
+      })
+
+      return () => {
+        newSocket.close()
+      }
+    }
+  }, [token])
+  console.log(connectedClients)
 
   return (
     <>
@@ -97,7 +95,7 @@ export default function UserTable() {
           <Spinner size="lg" label="Charegement D'etulisateures" />
         </div>
       )}
-      {users && (
+      {user && loginUser && users && (
         <Table
           isHeaderSticky
           aria-label="User Table"
@@ -116,11 +114,50 @@ export default function UserTable() {
               <span className="font-semibold text-danger ">Aucain utilisateurs trouver</span>
             }
           >
-            {(item) => (
-              <TableRow key={item.id}>
-                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            {users.map((u) => (
+              <TableRow key={u.id}>
+                <TableCell>
+                  {' '}
+                  <User
+                    avatarProps={{ radius: 'lg', src: u.image || undefined }}
+                    description={u.email}
+                    name={u.userName}
+                    className="dark:text-white"
+                  />
+                </TableCell>
+
+                <TableCell align="center">
+                  {' '}
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    startContent={getRoleIcon(u.role)}
+                    color={getRoleColor(u.role)}
+                  >
+                    {getRoleLabel(u.role)}
+                  </Chip>
+                </TableCell>
+                <TableCell align="center">
+                  {' '}
+                  <Chip variant="bordered">
+                    {connectedClients.includes(u.id) ? (
+                      <span className="capitalize text-success">
+                        <FaWifi size="18" />
+                      </span>
+                    ) : (
+                      <span className="capitalize text-danger">
+                        <FiWifiOff size="18" />
+                      </span>
+                    )}
+                  </Chip>
+                </TableCell>
               </TableRow>
-            )}
+            ))}
+            {/* {(item) => (
+             
+                {(columnKey) => }
+             
+            )} */}
             {/* {users.length === 0 && (
               <TableRow>
                 <TableCell colSpan='3'>

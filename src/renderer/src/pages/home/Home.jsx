@@ -23,6 +23,7 @@ import SwipperCardShart from '../../components/swipper/SwiperCard'
 const Home = () => {
   const dispatch = useDispatch()
   const { paymentStatus, loadingGet, error } = useSelector((state) => state.paymentStatus)
+
   console.log(loadingGet)
   useEffect(() => {
     // dispatch(getCategoriesCounts())

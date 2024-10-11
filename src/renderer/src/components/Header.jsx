@@ -13,6 +13,9 @@ import { RiMenu3Line } from 'react-icons/ri'
 import ToggleThem from './ToggleThem'
 import { Link } from 'react-router-dom'
 import { ClockCm } from './Clock'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserById } from '../redux/api/userApi'
+import { getRoleColor, getRoleLabel } from '../utils/utils'
 
 const Header = ({ toggleSideBare, open }) => {
  
@@ -30,6 +33,18 @@ const Header = ({ toggleSideBare, open }) => {
       document.body.className = ''
     }
   }, [dark])
+
+
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.user)
+  const { user: loginUser } = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    if (loginUser) {
+      dispatch(getUserById(loginUser.id))
+    }
+    console.log('user get ')
+  }, [dispatch, loginUser])
   return (
     <header
       className={`fixed top-0 right-0  z-[100] ${
@@ -49,11 +64,11 @@ const Header = ({ toggleSideBare, open }) => {
         <ClockCm />
       </div>
       <div className={`flex gap-3 items-center ${open && 'hidden sm:flex'} `}>
-        <Dropdown placement="bottom-end" closeOnSelect={false}>
+      { user &&  <Dropdown placement="bottom-end" closeOnSelect={false}>
           <div className="flex items-center gap-2">
             <Link to="/" className="flex flex-col items-end ">
-              <span className="text-xs sm:text-medium font-semibold    ">abdellah ait bachikh</span>
-              <span className="text-[10px] sm:text-sm font-semibold text-gray-400">@Admin</span>
+              <span className="text-xs sm:text-medium font-semibold    ">{user.userName}</span>
+              <span className="text-[10px] sm:text-sm font-semibold text-gray-400">@{getRoleLabel(user.role)}</span>
             </Link>
             <DropdownTrigger>
               <Avatar isBordered className="flex-shrink-0" />
@@ -66,7 +81,7 @@ const Header = ({ toggleSideBare, open }) => {
               </div>
             </DropdownItem>
           </DropdownMenu>
-        </Dropdown>
+        </Dropdown>}
       </div>
     </header>
   )

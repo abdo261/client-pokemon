@@ -184,7 +184,7 @@ const UpdateUser = () => {
                 { value: 'RESPONSABLE', label: 'Responsable' },
                 { value: 'LIVREUR', label: 'Livreur' }
               ].map((item) => (
-                <SelectItem key={item.value} value={item.value}>
+                <SelectItem key={item.value} value={item.value}  className='dark:text-white'>
                   {item.label}
                 </SelectItem>
               ))}

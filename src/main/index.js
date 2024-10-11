@@ -2,7 +2,8 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-
+import { spawn } from 'child_process'; // Import child_process to spawn the API server
+let server;
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -60,12 +61,28 @@ function createWindow() {
   
   
 }
+// function startServer() {
+//   const apiPath = join(__dirname, '../../../server'); // Adjust the path to your API directory
+//   server = spawn('npm', ['run',"dev"], { cwd: apiPath, shell: true });
 
+//   server.stdout.on('data', (data) => {
+//     console.log(`API Server: ${data}`);
+//   });
+
+//   server.stderr.on('data', (data) => {
+//     console.error(`API Server Error: ${data}`);
+//   });
+
+//   server.on('close', (code) => {
+//     console.log(`API Server exited with code ${code}`);
+//   });
+// }
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron');
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
+  // startServer(); // Start the API server when the app is ready
 
   createWindow();
 
@@ -76,6 +93,9 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    // if (server) {
+    //   server.kill(); // Kill the server process when the app quits
+    // }
     app.quit();
   }
 });

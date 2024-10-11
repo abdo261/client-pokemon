@@ -155,7 +155,6 @@ export const stopeDay = (id, dayData, cb, cbLoading) => async (dispatch) => {
 // Delete a Day by ID
 export const deleteDay = (id,cb) => async (dispatch) => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.delete(`/days/${id}`)
     dispatch(dayActions.removeDay(id))
     toast.success(response.data.message)

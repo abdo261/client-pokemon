@@ -185,7 +185,7 @@ const Create = ({ onClose }) => {
               { value: 'RESPONSABLE', label: 'responsable' },
               { value: 'LIVREUR', label: 'livreur' }
             ].map((item) => (
-              <SelectItem key={item.value} value={item.value}>
+              <SelectItem key={item.value} value={item.value} className='dark:text-white'>
                 {item.label}
               </SelectItem>
             ))}

@@ -18,47 +18,56 @@ const Login = () => {
     email: '',
     password: ''
   })
-  const imgRef = useRef(null); // Create a ref to store the original position
-  const [position, setPosition] = useState({ x: 0, y: 0 }); // State for tracking position
+  const imgRef = useRef(null) // Create a ref to store the original position
+  const [position, setPosition] = useState({ x: 0, y: 0 }) // State for tracking position
 
-  const { errorValidation,loading } = useSelector((state) => state.auth)
+  const { errorValidation, loading } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handelChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-    dispatch(authActions.setErrorValidation({...errorValidation,[field]:null}))
+    dispatch(authActions.setErrorValidation({ ...errorValidation, [field]: null }))
   }
   const handelSubmit = (e) => {
     e.preventDefault()
     console.log(formData)
-    dispatch(loginUser(formData, () => navigate('/')))
+    dispatch(
+      loginUser(formData, () => {
+        navigate('/')
+        setFormData({
+          email: '',
+          password: ''
+        })
+        authActions.setErrorValidation( null )
+      })
+    )
   }
   return (
     <div className="dark:bg-[#18191A] login-page dark:text-gray-100 h-screen w-screen flex items-center justify-center  ">
       <div className="backdrop-blur-sm w-screen mx-3 sm:w-[600px]  border-gray-300 dark:border-gray-600 border-4  rounded-2xl flex flex-col items-center">
         <div className="w-full flex items-center justify-center">
-        <motion.img
-  src={pokemon}
-  className="object-contain w-[150px] sm:w-[200px]"
-  alt="logo"
-  drag // Enable dragging
-  dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }} // Set constraints if needed
-  layout // This enables layout transitions
-  animate={{
-    rotate: [0, 10, -10, 0],
-    transition: {
-      duration: 2, // Duration for the shake animation
-      ease: "easeInOut",
-      repeat: Infinity, // Repeat indefinitely
-      repeatType: "loop",
-      times: [0, 0.5, 1], // Shake for 2 seconds, then pause
-    },
-  }}
-  onDragEnd={(event, info) => {
-    // Reset to original position when drag ends
-    // We don't need to set position; layout will handle it
-  }}
-/>
+          <motion.img
+            src={pokemon}
+            className="object-contain w-[150px] sm:w-[200px]"
+            alt="logo"
+            drag // Enable dragging
+            dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }} // Set constraints if needed
+            layout // This enables layout transitions
+            animate={{
+              rotate: [0, 10, -10, 0],
+              transition: {
+                duration: 2, // Duration for the shake animation
+                ease: 'easeInOut',
+                repeat: Infinity, // Repeat indefinitely
+                repeatType: 'loop',
+                times: [0, 0.5, 1] // Shake for 2 seconds, then pause
+              }
+            }}
+            onDragEnd={(event, info) => {
+              // Reset to original position when drag ends
+              // We don't need to set position; layout will handle it
+            }}
+          />
         </div>
         <h1 className="text-3xl sm:text-4xl font-semibold flex items-center">
           <HiMiniUsers className="text-4xl sm:text-6xl" />
@@ -161,7 +170,14 @@ const Login = () => {
             }
           />
           <div className="flex items-center w-full ">
-            <Button fullWidth size="lg" color="warning" className="font-semibold" type="submit" isLoading={loading}>
+            <Button
+              fullWidth
+              size="lg"
+              color="warning"
+              className="font-semibold"
+              type="submit"
+              isLoading={loading}
+            >
               Se connecter
             </Button>
           </div>
