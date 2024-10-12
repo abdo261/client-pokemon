@@ -185,6 +185,7 @@ const SelectProduct = ({ users ,loadingUsers}) => {
           formData={formData}
           products={products}
           handelSelect={handelSelect}
+          setFormData={setFormData}
         />)}
       </div>
     </>

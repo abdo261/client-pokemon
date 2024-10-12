@@ -8,19 +8,39 @@ import { Button, NextUIProvider, Tooltip } from '@nextui-org/react'
 import pokeemon from '../assets/images/pokeemon-01.png'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import io from 'socket.io-client'
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL_PUR
+
 const Layout = () => {
   const usePreviousRoute = () => {
     const location = useLocation()
     const previousPath = useRef(null)
     const currentPath = location.pathname
-
+ const [connectedClients,setConnectedClients] =useState([])
     useEffect(() => {
       previousPath.current = currentPath
     }, [currentPath])
 
     return previousPath.current
   }
+  const token = localStorage.getItem('session_user')
+  ? JSON.parse(localStorage.getItem('session_user')).token
+  : null
+  useEffect(() => {
+    if (token) {
+      const newSocket = io(SOCKET_SERVER_URL)
+      newSocket.on('connect', () => {
+        newSocket.emit('conectCLintId', token)
+      })
+      newSocket.on('connectedClients', (clients) => {
+        setConnectedClients(clients)
+      })
 
+      return () => {
+        newSocket.close()
+      }
+    }
+  }, [token])
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const prevRoute = usePreviousRoute()

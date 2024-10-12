@@ -182,6 +182,7 @@ const SelectOffer = ({ users, loadingUsers }) => {
               formData={formData}
               offers={offers}
               handelSelect={handelSelect}
+              setFormData={setFormData}
             />
           )
         )}

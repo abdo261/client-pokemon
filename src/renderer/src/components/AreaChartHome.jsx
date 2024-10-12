@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
 import { getLocalTimeZone } from '@internationalized/date'
 
-
-
 const AreaChartHome = ({
   fromDate,
   toDate,
@@ -12,8 +10,6 @@ const AreaChartHome = ({
   timeRange = 'hourly',
   payments
 }) => {
- 
-
   const [chartData, setChartData] = useState({
     series: [],
     options: {
@@ -84,20 +80,20 @@ const AreaChartHome = ({
       const createdAt = new Date(payment.createdAt).getTime()
       const from = fromDate.toDate(getLocalTimeZone()).getTime()
       const to = toDate.toDate(getLocalTimeZone()).getTime()
-  
+
       // Order type filtering logic (offline/online)
       if (orderType === 'true' && !payment.order) return false
       if (orderType === 'false' && payment.order) return false
-  
+
       return createdAt >= from && createdAt <= to
     })
-  
+
     const categories = []
     const totalPriceData = {}
-  
+
     filteredPayments.forEach((payment) => {
       const createdAt = new Date(payment.createdAt)
-  
+
       let key
       if (timeRange === 'hourly') {
         key = createdAt.toISOString().slice(0, 13) // Group by hour (YYYY-MM-DDTHH)
@@ -106,18 +102,18 @@ const AreaChartHome = ({
       } else if (timeRange === 'monthly') {
         key = createdAt.toISOString().slice(0, 7) // Group by month (YYYY-MM)
       }
-  
+
       if (!totalPriceData[key]) {
         totalPriceData[key] = 0
         categories.push(key) // Add key as a category for the x-axis
       }
-  
+
       // Parse the `totalePrice` as a number before adding it
       totalPriceData[key] += parseFloat(payment.totalePrice || 0)
     })
-  
+
     const totalPrices = categories.map((key) => totalPriceData[key])
-  
+
     setChartData({
       series: [{ name: 'Total Price', data: totalPrices }],
       options: {
@@ -133,7 +129,6 @@ const AreaChartHome = ({
       }
     })
   }
-  
 
   const updateCountChartData = () => {
     const paymentCounts = {}

@@ -5,12 +5,15 @@
 .swipperSelect .swiper {
   width: 100%;
 }
-.swiper-button-prev {
+.swiper-button-prev { 
+ 
+  left: 0;
   transform: scale(0.6); /* Adjust the scale as needed */
+
 }
 
 /* Scale up the default next arrow */
-.swiper-button-next {
+.swiper-button-next {  right: 0;
   transform: scale(0.6); /* Adjust the scale as needed */
 }
 

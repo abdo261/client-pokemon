@@ -21,7 +21,8 @@ import {
   getRoleColor,
   getRoleIcon,
   getRoleLabel,
-  getVariantOfRest
+  getVariantOfRest,
+  PrintInvoiceContent
 } from '../../utils/utils'
 import pokeemon from '../../assets/images/pokeemon-01.png'
 import { toast } from 'react-toastify'
@@ -33,7 +34,7 @@ import { useDispatch } from 'react-redux'
 import { createPayment } from '../../redux/api/paymentApi'
 import { createPaymentOffer } from '../../redux/api/paymentOfferApi'
 
-const ResultOffers = ({ formData, offers, handelSelect, users }) => {
+const ResultOffers = ({ formData, offers, handelSelect, users ,setFormData}) => {
   const [details, setDetails] = useState([])
   const [payePrice, setPayedPrice] = useState('')
   const [haveDelevry, setHaveDelevry] = useState(false)
@@ -41,6 +42,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
   const [clientNumber, setClientNumber] = useState('')
   const [delevryPrice, setDelevryPrice] = useState('')
   const [focusedInput, setFocusedInput] = useState('payedPrice')
+  const [loadingCreate, setIsLOadingCreate] = useState(false)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -94,19 +96,9 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
       (total, item) => parseFloat(total) + parseFloat(item.price),
       0
     )
-    const base64Image = await convertImageToBase64(pokeemon) // Ensure 'pokeemon' is the correct image path or use your relative path
 
-    // console.log({
-    //   ...formData,
-    //   details: [...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price }))],
-    //   totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
-    //   isPayed: !haveDelevry,
-    //   clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
-    //   delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
-    //   delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null
-    // })
-    dispatch(
-      createPaymentOffer({
+   dispatch( createPaymentOffer(
+      {
         ...formData,
         details: [
           ...details.map((p) => ({
@@ -122,164 +114,42 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
         delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
         delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
         isDelevry: haveDelevry
-      })
-    )
-    // Define the HTML content
-    const content = `
-     <html>
-       <head>
-         <style>
-           body {
-             font-family: Arial, sans-serif;
-             width: 80mm;
-           }
-           table {
-             width: 100%;
-             border-collapse: collapse;
-           }
-           th, td {
-             border: 1px solid #ddd;
-             padding: 8px;
-           }
-           th {
-             background-color: #f2f2f2;
-           }
-           .text-center {
-             text-align: center;
-           }
-           .font-bold {
-             font-weight: bold;
-           }
-           .mt-2 {
-             margin-top: 2em;
-           }
-           .mb-2 {
-             margin-bottom: 2em;
-           }
-           .container {
-             padding: 3px;
-             background-color: white;
-             border: 1px solid #ccc;
-             border-radius: 6px;
-             width: 302px;
-             color: #333;
-             font-size: 12px;
-             font-family: monospace;
-           }
-           .image-container {
-             margin-left: auto;
-             margin-right: auto;
-             width: 100px;
-             height: auto;
-           }
-           .image {
-             width: 100%;
-             object-fit: cover;
-           }
-           .address {
-             text-align: center;
-             font-size: 10px;
-             
-           }
-             .city {
-             text-align: center;
-             font-size: 10px;
-             display: flex;
-             align-items: center;
-             justify-content: center; 
-             gap: 4px;
-           }
-             .city img {
-              width:14px;
-              height: 14px; 
-              object-fit: contain;
-             }
-           .border-top {
-             border-top: 1px solid #ccc;
-             margin-top: 8px;
-             margin-bottom: 8px;
-           }
-           .table {
-             width: 100%;
-             border-collapse: collapse;
-             font-size: 12px;
-           }
-           .thank-you {
-             text-align: center;
-             font-size: 10px;
-             margin-top: 8px;
-           }
-         </style>
-       </head>
-       <body>
-         <div class="container">
-           <div class="image-container">
-             <img src="${base64Image}" class="image" />
-           </div>
-           <p class="address">123 Adresse de la rue Tan-Tan, Maroc</p>
-           <p class="city ">
-           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMy40NDUgMTcuODI3Yy0zLjY4NCAxLjY4NC05LjQwMS05LjQzLTUuOC0xMS4zMDhsMS4wNTMtLjUxOSAxLjc0NiAzLjQwOS0xLjA0Mi41MTNjLTEuMDk1LjU4NyAxLjE4NSA1LjA0IDIuMzA1IDQuNDk3bDEuMDMyLS41MDUgMS43NiAzLjM5Ny0xLjA1NC41MTZ6Ii8+PC9zdmc+">
-            0666666666</p>
-           <div class="border-top"></div>
-           <p>Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}</p>
-          ${haveDelevry ? (clientNumber ? '<p>Client : ' + clientNumber + '</p>' : '') : ''}
-           <p class="">Facture #12345</p>
-           <div class="border-top"></div>
-           <table class="table">
-             <thead>
-               <tr>
-                 <th>Article</th>
-                 <th>Qté</th>
-                 <th>Prix</th>
-               </tr>
-             </thead>
-             <tbody>
-               ${details
-                 .map(
-                   (item) => `
-                   <tr>
-                     <td>${item.name}</td>
-                     <td class="text-center">${item.q}</td>
-                     <td class="text-right">${item.price} MAD</td>
-                   </tr>
-                 `
-                 )
-                 .join('')}
-                 ${
-                   haveDelevry &&
-                   `
-                     <tr>
-                       <td className="truncate w-full">livraison</td>
-                       <td className="text-center">...</td>
-                       <td className="text-right">${!delevryPrice ? 0 : delevryPrice} MAD</td>
-                     </tr>`
-                 }
-             </tbody>
-             <tfoot>
-               <tr>
-                 <td>Total</td>
-                 <td colspan="2" class="text-right">${totalePrice + (!delevryPrice ? 0 : delevryPrice)} MAD</td>
-               </tr>
-             </tfoot>
-           </table>
-           <div class="border-top"></div>
-           <p class="thank-you">Merci pour votre achat !</p>
-         </div>
-       </body>
-     </html>
-   `
-
-    // Print the content
-    try {
-      if (window.api && window.api.print) {
-        window.api.print(content)
-        toast.success('Impression réussie')
-      } else {
-        toast.error("Erreur d'impression")
-      }
-    } catch (error) {
-      toast.error("Erreur d'impression")
-    }
+      },
+      (element) => {
+        PrintInvoiceContent(element, {
+          ...formData,
+          details: [
+            ...details.map((p) => ({
+              id: p.id,
+              name: p.name,
+              q: p.q,
+              totalePrice: parseFloat(p.price)
+            }))
+          ],
+          totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
+          isPayed: !haveDelevry,
+          clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
+          delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
+          delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
+          isDelevry: haveDelevry,
+          user: delevryId ? users.find((u) => u.id === parseInt(delevryId)).userName :""
+        } )
+        setFormData({
+          offersIds: [],
+    totalePrice: '',
+    isPayed: true,
+    details: []
+        })
+        setDetails([])
+        setHaveDelevry(false)
+        setDelevryId(null)
+        setPayedPrice('')
+        setClientNumber('')
+        setDelevryPrice('')
+        setFocusedInput('payedPrice')
+      },
+      () => setIsLOadingCreate(false)
+    ))
   }
   const handleInputChange = (e) => {
     const value = e.target.value
@@ -339,7 +209,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
   }
 
   return (
-    <div className="h-fit max-h-[500px]  rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
+    <div className="h-fit  max-h-full rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
       <div className="flex items-center w-full  dark:bg-[#242526] bg-white p-3 shadow-lg sticky top-0 z-30">
         <div>
           <Chip
@@ -682,7 +552,7 @@ const ResultOffers = ({ formData, offers, handelSelect, users }) => {
           </PopoverContent>
         </Popover>
 
-        <Button color="primary" onClick={handlePrint}>
+        <Button color="primary" onClick={handlePrint} isLoading={loadingCreate}>
           <IoPrintOutline size={20} />
         </Button>
       </div>

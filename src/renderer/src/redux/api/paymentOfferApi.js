@@ -53,7 +53,7 @@ export const createPaymentOffer = (paymentData, cb, cbLoading) => async (dispatc
     const response = await request.post('/paymentsOffer', paymentData)
     dispatch(paymentOfferActions.addPaymentOffer(response.data.paymentOffer))
     toast.success('Paiement créé avec succès')
-    cb && cb()
+    cb && cb(response.data.paymentOffer)
   } catch (error) {
     console.log(error)
     if (error?.response) {

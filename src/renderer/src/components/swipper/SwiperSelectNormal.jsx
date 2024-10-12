@@ -28,9 +28,8 @@ export default function SwiperSelectNormal({
       slidesPerView={1}
       spaceBetween={10}
       loop={true}
-    
       navigation={true}
-      modules={[ Navigation]}
+      modules={[Navigation]}
       className="mySwiper  "
       grabCursor={true}
     >

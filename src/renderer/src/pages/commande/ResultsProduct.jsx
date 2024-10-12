@@ -21,7 +21,8 @@ import {
   getRoleColor,
   getRoleIcon,
   getRoleLabel,
-  getVariantOfRest
+  getVariantOfRest,
+  PrintInvoiceContent
 } from '../../utils/utils'
 import pokeemon from '../../assets/images/pokeemon-01.png'
 import { toast } from 'react-toastify'
@@ -32,7 +33,7 @@ import { FaDeleteLeft, FaMotorcycle } from 'react-icons/fa6'
 import { useDispatch } from 'react-redux'
 import { createPayment } from '../../redux/api/paymentApi'
 
-const ResultsProduct = ({ formData, products, handelSelect, users }) => {
+const ResultsProduct = ({ formData, products, handelSelect, users, setFormData }) => {
   const [details, setDetails] = useState([])
   const [haveDelevry, setHaveDelevry] = useState(false)
   const [delevryId, setDelevryId] = useState(null)
@@ -40,7 +41,6 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
   const [clientNumber, setClientNumber] = useState('')
   const [delevryPrice, setDelevryPrice] = useState('')
   const [focusedInput, setFocusedInput] = useState('payedPrice')
-
   const dispatch = useDispatch()
   useEffect(() => {
     const selectedItems = products
@@ -92,10 +92,11 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
     setDetails((prevDetails) => prevDetails.filter((item) => item.id !== id))
     handelSelect(id) // Ensure this correctly toggles the selection
   }
-
-
-  const handlePrint = async () => {
+  const [isLoadingCreate, setIsLOadingCreate] = useState(false)
+  const handlePrint = async (id) => {
+    setIsLOadingCreate(true)
     if (details.some((p) => p.q === 0)) {
+      setIsLOadingCreate(false)
       toast.error(
         'Un ou plusieurs produits ont une quantité de 0. Veuillez mettre à jour les quantités.'
       )
@@ -104,190 +105,68 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
 
     // Calculate the total price
     const totalePrice = details?.reduce((total, item) => total + item.price, 0)
-    console.log({
-      ...formData,
-      details: [...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price }))],
-      totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
-      isPayed: !haveDelevry,
-      clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
-      delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
-      delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null
-    })
+
     // Fetch the base64 image
-    const base64Image = await convertImageToBase64(pokeemon) // Ensure 'pokeemon' is the correct image path or use your relative path
 
     // Dispatch the payment creation action
     dispatch(
-      createPayment({
-        ...formData,
-        details: [
-          ...details.map((p) => ({ id: p.id, name: p.name, q: p.q, totalePrice: p.price,category:p.category.name }))
-        ],
-        totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
-        isPayed: !haveDelevry,
-        clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
-        delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
-        delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
-        isDelevry:haveDelevry
-      })
+      createPayment(
+        {
+          ...formData,
+          details: [
+            ...details.map((p) => ({
+              id: p.id,
+              name: p.name,
+              q: p.q,
+              totalePrice: p.price,
+              category: p.category.name
+            }))
+          ],
+          totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
+          isPayed: !haveDelevry,
+          clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
+          delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
+          delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
+          isDelevry: haveDelevry
+        },
+        (element) => {
+          PrintInvoiceContent(element, {
+            ...formData,
+            details: [
+              ...details.map((p) => ({
+                id: p.id,
+                name:p.name,
+                q: p.q,
+                totalePrice: p.price,
+                category: p.category.name
+              }))
+            ],
+            totalePrice: totalePrice + (haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : 0),
+            isPayed: !haveDelevry,
+            clientPhoneNumber: haveDelevry ? (clientNumber ? `${clientNumber}` : null) : null,
+            delevryId: haveDelevry ? (delevryId ? parseInt(delevryId) : null) : null,
+            delevryPrice: haveDelevry ? (!delevryPrice ? 0 : delevryPrice) : null,
+            isDelevry: haveDelevry,
+            user: delevryId ? users.find((u) => u.id === parseInt(delevryId)).userName :""
+          } )
+          setFormData({
+            details: null,
+            productsIds: [],
+            totalePrice: '',
+            isPayed: true,
+            isLocal: true
+          })
+          setDetails([])
+          setHaveDelevry(false)
+          setDelevryId(null)
+          setPayedPrice('')
+          setClientNumber('')
+          setDelevryPrice('')
+          setFocusedInput('payedPrice')
+        },
+        () => setIsLOadingCreate(false)
+      )
     )
-
-    // Define the HTML content
-    const content = `
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              width: 80mm;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            th, td {
-              border: 1px solid #ddd;
-              padding: 8px;
-            }
-            th {
-              background-color: #f2f2f2;
-            }
-            .text-center {
-              text-align: center;
-            }
-            .font-bold {
-              font-weight: bold;
-            }
-            .mt-2 {
-              margin-top: 2em;
-            }
-            .mb-2 {
-              margin-bottom: 2em;
-            }
-            .container {
-              padding: 3px;
-              background-color: white;
-              border: 1px solid #ccc;
-              border-radius: 6px;
-              width: 302px;
-              color: #333;
-              font-size: 12px;
-              font-family: monospace;
-            }
-            .image-container {
-              margin-left: auto;
-              margin-right: auto;
-              width: 100px;
-              height: auto;
-            }
-            .image {
-              width: 100%;
-              object-fit: cover;
-            }
-            .address {
-              text-align: center;
-              font-size: 10px;
-              
-            }
-              .city {
-              text-align: center;
-              font-size: 10px;
-              display: flex;
-              align-items: center;
-              justify-content: center; 
-              gap: 4px;
-            }
-              .city img {
-               width:14px;
-               height: 14px; 
-               object-fit: contain;
-              }
-            .border-top {
-              border-top: 1px solid #ccc;
-              margin-top: 8px;
-              margin-bottom: 8px;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              font-size: 12px;
-            }
-            .thank-you {
-              text-align: center;
-              font-size: 10px;
-              margin-top: 8px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="image-container">
-              <img src="${base64Image}" class="image" />
-            </div>
-            <p class="address">123 Adresse de la rue Tan-Tan, Maroc</p>
-            <p class="city ">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMy40NDUgMTcuODI3Yy0zLjY4NCAxLjY4NC05LjQwMS05LjQzLTUuOC0xMS4zMDhsMS4wNTMtLjUxOSAxLjc0NiAzLjQwOS0xLjA0Mi41MTNjLTEuMDk1LjU4NyAxLjE4NSA1LjA0IDIuMzA1IDQuNDk3bDEuMDMyLS41MDUgMS43NiAzLjM5Ny0xLjA1NC41MTZ6Ii8+PC9zdmc+">
-             0666666666</p>
-            <div class="border-top"></div>
-            <p>Date : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}</p>
-           ${haveDelevry ? (clientNumber ? '<p>Client : ' + clientNumber + '</p>' : '') : ''}
-            <p class="">Facture #12345</p>
-            <div class="border-top"></div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Article</th>
-                  <th>Qté</th>
-                  <th>Prix</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${details
-                  .map(
-                    (item) => `
-                    <tr>
-                      <td>${item.name}</td>
-                      <td class="text-center">${item.q}</td>
-                      <td class="text-right">${item.price} MAD</td>
-                    </tr>
-                  `
-                  )
-                  .join('')}
-                  ${
-                    haveDelevry &&
-                    `
-                      <tr>
-                        <td className="truncate w-full">livraison</td>
-                        <td className="text-center">...</td>
-                        <td className="text-right">${!delevryPrice ? 0 : delevryPrice} MAD</td>
-                      </tr>`
-                  }
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td colspan="2" class="text-right">${totalePrice + (!delevryPrice ? 0 : delevryPrice)} MAD</td>
-                </tr>
-              </tfoot>
-            </table>
-            <div class="border-top"></div>
-            <p class="thank-you">Merci pour votre achat !</p>
-          </div>
-        </body>
-      </html>
-    `
-
-    // Print the content
-    try {
-      if (window.api && window.api.print) {
-        window.api.print(content)
-        toast.success('Impression réussie')
-      } else {
-        toast.error("Erreur d'impression")
-      }
-    } catch (error) {
-      toast.error("Erreur d'impression")
-    }
   }
   const handleInputChange = (e) => {
     const value = e.target.value
@@ -296,7 +175,7 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
     if (focusedInput === 'payedPrice') {
       setPayedPrice(numericValue)
     } else if (focusedInput === 'clientNumber') {
-      const numeric = value.replace(/\D/g, '');
+      const numeric = value.replace(/\D/g, '')
       setClientNumber(numeric)
     } else if (focusedInput === 'delevryPrice') {
       setDelevryPrice(numericValue)
@@ -347,7 +226,7 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
   }
 
   return (
-    <div className=" h-fit max-h-[500px] bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
+    <div className=" h-fit max-h-full bg-white rounded-lg overflow-hidden overflow-y-auto dark:bg-[#242526] dark:text-white border-1 border-gray-600 relative">
       <div className="flex items-center w-full  dark:bg-[#242526] bg-white p-3 shadow-lg sticky top-0 z-30">
         <div>
           <Chip
@@ -445,6 +324,7 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
             color="success"
             // icon={<FaMotorcycle />}
             className="flex-shrink-0"
+            isSelected={haveDelevry}
             value={haveDelevry}
             onChange={(e) => setHaveDelevry(e.target.checked)}
           >
@@ -674,9 +554,17 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
               <p className="text-xs">
                 Date : {new Date().toLocaleDateString()} à {new Date().toLocaleTimeString()}
               </p>
-              <p className="text-xs">
-                Client : {haveDelevry && (clientNumber ? clientNumber : '...')}
+              <p className="text-xs flex items-center justify-between border-1 border-black p-1">
+                {!haveDelevry && <span className="flex-1 text-center">Comande son livraison</span>}
+                {haveDelevry && (clientNumber ? <span> Client : {clientNumber} </span> : '')}
+                {haveDelevry &&
+                  (delevryId ? (
+                    <span> Livreur : {users.find((u) => u.id == delevryId).userName} </span>
+                  ) : (
+                    ''
+                  ))}
               </p>
+
               <p className="text-xs mb-2">Facture #12345</p>
 
               <div className="border-t border-gray-300 my-2"></div>
@@ -739,7 +627,7 @@ const ResultsProduct = ({ formData, products, handelSelect, users }) => {
           </PopoverContent>
         </Popover>
 
-        <Button color="primary" onClick={handlePrint}>
+        <Button color="primary" onClick={handlePrint} isLoading={isLoadingCreate}>
           <IoPrintOutline size={20} />
         </Button>
       </div>

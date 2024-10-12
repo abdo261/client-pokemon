@@ -49,6 +49,7 @@ export const getOfferById = (id) => async (dispatch) => {
 export const createOffer = (offerData, cb, cbLoading) => async (dispatch) => {
   try {
     const response = await request.post('/offers', offerData)
+    console.log(response.data.offer)
     dispatch(offerActions.addOffer(response.data.offer))
     toast.success(response.data.message)
     cb && cb()
