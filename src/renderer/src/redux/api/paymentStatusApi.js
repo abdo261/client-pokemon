@@ -6,7 +6,6 @@ export const getPaymentsCountStatus = () => async (dispatch) => {
   dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatus(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countAll')
    
     dispatch(paymentStatusActions.setPaymentStatus(response.data))
@@ -29,7 +28,6 @@ export const getPaymentsCountStatusWithQuantity = () => async (dispatch) => {
   dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusWithQuantity(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countAllWitheQuantity')
    
     dispatch(paymentStatusActions.setPaymentStatusWithQuantity(response.data))
@@ -52,7 +50,6 @@ export const getPaymentsCountByProductsStatus = () => async (dispatch) => {
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusProduts(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countByProducts')
    
     dispatch(paymentStatusActions.setPaymentStatusProduts(response.data))
@@ -75,7 +72,6 @@ export const getPaymentsCountByProductsStatusWithQuantity = () => async (dispatc
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusProdutsWithQuantity(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countByProductsWithQuantity')
    
     dispatch(paymentStatusActions.setPaymentStatusProdutsWithQuantity(response.data))
@@ -98,7 +94,6 @@ export const getPaymentsCountByOffersStatus = () => async (dispatch) => {
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusOffers(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countByOffers')
 
     dispatch(paymentStatusActions.setPaymentStatusOffers(response.data))
@@ -121,7 +116,6 @@ export const getPaymentsCountByOffersStatusWithQuantity = () => async (dispatch)
   // dispatch(paymentStatusActions.setLoadingGet(true))
   dispatch(paymentStatusActions.setPaymentStatusOffersWithQuantity(null))
   try {
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
     const response = await request.get('/payment/status/countByOffersWithQuantity')
 
     dispatch(paymentStatusActions.setPaymentStatusOffersWithQuantity(response.data))
@@ -144,7 +138,6 @@ export const getPaymentsCountByOffersStatusWithQuantity = () => async (dispatch)
 //   dispatch(paymentStatusActions.setLoadingGet(true))
 //   dispatch(paymentStatusActions.setP(null))
 //   try {
-//     // await new Promise(resolve => setTimeout(resolve, 3000));
 //     const response = await request.get('/categories/products')
 
 //     dispatch(paymentStatusActions.setP(response.data))

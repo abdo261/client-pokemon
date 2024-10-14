@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { FaRegMoon } from 'react-icons/fa'
 import { MdOutlineLightMode } from 'react-icons/md'
 import { Button } from '@nextui-org/react'

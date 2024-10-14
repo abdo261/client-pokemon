@@ -165,6 +165,8 @@ const Create = ({ onClose }) => {
             className="tracking-widest flex-1"
             fullWidth
             variant="bordered"
+            value={formData.role}
+            selectedKeys={[formData.role]}
             onChange={(e) => handleChange('role', e.target.value)}
             aria-label="role"
             label="Rôle"

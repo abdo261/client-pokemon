@@ -1,5 +1,5 @@
 // PieChart.js
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Chart from 'react-apexcharts';
 
 const PieChart = ({ data }) => {

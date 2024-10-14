@@ -8,7 +8,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  User
 } from '@nextui-org/react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,22 +22,19 @@ import {
   formatDateToLocaleString,
   formatMoney,
   getRoleColor,
-  getRoleIcon,
   getRoleLabel,
   transformDataShart,
   transformDataShartSonQuantity
 } from '../../utils/utils'
 import CurrenChipTime from '../../components/currenChipTime'
 import { TiArrowSortedDown, TiFlowSwitch } from 'react-icons/ti'
-import { IoBagCheckOutline } from 'react-icons/io5'
-import { MdFastfood, MdOutlineShop2, MdPhoneInTalk } from 'react-icons/md'
+import { MdFastfood, MdOutlineShop2} from 'react-icons/md'
 import { GiShop } from 'react-icons/gi'
 import { PiInvoice } from 'react-icons/pi'
-import pokeemon from '../../assets/images/pokeemon-01.png'
 import { BiSolidOffer } from 'react-icons/bi'
-import ErrorAlert from '../../components/ErrorAlert'
 import CalculateDelevryPrice from '../../components/CalculateDelevryPrice'
 import PieChart from '../../components/PieChart'
+import Receipt from '../../components/Receipt'
 
 const Show = () => {
   const { id } = useParams()
@@ -53,10 +49,10 @@ const Show = () => {
   const transformedOfferDataQ = dayCountQ ? transformDataShart(dayCountQ.offers) : {}
   const transformedProductData = dayCountQ ? transformDataShartSonQuantity(dayCountQ.products) : {}
   const transformedOfferData = dayCountQ ? transformDataShartSonQuantity(dayCountQ.offers) : {}
-  console.log(dayCount)
+  console.log(dayDetails)
   return (
     <>
-      {dayDetails && dayCount && (
+      {dayDetails && (
         <div className="grid  grid-cols-1 gap-2">
           <div className="flex items-center flex-col">
             {dayDetails.day?.stopeAt ? (
@@ -69,7 +65,7 @@ const Show = () => {
                   content: 'drop-shadow shadow-black text-black'
                 }}
               >
-                {formatDateToLocaleString(dayDetails.day.stopeAt)}
+                {formatDateToLocaleString(dayDetails.day.startAt)}
               </Chip>
             ) : (
               <Chip
@@ -82,7 +78,7 @@ const Show = () => {
                 }}
               >
                 <span className="font-[500]">
-                  {formatDateToLocaleString(dayDetails.day.stopeAt)}
+                  {formatDateToLocaleString(dayDetails.day.startAt)}
                 </span>
               </Chip>
             )}
@@ -147,9 +143,9 @@ const Show = () => {
                           Produits <span>{e.paymentProducts.length}</span>
                         </h1>
                         {e.paymentProducts.length > 0 ? (
-                          <Table items={e.paymentProducts} totale={e.paymentProducts.length} />
+                          <Table items={e.paymentProducts} totale={e.paymentProducts.length} user={e.userName} />
                         ) : (
-                          <div className="w-full h-full flex justify-center items-center">
+                          <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20 pb-3">
                             <h1>aucun Commande !</h1>
                           </div>
                         )}
@@ -162,7 +158,7 @@ const Show = () => {
                         {e.paymentOffers.length > 0 ? (
                           <Table items={e.paymentOffers} totale={e.paymentOffers.length} />
                         ) : (
-                          <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20">
+                          <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20 pb-3">
                             <h1>aucun Commande !</h1>
                           </div>
                         )}
@@ -202,7 +198,7 @@ const Show = () => {
                     totale={dayDetails.paymentProducts.filter((pa) => pa.delevryId == null).length}
                   />
                 ) : (
-                  <div className="w-full h-full flex justify-center items-center">
+                  <div className="w-full md:h-full flex justify-center items-center font-semibold text-lg h-20 pb-3">
                     <h1>aucun Commande !</h1>
                   </div>
                 )}
@@ -221,7 +217,56 @@ const Show = () => {
                     totale={dayDetails.paymentOffers.filter((pa) => pa.delevryId == null).length}
                   />
                 ) : (
-                  <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20">
+                  <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20 pb-3">
+                    <h1>aucun Commande !</h1>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="w-full flex flex-col items-center gap-2">
+            <h1 className="text-2xl font-semibold">
+              Totale Commande :{' '}
+              {dayDetails.paymentProducts.length +
+                dayDetails.paymentOffers.length}{' '}
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full bg-white dark:bg-inherit border-2 border-slate-400  p-2 rounded-xl">
+              <div>
+                <h1 className="text-xl font-semibold  flex items-center gap-2">
+                  {' '}
+                  <MdFastfood />
+                  Produits{' '}
+                  <span>
+                    {dayDetails.paymentProducts.length}
+                  </span>
+                </h1>
+                {dayDetails.paymentProducts.length > 0 ? (
+                  <Table
+                    items={dayDetails.paymentProducts}
+                    totale={dayDetails.paymentProducts.length}  
+                    
+                  />
+                ) : (
+                  <div className="w-full md:h-full flex justify-center items-center font-semibold text-lg h-20 pb-3">
+                    <h1>aucun Commande !</h1>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold  flex items-center gap-2">
+                  <BiSolidOffer /> Packes
+                  <span>
+                    {dayDetails.paymentOffers.length}
+                  </span>
+                </h1>
+
+                {dayDetails.paymentOffers.length > 0 ? (
+                  <Table
+                    items={dayDetails.paymentOffers}
+                    totale={dayDetails.paymentOffers.length}
+                  />
+                ) : (
+                  <div className="w-full md:h-full flex justify-center items-center  font-semibold text-lg h-20 pb-3">
                     <h1>aucun Commande !</h1>
                   </div>
                 )}
@@ -392,87 +437,12 @@ const Table = ({ items, totale }) => {
                   <Popover placement="top">
                     <PopoverTrigger>
                       <Button color="default" isIconOnly size="sm" variant="faded">
-                        <PiInvoice size={20} />
+                        <PiInvoice size={20}  />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent>
-                      <div className="px-3 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300  rounded-md w-[320px] md:w[450px] text-sm font-mono">
-                        <div className=" mx-auto w-[100px] h-fit">
-                          <img src={pokeemon} className="w-full object-cover" />
-                        </div>
-
-                        <p className="text-center text-xs">123 Adresse de la rue Tan-Tan, Maroc</p>
-                        <p className=" text-xs mb-2 flex items-center gap-2 w-fit mx-auto">
-                          <MdPhoneInTalk /> <span> 06 66 66 66 66</span>
-                        </p>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        <p className="text-xs">
-                          Date : {new Date(f.createdAt).toLocaleDateString()} à{' '}
-                          {new Date(f.createdAt).toLocaleTimeString()}
-                        </p>
-                        <p className="text-xs mb-2">Facture #{f.id}</p>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        {/* Table Headers */}
-                        <table className="table-auto w-full border-collapse border border-gray-300 text-xs">
-                          <thead className="dark:text-black">
-                            <tr className="bg-gray-200">
-                              <th className="border border-gray-300 px-2 py-1 font-bold">
-                                Article
-                              </th>
-                              <th className="border border-gray-300 px-2 py-1 font-bold">Qté</th>
-                              <th className="border border-gray-300 px-2 py-1 font-bold">Prix</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            {JSON.parse(f.details)?.map((item) => (
-                              <tr key={item.id}>
-                                <td className="border border-gray-300 px-2 py-1 truncate w-full capitalize">
-                                  {item.category ? (item.category +" "+ item.name) : item.name}
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1 text-center">
-                                  {item.q}
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1  text-right">
-                                  <span className="whitespace-nowrap">{item.totalePrice} MAD</span>
-                                </td>
-                              </tr>
-                            ))}
-                            <tr>
-                              <td className="border border-gray-300 px-2 py-1 truncate w-full">
-                                livraisen
-                              </td>
-                              <td className="border border-gray-300 px-2 py-1 text-center">...</td>
-                              <td className="border border-gray-300 px-2 py-1  text-right">
-                                <span className="whitespace-nowrap">{f.delevryPrice} MAD</span>
-                              </td>
-                            </tr>
-                          </tbody>
-
-                          {/* Totals as Footer */}
-                          <tfoot>
-                            <tr className="font-semibold">
-                              <td className="border-t border-gray-300 px-1 py-1 text-left">
-                                Total
-                              </td>
-                              <td
-                                colSpan="2"
-                                className="border-t border-gray-300 px-1 py-1 text-right"
-                              >
-                                {formatMoney(f.totalePrice)}
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        <p className="text-xs text-center">Merci pour votre achat !</p>
-                      </div>
+                      <Receipt payment={{...f , details : JSON.parse(f.details),user:f.delevry ? f.delevry.userName : null , isDelevry:f.delevryPrice >=0 ? f.delevryPrice : null} } />
+                      
                     </PopoverContent>
                   </Popover>
                 </td>{' '}

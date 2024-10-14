@@ -1,10 +1,8 @@
 import { Badge, Chip, Spinner } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import { checkIfSelected, filterProductsByType } from '../../utils/utils'
 import { FaCheck } from 'react-icons/fa6'
 import { useDispatch, useSelector } from 'react-redux'
-import { getCategories } from '../../redux/api/categoryApi'
-import { getProducts } from '../../redux/api/productApi'
 import defaultImage from '../../assets/images/dfault-image.png'
 import ErrorAlert from '../../components/ErrorAlert'
 import { imageURI } from '../../utils/axios'
@@ -105,7 +103,7 @@ const SelectProduct = ({ users ,loadingUsers}) => {
                 </span>
                 <span>Non-Catégorisés</span>
               </span>
-              <span className="flex flex-wrap flex-grow gap-2 items-start">
+              <span className="flex flex-wrap flex-grow gap-4 items-start">
                 {products &&
                   products
                     .filter((p) => !p.categoryId)
@@ -131,7 +129,7 @@ const SelectProduct = ({ users ,loadingUsers}) => {
                             >
                               <div className="flex items-center">
                                 <span
-                                  className={`text-xs lg:text-small font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                  className={`text-lg md:text-2xl capitalize font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                                 >
                                   {p.name}
                                 </span>
@@ -154,7 +152,7 @@ const SelectProduct = ({ users ,loadingUsers}) => {
                         >
                           <div className="flex items-center">
                             <span
-                              className={`text-xs lg:text-small font-semibold dark:text-gray-300`}
+                              className={`text-lg md:text-2xl capitalize font-semibold dark:text-gray-300`}
                             >
                               {p.name}
                             </span>

@@ -7,7 +7,6 @@ export const getUsers = () => async (dispatch) => {
   dispatch(userActions.setUsers(null))
 
   try {
-    // await new Promise(resolve=>setTimeout(resolve,4000))
     const response = await request.get('/users')
     dispatch(userActions.setUsers(response.data))
   } catch (error) {

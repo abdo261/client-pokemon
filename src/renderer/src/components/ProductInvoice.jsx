@@ -9,20 +9,20 @@ import {
   PopoverTrigger
 } from '@nextui-org/react'
 import { useEffect, useMemo, useState } from 'react'
-import { FiEye, FiSearch } from 'react-icons/fi'
+import { FiSearch } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
 import swal from 'sweetalert'
 import ErrorAlert from '../components/ErrorAlert'
 import { deletePayment, getPayments, updatePayment } from '../redux/api/paymentApi'
 import { convertImageToBase64, formatMoney } from '../utils/utils'
 import { GiShop } from 'react-icons/gi'
-import { MdOutlineShop2, MdPhoneInTalk } from 'react-icons/md'
+import { MdOutlineShop2} from 'react-icons/md'
 import { PiInvoice } from 'react-icons/pi'
 import pokeemon from '../assets/images/pokeemon-01.png'
 import { IoPrintOutline } from 'react-icons/io5'
 import { BiSolidEdit, BiTrash } from 'react-icons/bi'
-import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import Receipt from './Receipt'
 
 const ProductInvoice = () => {
   const dispatch = useDispatch()
@@ -475,93 +475,7 @@ const Table = ({
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent>
-                      <div className="px-3 py-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-300  rounded-md w-[320px] md:w[450px] text-sm font-mono">
-                        <div className=" mx-auto w-[100px] h-fit">
-                          <img src={pokeemon} className="w-full object-cover" />
-                        </div>
-
-                        <p className="text-center text-xs">123 Adresse de la rue Tan-Tan, Maroc</p>
-                        <p className=" text-xs mb-2 flex items-center gap-2 w-fit mx-auto">
-                          <MdPhoneInTalk /> <span> 06 66 66 66 66</span>
-                        </p>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        <p className="text-xs">
-                          Date : {new Date(f.createdAt).toLocaleDateString()} à{' '}
-                          {new Date(f.createdAt).toLocaleTimeString()}
-                        </p>
-                        <p className="text-xs">
-                          Client :{' '}
-                          {f.delevryId && (f.clientPhoneNumber ? f.clientPhoneNumber : '...')}
-                        </p>
-                        <p className="text-xs mb-2">Facture #{f.id}</p>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        {/* Table Headers */}
-                        <table className="table-auto w-full border-collapse border border-gray-300 text-xs">
-                          <thead className="dark:text-black">
-                            <tr className="bg-gray-200">
-                              <th className="border border-gray-300 px-2 py-1 font-bold">
-                                Article
-                              </th>
-                              <th className="border border-gray-300 px-2 py-1 font-bold">Qté</th>
-                              <th className="border border-gray-300 px-2 py-1 font-bold">Prix</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            {JSON.parse(f.details)?.map((item) => (
-                              <tr key={item.id}>
-                                <td className="border border-gray-300 px-2 py-1 truncate w-full">
-                                  {item.name}
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1 text-center">
-                                  {item.q}
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1  text-right">
-                                  <span className="whitespace-nowrap">{item.price} MAD</span>
-                                </td>
-                              </tr>
-                            ))}
-                            {f.delevryId && (
-                              <tr>
-                                <td className="border border-gray-300 px-2 py-1 truncate w-full">
-                                  livraison
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1 text-center">
-                                  ...
-                                </td>
-                                <td className="border border-gray-300 px-2 py-1  text-right">
-                                  <span className="whitespace-nowrap">
-                                    {!f.delevryPrice ? 0 : f.delevryPrice} MAD
-                                  </span>
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-
-                          {/* Totals as Footer */}
-                          <tfoot>
-                            <tr className="font-semibold">
-                              <td className="border-t border-gray-300 px-1 py-1 text-left">
-                                Total
-                              </td>
-                              <td
-                                colSpan="2"
-                                className="border-t border-gray-300 px-1 py-1 text-right"
-                              >
-                                {formatMoney(f.totalePrice)}
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-
-                        <div className="border-t border-gray-300 my-2"></div>
-
-                        <p className="text-xs text-center">Merci pour votre achat !</p>
-                      </div>
+                    <Receipt payment={{...f , details : JSON.parse(f.details),user:f.delevry ? f.delevry.userName : null ,isDelevry:f.delevryPrice >=0 ? f.delevryPrice : null }} />
                     </PopoverContent>
                   </Popover>
                 </td>
@@ -598,18 +512,7 @@ const Table = ({
                     >
                       <IoPrintOutline />
                     </Button>
-                    <Button
-                      size="sm"
-                      isIconOnly
-                      radius="md"
-                      className="text-xl"
-                      color="primary"
-                      variant="ghost"
-                      // as={Link}
-                      // to={`/Payments/show/${f.id}`}
-                    >
-                      <FiEye />
-                    </Button>
+                   
                     <Button
                       size="sm"
                       isIconOnly

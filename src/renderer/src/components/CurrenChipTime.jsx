@@ -1,5 +1,5 @@
 import { Chip } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 
 const CurrenChipTime = () => {
     const [currentHour, setCurrentHour] = useState(new Date().getHours())

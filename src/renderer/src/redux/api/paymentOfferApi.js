@@ -60,7 +60,9 @@ export const createPaymentOffer = (paymentData, cb, cbLoading) => async (dispatc
       if (error.response.status === 400) {
         toast.error('Erreur de validation')
         dispatch(paymentOfferActions.setErrorValidation(error.response.data))
-      } else {
+      } else if(error.response.status ===402){
+        toast.warning(error.response.data.message)
+      }else {
         toast.error(paymentOfferActions.setError(error.response.data.message))
       }
     } else {
@@ -77,7 +79,6 @@ export const createPaymentOffer = (paymentData, cb, cbLoading) => async (dispatc
 }
 export const updatePaymentOffer = (id, paymentData, cb, cbLoading) => async (dispatch) => {
   try {
-    // await new Promise(resolve =>setTimeout(resolve,5000))
 
     const response = await request.put(`/paymentsOffer/${id}`, paymentData)
     dispatch(paymentOfferActions.updatePaymentOffer({ payment: response.data.paymentOffer, id }))

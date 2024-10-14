@@ -1,7 +1,6 @@
 import { Chip, Input } from '@nextui-org/react'
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { IoBagCheckOutline } from 'react-icons/io5'
-import { FcMoneyTransfer } from 'react-icons/fc'
 
 const CalculateDelevryPrice = ({ delevry }) => {
   const [pricePerOrder, setPricePerOrder] = useState(6)

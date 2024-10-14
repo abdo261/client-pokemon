@@ -1,21 +1,17 @@
 import { IoBagCheckOutline } from 'react-icons/io5'
 import { MdOutlineCategory } from 'react-icons/md'
 import { IoFastFoodSharp } from 'react-icons/io5'
-import PieChart from '../../components/PieChart'
 
 import { IoBagHandleOutline } from 'react-icons/io5'
 import { BsBagX } from 'react-icons/bs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { getCategoriesCounts } from '../../redux/api/categoryApi'
 import TableUsersHome from '../../components/TableUsersHome'
 import { BiShowAlt, BiSolidShoppingBags } from 'react-icons/bi'
 import ChartProfitsHome from '../../components/ChartProfitsHome'
 import { Button, Popover, PopoverContent, PopoverTrigger, Spinner } from '@nextui-org/react'
 import ErrorAlert from '../../components/ErrorAlert'
 import {
-  getPaymentsCountByOffersStatus,
-  getPaymentsCountByProductsStatus,
   getPaymentsCountStatus
 } from '../../redux/api/paymentStatusApi'
 import SwipperCardShart from '../../components/swipper/SwiperCard'
@@ -26,21 +22,20 @@ const Home = () => {
 
   console.log(loadingGet)
   useEffect(() => {
-    // dispatch(getCategoriesCounts())
     dispatch(getPaymentsCountStatus())
   }, [dispatch])
 
   return (
-    <>
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 ">
       {loadingGet ? (
         // Show Spinner if loading
-        <Spinner size="lg" label="Chargement en cours..." />
+       <div className='col-span-full flex items-center justify-center'> <Spinner size="lg" label="Chargement en cours..." /></div>
       ) : error ? (
         // Show ErrorAlert if there is an error
         <ErrorAlert className="h-fit self-center" message={error} />
       ) : (
         paymentStatus && (
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 ">
+          <>
             <div className=" bg-gradient-to-r from-gray-300 to-white dark:text-black rounded-lg p-4 flex items-center gap-2 shadow relative">
               <Popover placement="top">
                 <PopoverTrigger>
@@ -136,28 +131,22 @@ const Home = () => {
                 <div className="text-xl">Annuler</div>
               </div>
             </div>
-
-            <div className="col-span-1 sm:col-span-2 lg:col-span-1 dark:text-gray-500  rounded-lg p-4 flex justify-center">
-              {/* <div className="w-fit  overflow-x-auto flex justify-start"> */}
-              <div className="swiperHomeContainer w-fit   flex justify-start">
-                <SwipperCardShart />
-              </div>
-            </div>
-            <TableUsersHome />
-            <div className="col-span-full p-2 bg-white dark:bg-gray-500 dark:text-black  rounded-lg ">
-              <ChartProfitsHome />
-            </div>
-          </div>
+          </>
         )
       )}
-      {/* {loadingGet ? (
-        <Spinner size="lg" label="Chagement Encour..." />
-      ) : (error && (
-        <ErrorAlert className="h-fit self-center" message={error} />
-      ) || (
-       
-      ))} */}
-    </>
+      <div className="col-span-1 sm:col-span-2 lg:col-span-1 dark:text-gray-500  rounded-lg p-4 flex justify-center">
+        {/* <div className="w-fit  overflow-x-auto flex justify-start"> */}
+        <div className="swiperHomeContainer w-fit   flex justify-start">
+          <SwipperCardShart />
+        </div>
+      </div>
+      <div className='col-sapn-1 sm:col-span-2 '>
+      <TableUsersHome />
+      </div>
+      <div className="col-span-full p-2 bg-white dark:bg-gray-500 dark:text-black  rounded-lg ">
+        <ChartProfitsHome />
+      </div>
+    </div>
   )
 }
 

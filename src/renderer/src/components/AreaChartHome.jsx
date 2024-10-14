@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
 import { getLocalTimeZone } from '@internationalized/date'
 
@@ -115,7 +115,7 @@ const AreaChartHome = ({
     const totalPrices = categories.map((key) => totalPriceData[key])
 
     setChartData({
-      series: [{ name: 'Total Price', data: totalPrices }],
+      series: [{ name: 'Total Prix', data: totalPrices }],
       options: {
         ...chartData.options,
         xaxis: {
@@ -166,7 +166,7 @@ const AreaChartHome = ({
     })
 
     const seriesData = [
-      { name: 'Number of Payments', data: categories.map((key) => paymentCounts[key]) }
+      { name: 'Commandes', data: categories.map((key) => paymentCounts[key]) }
     ]
 
     setCountChartData({
@@ -184,7 +184,7 @@ const AreaChartHome = ({
       }
     })
   }
-
+console.log({Totale_Prix : chartData.series})
   return (
     <div className="chart-container">
       {/* Existing total price chart */}

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DatePicker, Select, SelectItem } from '@nextui-org/react'
 import { parseAbsoluteToLocal, getLocalTimeZone, today } from '@internationalized/date'
 import AreaChartHome from './AreaChartHome'
 import { useDispatch, useSelector } from 'react-redux'
-import { useSelect } from '@nextui-org/react'
 import { getPayments } from '../redux/api/paymentApi'
 const ChartProfitsHome = () => {
   const dispatch = useDispatch()

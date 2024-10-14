@@ -26,7 +26,6 @@ export const getCategoriesWithProducts = () => async (dispatch) => {
   dispatch(categoryActions.setLoadingGet(true))
   dispatch(categoryActions.setCategories(null))
   try {
-    // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories/products')
     
     dispatch(categoryActions.setCategories(response.data))
@@ -48,7 +47,6 @@ export const getCategoriesCounts = () => async (dispatch) => {
   dispatch(categoryActions.setLoadingGet(true))
   dispatch(categoryActions.setCategories(null))
   try {
-    // await new Promise(resolve => setTimeout(resolve, 3000));
     const response = await request.get('/categories/counts')
     
     dispatch(categoryActions.setCategories(response.data))
@@ -100,7 +98,8 @@ export const createCategory = (categoryData, cb, cbLoading) => async (dispatch) 
       if (error.response.status === 400) {
         toast.error('error validation')
         dispatch(categoryActions.setErrorValidatoon(error.response.data))
-      } else {
+      }
+       else {
         dispatch(categoryActions.setError(error.response.data.message))
       }
     } else {

@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getLatestDay } from '../../redux/api/dayApi'
 import { calculateHourDifference, formatDateToLocaleString } from '../../utils/utils'
 import { FiEye } from 'react-icons/fi'
-import { BiSolidEdit, BiTrash } from 'react-icons/bi'
+import {BiTrash } from 'react-icons/bi'
 import CurrenChipTime from '../../components/currenChipTime'
 
 export default function List() {
@@ -260,7 +260,7 @@ const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
                       {' '}
                       {day.stopeAt && (
                         <>
-                          <Button
+                          {/* <Button
                             size="sm"
                             isIconOnly
                             radius="md"
@@ -271,7 +271,7 @@ const Table = ({ items, setItemToDelete, isLOadingDelete, itemToDelete }) => {
                             to={`/days/update/${day.id}`}
                           >
                             <BiSolidEdit />
-                          </Button>
+                          </Button> */}
                         </>
                       )} <Button
                       size="sm"

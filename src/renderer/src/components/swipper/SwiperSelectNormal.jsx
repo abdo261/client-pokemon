@@ -1,4 +1,3 @@
-import React, { useRef, useState } from 'react'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { motion } from 'framer-motion'
@@ -10,7 +9,7 @@ import 'swiper/css/pagination'
 import './styles.css'
 
 // import required modules
-import { EffectCoverflow, Navigation, Pagination } from 'swiper/modules'
+import {  Navigation } from 'swiper/modules'
 import { Badge, Chip } from '@nextui-org/react'
 import { checkIfSelected } from '../../utils/utils'
 import { FaCheck } from 'react-icons/fa6'
@@ -43,7 +42,7 @@ export default function SwiperSelectNormal({
               <h1>
                 <Chip variant="dot">No Type</Chip>
               </h1>
-              <div className="flex flex-wrap flex-grow gap-2 items-start w-full">
+              <div className="flex flex-wrap flex-grow gap-4 items-start w-full">
                 {products
                   .filter((p) => p.categoryId === category.id)
                   .filter((p) => p.isPublish)
@@ -61,7 +60,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <Chip
                             radius="sm"
-                            className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                            className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                             key={p.id}
                             color={
                               checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -72,7 +71,7 @@ export default function SwiperSelectNormal({
                             {' '}
                             <div className=" flex items-center">
                               <span
-                                className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                               >
                                 {p.name}
                               </span>{' '}
@@ -97,18 +96,19 @@ export default function SwiperSelectNormal({
                       >
                         <Chip
                           radius="sm"
-                          className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                          className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                           key={p.id}
                           color={
                             checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
                           }
                           onClick={() => handelSelect(p.id)}
                           variant="solid"
+                          size="lg"
                         >
                           {' '}
                           <div className=" flex items-center">
                             <span
-                              className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                              className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                             >
                               {p.name}
                             </span>{' '}
@@ -140,7 +140,7 @@ export default function SwiperSelectNormal({
                   Panini
                 </Chip>
               </h1>
-              <div className="flex flex-wrap flex-grow gap-2 items-start w-full">
+              <div className="flex flex-wrap flex-grow gap-4 items-start w-full">
                 {products
                   .filter((p) => p.categoryId === category.id)
                   .filter((p) => p.isPublish)
@@ -158,7 +158,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <Chip
                             radius="sm"
-                            className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                            className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                             key={p.id}
                             color={
                               checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -169,7 +169,7 @@ export default function SwiperSelectNormal({
                             {' '}
                             <div className=" flex items-center">
                               <span
-                                className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                               >
                                 {p.name}
                               </span>{' '}
@@ -194,7 +194,7 @@ export default function SwiperSelectNormal({
                       >
                         <Chip
                           radius="sm"
-                          className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                          className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                           key={p.id}
                           color={
                             checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -205,7 +205,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <div className=" flex items-center">
                             <span
-                              className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                              className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                             >
                               {p.name}
                             </span>{' '}
@@ -237,7 +237,7 @@ export default function SwiperSelectNormal({
                   Four
                 </Chip>
               </h1>
-              <div className="flex flex-wrap flex-grow gap-2 items-start w-full">
+              <div className="flex flex-wrap flex-grow gap-4 items-start w-full">
                 {products
                   .filter((p) => p.categoryId === category.id)
                   .filter((p) => p.isPublish)
@@ -255,7 +255,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <Chip
                             radius="sm"
-                            className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                            className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                             key={p.id}
                             color={
                               checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -266,7 +266,7 @@ export default function SwiperSelectNormal({
                             {' '}
                             <div className=" flex items-center">
                               <span
-                                className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                               >
                                 {p.name}
                               </span>{' '}
@@ -291,7 +291,7 @@ export default function SwiperSelectNormal({
                       >
                         <Chip
                           radius="sm"
-                          className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                          className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                           key={p.id}
                           color={
                             checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -302,7 +302,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <div className=" flex items-center">
                             <span
-                              className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                              className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                             >
                               {p.name}
                             </span>{' '}
@@ -334,7 +334,7 @@ export default function SwiperSelectNormal({
                   Charbon
                 </Chip>
               </h1>
-              <div className="flex flex-wrap flex-grow gap-2 items-start w-full">
+              <div className="flex flex-wrap flex-grow gap-4 items-start w-full">
                 {products
                   .filter((p) => p.categoryId === category.id)
                   .filter((p) => p.isPublish)
@@ -352,7 +352,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <Chip
                             radius="sm"
-                            className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                            className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                             key={p.id}
                             color={
                               checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -363,7 +363,7 @@ export default function SwiperSelectNormal({
                             {' '}
                             <div className=" flex items-center">
                               <span
-                                className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                                className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                               >
                                 {p.name}
                               </span>{' '}
@@ -388,7 +388,7 @@ export default function SwiperSelectNormal({
                       >
                         <Chip
                           radius="sm"
-                          className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+                          className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
                           key={p.id}
                           color={
                             checkIfSelected(p.id, formData.productsIds) ? 'success' : 'default'
@@ -399,7 +399,7 @@ export default function SwiperSelectNormal({
                           {' '}
                           <div className=" flex items-center">
                             <span
-                              className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+                              className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
                             >
                               {p.name}
                             </span>{' '}
@@ -448,7 +448,7 @@ export default function SwiperSelectNormal({
 //             Panini
 //           </Chip>
 //         </h1>
-//         <div className="flex flex-wrap flex-grow gap-2 items-start justify-start  w-full ">
+//         <div className="flex flex-wrap flex-grow gap-4 items-start justify-start  w-full ">
 //           {products
 //             .filter((p) => p.categoryId === c.id)
 //             .filter((p) => p.isPublish)
@@ -465,7 +465,7 @@ export default function SwiperSelectNormal({
 //                   <span>
 //                     {' '}
 //                     <Chip
-//                       className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                       className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                       key={p.id}
 //                       color={
 //                         checkIfSelected(p.id, formData.productsIds)
@@ -479,7 +479,7 @@ export default function SwiperSelectNormal({
 //                       {' '}
 //                       <div className=" flex items-center">
 //                         <span
-//                           className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                           className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                         >
 //                           {p.name}
 //                         </span>{' '}
@@ -504,7 +504,7 @@ export default function SwiperSelectNormal({
 //                 >
 //                   <Chip
 //                     radius="sm"
-//                     className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                     className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                     key={p.id}
 //                     color={
 //                       checkIfSelected(p.id, formData.productsIds)
@@ -517,7 +517,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <div className=" flex items-center">
 //                       <span
-//                         className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                         className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                       >
 //                         {p.name}
 //                       </span>{' '}
@@ -556,7 +556,7 @@ export default function SwiperSelectNormal({
 //             Four
 //           </Chip>
 //         </h1>
-//         <div className="flex flex-wrap flex-grow gap-2 items-start justify-start  w-full ">
+//         <div className="flex flex-wrap flex-grow gap-4 items-start justify-start  w-full ">
 //           {products
 //             .filter((p) => p.categoryId === c.id)
 //             .filter((p) => p.isPublish)
@@ -574,7 +574,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <Chip
 //                       radius="sm"
-//                       className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                       className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                       key={p.id}
 //                       color={
 //                         checkIfSelected(p.id, formData.productsIds)
@@ -587,7 +587,7 @@ export default function SwiperSelectNormal({
 //                       {' '}
 //                       <div className=" flex items-center">
 //                         <span
-//                           className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                           className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                         >
 //                           {p.name}
 //                         </span>{' '}
@@ -612,7 +612,7 @@ export default function SwiperSelectNormal({
 //                 >
 //                   <Chip
 //                     radius="sm"
-//                     className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                     className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                     key={p.id}
 //                     color={
 //                       checkIfSelected(p.id, formData.productsIds)
@@ -625,7 +625,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <div className=" flex items-center">
 //                       <span
-//                         className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                         className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                       >
 //                         {p.name}
 //                       </span>{' '}
@@ -664,7 +664,7 @@ export default function SwiperSelectNormal({
 //             Charbon
 //           </Chip>
 //         </h1>
-//         <div className="flex flex-wrap flex-grow gap-2 items-start justify-start  w-full ">
+//         <div className="flex flex-wrap flex-grow gap-4 items-start justify-start  w-full ">
 //           {products
 //             .filter((p) => p.categoryId === c.id)
 //             .filter((p) => p.isPublish)
@@ -682,7 +682,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <Chip
 //                       radius="sm"
-//                       className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                       className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                       key={p.id}
 //                       color={
 //                         checkIfSelected(p.id, formData.productsIds)
@@ -695,7 +695,7 @@ export default function SwiperSelectNormal({
 //                       {' '}
 //                       <div className=" flex items-center">
 //                         <span
-//                           className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                           className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                         >
 //                           {p.name}
 //                         </span>{' '}
@@ -720,7 +720,7 @@ export default function SwiperSelectNormal({
 //                 >
 //                   <Chip
 //                     radius="sm"
-//                     className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                     className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                     key={p.id}
 //                     color={
 //                       checkIfSelected(p.id, formData.productsIds)
@@ -733,7 +733,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <div className=" flex items-center">
 //                       <span
-//                         className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                         className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                       >
 //                         {p.name}
 //                       </span>{' '}
@@ -762,7 +762,7 @@ export default function SwiperSelectNormal({
 //       <h1>
 //         <Chip variant="dot">No Type</Chip>
 //       </h1>
-//       <div className="flex flex-wrap flex-grow gap-2 items-start w-full">
+//       <div className="flex flex-wrap flex-grow gap-4 items-start w-full">
 //         {products
 //           .filter((p) => p.categoryId === c.id)
 //           .filter((p) => p.isPublish)
@@ -780,7 +780,7 @@ export default function SwiperSelectNormal({
 //                   {' '}
 //                   <Chip
 //                     radius="sm"
-//                     className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                     className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                     key={p.id}
 //                     color={
 //                       checkIfSelected(p.id, formData.productsIds)
@@ -793,7 +793,7 @@ export default function SwiperSelectNormal({
 //                     {' '}
 //                     <div className=" flex items-center">
 //                       <span
-//                         className={` text-xs lg:text-small capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                         className={` text-lg md:text-2xl capitalize  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                       >
 //                         {p.name}
 //                       </span>{' '}
@@ -818,7 +818,7 @@ export default function SwiperSelectNormal({
 //               >
 //                 <Chip
 //                   radius="sm"
-//                   className={`cursor-pointer w-fit  ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
+//                   className={`cursor-pointer w-fit   ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-400'}  `}
 //                   key={p.id}
 //                   color={
 //                     checkIfSelected(p.id, formData.productsIds)
@@ -831,7 +831,7 @@ export default function SwiperSelectNormal({
 //                   {' '}
 //                   <div className=" flex items-center">
 //                     <span
-//                       className={`capitalize text-xs lg:text-small  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
+//                       className={`capitalize text-lg md:text-2xl  font-semibold ${checkIfSelected(p.id, formData.productsIds) ? 'dark:text-black' : 'dark:text-gray-300'}`}
 //                     >
 //                       {p.name}
 //                     </span>{' '}

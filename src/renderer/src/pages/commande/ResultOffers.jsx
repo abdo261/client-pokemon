@@ -10,13 +10,11 @@ import {
   SelectItem,
   Spinner
 } from '@nextui-org/react'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoBagHandleOutline, IoCloseOutline, IoAddOutline, IoRemoveOutline } from 'react-icons/io5'
-import { PiMoneyWavy } from 'react-icons/pi'
 import { IoPrintOutline } from 'react-icons/io5'
 import { PiInvoice } from 'react-icons/pi'
 import {
-  convertImageToBase64,
   formatMoney,
   getRoleColor,
   getRoleIcon,
@@ -31,7 +29,6 @@ import { GiPayMoney } from 'react-icons/gi'
 import { FcMoneyTransfer } from 'react-icons/fc'
 import { FaDeleteLeft } from 'react-icons/fa6'
 import { useDispatch } from 'react-redux'
-import { createPayment } from '../../redux/api/paymentApi'
 import { createPaymentOffer } from '../../redux/api/paymentOfferApi'
 
 const ResultOffers = ({ formData, offers, handelSelect, users ,setFormData}) => {

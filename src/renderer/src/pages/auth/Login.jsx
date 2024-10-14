@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import {  useState } from 'react'
 import { motion } from 'framer-motion'
 import pokemon from '../../assets/images/pokeemon-01.png'
 import { HiMiniUsers } from 'react-icons/hi2'
@@ -18,8 +18,7 @@ const Login = () => {
     email: '',
     password: ''
   })
-  const imgRef = useRef(null) // Create a ref to store the original position
-  const [position, setPosition] = useState({ x: 0, y: 0 }) // State for tracking position
+
 
   const { errorValidation, loading } = useSelector((state) => state.auth)
   const dispatch = useDispatch()

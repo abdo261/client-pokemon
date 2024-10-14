@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import SwipperShartsSlide from './SwipperShartsSlide'
+import  { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getPaymentsCountByOffersStatusWithQuantity,
@@ -15,11 +14,10 @@ import { TiFlowSwitch } from 'react-icons/ti'
 const Sharts = () => {
   const dispatch = useDispatch()
   const {
-    paymentStatusWithQuantity,
+    
     paymentStatusProdutsWithQuantity,
     paymentStatusOffersWithQuantity,
-    loadingGet,
-    error
+   
   } = useSelector((state) => state.paymentStatus)
   useEffect(() => {
     // dispatch(getCategoriesCounts())
@@ -33,8 +31,7 @@ const Sharts = () => {
   const transformedOfferData = paymentStatusOffersWithQuantity
     ? transformDataShart(paymentStatusOffersWithQuantity)
     : {}
-  console.log(paymentStatusProdutsWithQuantity)
-  console.log(paymentStatusOffersWithQuantity)
+
   return (
     <div className="swiperShartContainer w-full ">
       {paymentStatusProdutsWithQuantity && paymentStatusOffersWithQuantity && (

@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify'
-import { request } from '../../utils/axios' 
+import { request } from '../../utils/axios'
 import { paymentActions } from '../slices/paymentSlice'
 
 // Get all payments
@@ -7,7 +7,8 @@ export const getPayments = () => async (dispatch) => {
   dispatch(paymentActions.setLoadingGet(true))
   dispatch(paymentActions.setPayments(null))
 
-  try {
+  try {    
+
     const response = await request.get('/payments')
     dispatch(paymentActions.setPayments(response.data))
   } catch (error) {
@@ -55,6 +56,8 @@ export const createPayment = (paymentData, cb, cbLoading) => async (dispatch) =>
       if (error.response.status === 400) {
         toast.error('Erreur de validation')
         dispatch(paymentActions.setErrorValidation(error.response.data))
+      }else if(error.response.status ===402){
+        toast.warning(error.response.data.message)
       } else {
         toast.error(paymentActions.setError(error.response.data.message))
       }
@@ -70,7 +73,6 @@ export const createPayment = (paymentData, cb, cbLoading) => async (dispatch) =>
 }
 export const updatePayment = (id, paymentData, cb, cbLoading) => async (dispatch) => {
   try {
-    // await new Promise(resolve =>setTimeout(resolve,5000))
     const response = await request.put(`/payments/${id}`, paymentData)
     dispatch(paymentActions.updatePayment({ payment: response.data.payment, id }))
     console.log(response.data.payment)

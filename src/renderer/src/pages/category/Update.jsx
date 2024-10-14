@@ -1,11 +1,9 @@
 import { Button, Input, Spinner } from '@nextui-org/react'
-import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  createCategory,
-  getCategories,
+   getCategories,
   getCategoryById,
   updateCategory
 } from '../../redux/api/categoryApi'

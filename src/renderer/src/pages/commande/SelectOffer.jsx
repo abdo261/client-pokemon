@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { FiEye } from 'react-icons/fi'
+import {  useState } from 'react'
 import {
   Card,
   CardBody,
@@ -15,11 +14,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import defaultImage from '../../assets/images/dfault-image.png'
-import ErrorAlert from '../../components/ErrorAlert'
 import { imageURI } from '../../utils/axios'
 import { LuShoppingBag } from 'react-icons/lu'
 import { checkIfSelected, formatMoney } from '../../utils/utils'
-import { getOffers } from '../../redux/api/offerApi'
 import ResultOffers from './ResultOffers'
 const SelectOffer = ({ users, loadingUsers }) => {
   //   const exemple = {

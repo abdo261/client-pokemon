@@ -209,7 +209,7 @@ export const PrintInvoiceContent = async (element, object) => {
          }
          .image-container {
            margin: 0 auto;
-           width: 60px; /* Adjusted width for smaller receipts */
+           width: 70px; /* Adjusted width for smaller receipts */
            height: auto;
          }
          .image {
@@ -221,6 +221,9 @@ export const PrintInvoiceContent = async (element, object) => {
          }
          .text-xs {
            font-size: 10px;
+         }
+         .text-md {
+           font-size: 20px;
          }
          .mb-2 {
            margin-bottom: 0.5em;
@@ -313,7 +316,7 @@ export const PrintInvoiceContent = async (element, object) => {
          </p>
  
          <!-- Invoice Number -->
-         <p class="text-xs mb-2">Facture #${element.id}</p>
+         <p class="text-md mb-2">Facture #${element.id}</p>
  
          <!-- Table Headers and Items -->
          <div class="border-t"></div>

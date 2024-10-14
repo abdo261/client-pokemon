@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import { useEffect } from 'react'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
 
@@ -20,6 +20,7 @@ import {
 import { calculateSumsInObjects } from '../../utils/utils'
 import { MdFastfood } from 'react-icons/md'
 import { BiSolidOffer } from 'react-icons/bi'
+import { Spinner } from '@nextui-org/react'
 
 export default function SwipperCardShart() {
   const dispatch = useDispatch()
@@ -35,20 +36,22 @@ export default function SwipperCardShart() {
 
   return (
     <>
+      {' '}
+      {loadingGet && (
+        <div className="w-full h-full flex items-center justify-center ">
+          <Spinner size="lg" />
+        </div>
+      )}
       <Swiper
         effect={'cards'}
         grabCursor={true}
         modules={[EffectCards]}
         className=" w-[250px] h-[300px]"
-        
       >
         {!error && paymentStatusProduts && paymentStatusOffers && (
           <>
             <SwiperSlide className="bg-default  w-full  rounded-xl border-3 border-gray-400">
-              <div
-                className=" flex flex-col justify-evenly items-center  h-full pt-4 "
-                
-              >
+              <div className=" flex flex-col justify-evenly items-center  h-full pt-4 ">
                 <h1 className="text-2xl font-semibold text-gray-500 dark:text-gray-200 flex items-center gap-2">
                   <MdFastfood /> <span>Produits</span>
                 </h1>

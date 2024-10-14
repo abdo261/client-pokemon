@@ -1,17 +1,17 @@
 import { Button, Chip, Input, Pagination, Spinner } from '@nextui-org/react'
 import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence } from 'framer-motion' // Import AnimatePresence
-import Create from './Create' // Create product component
+import { AnimatePresence } from 'framer-motion' 
+import Create from './Create' 
 import { LuPanelTopOpen, LuPanelBottomOpen } from 'react-icons/lu'
 import { MdCompress, MdFastfood } from 'react-icons/md'
 import { BiSolidEdit, BiTrash } from 'react-icons/bi'
-import { FiEye, FiSearch } from 'react-icons/fi'
+import {  FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import { deleteProduct, getProducts } from '../../redux/api/productApi' // Replace with actual API
 import { useDispatch, useSelector } from 'react-redux'
 import swal from 'sweetalert'
 import ErrorAlert from '../../components/ErrorAlert'
-import { formatDateToDDMMYY, formatMoney, formatTimestamp } from '../../utils/utils'
+import {  formatMoney, formatTimestamp } from '../../utils/utils'
 import { IoBagHandleOutline } from 'react-icons/io5'
 import { FaBan } from 'react-icons/fa6'
 import defaultImage from '../../assets/images/dfault-image.png'

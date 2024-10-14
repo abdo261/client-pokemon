@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { ClockCm } from './Clock'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserById } from '../redux/api/userApi'
-import { getRoleColor, getRoleLabel } from '../utils/utils'
+import {  getRoleLabel } from '../utils/utils'
 
 const Header = ({ toggleSideBare, open }) => {
  

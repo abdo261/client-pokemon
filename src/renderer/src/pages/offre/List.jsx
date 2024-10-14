@@ -1,7 +1,6 @@
 import {
   Button,
   Chip,
-  Input,
   Pagination,
   Popover,
   PopoverContent,
@@ -21,14 +20,10 @@ import swal from 'sweetalert'
 import ErrorAlert from '../../components/ErrorAlert'
 import defaultImage from '../../assets/images/dfault-image.png'
 import { imageURI } from '../../utils/axios'
-import { MdCompress, MdFastfood } from 'react-icons/md'
-import { GiBarbecue } from 'react-icons/gi'
-import { PiOvenFill } from 'react-icons/pi'
-const productTypes = [
-  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue size={18} /> },
-  { value: 'PANINI', label: 'Panini', icon: <MdCompress size={18} /> },
-  { value: 'FOUR', label: 'Four', icon: <PiOvenFill size={18} /> }
-]
+import { MdFastfood } from 'react-icons/md'
+
+import { productTypes } from '../../utils/utils'
+
 const List = () => {
   const [showCreate, setShowCreate] = useState(false)
   const dispatch = useDispatch()
@@ -167,7 +162,7 @@ const Table = ({ items, total, setItemToDelete }) => {
                     {o.name}
                   </td>
                   <td className="whitespace-nowrap px-2 py-1 font-medium text-gray-900 dark:text-white w-auto text-center">
-                    <Popover placement="bottom">
+                    <Popover placement="right-end" showArrow={true}>
                       <PopoverTrigger>
                         <Button isIconOnly color="warning" variant="shadow">
                           <MdFastfood size={20} />

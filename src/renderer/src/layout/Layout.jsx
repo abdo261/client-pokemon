@@ -81,7 +81,7 @@ const Layout = () => {
                     delay={0}
                     closeDelay={0}
                   >
-                    <span className="w-fit">
+                    <span className="w-fit ">
                       <motion.span
                         transition={{ duration: 0.7 }}
                         whileTap={{ scale: 0.7 }}
@@ -91,7 +91,7 @@ const Layout = () => {
                           isIconOnly
                           size="sm"
                           variant="bordered"
-                          className="text-lg"
+                          className="text-lg sticky top-0 left-0"
                         
                           onClick={handelNavigate}
                         >

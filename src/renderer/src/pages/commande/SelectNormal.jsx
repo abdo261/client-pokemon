@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@nextui-org/react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SelectOffer from './SelectOffer'
 import { BiSolidOffer } from 'react-icons/bi'

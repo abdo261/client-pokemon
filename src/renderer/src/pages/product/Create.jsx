@@ -1,22 +1,17 @@
 import { Button, Checkbox, Input, Select, SelectItem, Spinner } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
-import { MdClose, MdCompress, MdOutlineCategory } from 'react-icons/md'
+import { MdClose, MdOutlineCategory } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import { createProduct } from '../../redux/api/productApi' // Assuming this action exists
 import { getCategories } from '../../redux/api/categoryApi' // Fetch categories
 import { productActions } from '../../redux/slices/productSlice'
-import { formatErrorField } from '../../utils/utils'
+import { formatErrorField, productTypes } from '../../utils/utils'
 import { imageURI } from '../../utils/axios'
 import defaultImage from '../../assets/images/dfault-image.png'
 import { LuImagePlus } from 'react-icons/lu'
-import { GiBarbecue } from 'react-icons/gi'
-import { PiOvenFill } from 'react-icons/pi'
-const productTypes = [
-  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue /> },
-  { value: 'PANINI', label: 'Panini', icon: <MdCompress /> },
-  { value: 'FOUR', label: 'Four', icon: <PiOvenFill /> }
-]
+
+
 
 const Create = ({ onClose }) => {
   const dispatch = useDispatch()
@@ -30,7 +25,7 @@ const Create = ({ onClose }) => {
     image: null,
     isPublish: true,
     imageFile: null,
-    type: null
+    type: ''
   })
   const [imagePreview, setImagePreview] = useState(null)
   const fileInputRef = useRef(null)
@@ -70,9 +65,9 @@ const Create = ({ onClose }) => {
     newFormData.append('categoryId', formData.categoryId)
     newFormData.append('price', formData.price)
     newFormData.append('isPublish', formData.isPublish)
-   if(formData.type){
-     newFormData.append('type', formData.type)
-   }
+    if (formData.type) {
+      newFormData.append('type', formData.type)
+    }
     newFormData.append('imageFile', formData.imageFile)
 
     if (formData.image) {
@@ -90,7 +85,7 @@ const Create = ({ onClose }) => {
             image: null,
             isPublish: true,
             imageFile: null,
-            type: null
+           type: ''
           })
         },
         setIsLoading(false)
@@ -106,9 +101,10 @@ const Create = ({ onClose }) => {
       image: null,
       isPublish: true,
       imageFile: null,
-      type: null
+      type: ''
     })
   }, [])
+
   return (
     <motion.div
       initial={{ height: 0 }}
@@ -144,7 +140,7 @@ const Create = ({ onClose }) => {
               errorValidation &&
               formatErrorField(errorValidation, 'name') && (
                 <ol>
-                  {formatErrorField(errorValidation, 'name').map((e,i) => (
+                  {formatErrorField(errorValidation, 'name').map((e, i) => (
                     <li key={i}>-{e}</li>
                   ))}
                 </ol>
@@ -170,7 +166,7 @@ const Create = ({ onClose }) => {
                   errorValidation &&
                   formatErrorField(errorValidation, 'categoryId') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'categoryId').map((e,i) => (
+                      {formatErrorField(errorValidation, 'categoryId').map((e, i) => (
                         <li key={i}>-{e}</li>
                       ))}
                     </ol>
@@ -222,7 +218,7 @@ const Create = ({ onClose }) => {
                 errorValidation &&
                 formatErrorField(errorValidation, 'price') && (
                   <ol>
-                    {formatErrorField(errorValidation, 'price').map((e,i) => (
+                    {formatErrorField(errorValidation, 'price').map((e, i) => (
                       <li key={i}>-{e}</li>
                     ))}
                   </ol>
@@ -231,16 +227,23 @@ const Create = ({ onClose }) => {
             />
           </div>
           <Select
+          //  key={formData.type || 'reset'} 
             placeholder="Sélectionnez le type"
             className="tracking-widest"
             variant="bordered"
-            value={formData.type}
+            selectedKeys={['' + formData.type]}
+            value={formData.type }
             onChange={(e) => handelChange('type', e.target.value)} // Update to handle type change
             aria-label="type"
             label="Type de Produit"
           >
             {productTypes.map((type) => (
-              <SelectItem key={type.value} value={type.value} startContent={type.icon} className='dark:text-white'>
+              <SelectItem
+                key={type.value}
+                value={type.value}
+                startContent={type.icon}
+                className="dark:text-white"
+              >
                 {type.label}
               </SelectItem>
             ))}
@@ -273,7 +276,7 @@ const Create = ({ onClose }) => {
                 <div className="text-danger font-bold text-small">
                   {errorValidation && formatErrorField(errorValidation, 'image') && (
                     <ol>
-                      {formatErrorField(errorValidation, 'image').map((e,i) => (
+                      {formatErrorField(errorValidation, 'image').map((e, i) => (
                         <li key={i}>-{e}</li>
                       ))}
                     </ol>
@@ -307,8 +310,11 @@ const Create = ({ onClose }) => {
                 setFormData({
                   name: '',
                   categoryId: '',
-                  prix: '',
-                  image: null
+                  price: '',
+                  image: null,
+                  isPublish: true,
+                  imageFile: null,
+                  type: ''
                 })
               }
             >

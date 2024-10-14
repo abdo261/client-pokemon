@@ -1,6 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css'
 
-import { Route, Routes, HashRouter as Router, BrowserRouter, Navigate } from 'react-router-dom'
+import { Route, Routes, HashRouter as Router,  Navigate } from 'react-router-dom'
 import { categoryRoutes } from './pages/category/router'
 import Layout from './layout/Layout'
 import Home from './pages/home/Home'
@@ -15,17 +15,19 @@ import Sharts from './pages/charts/Sharts'
 import { orderRoutes } from './pages/order/routes'
 import Login from './pages/auth/Login'
 import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 function App() {
   // const api = import.meta.env.VITE_API_URI
   const { user } = useSelector((state) => state.auth)
-  console.log(user)
+  useEffect(() => {
+    document.title = 'Poutchi'
+  }, [])
   return (
     <Router>
       <Routes>
         {user ? (
           <>
-           
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
             </Route>
@@ -43,15 +45,12 @@ function App() {
             {dayRoutes}
             {offreRoutes}
             {orderRoutes}
-            <Route path="/*" element={<Navigate to='/' />} />
-
+            <Route path="/*" element={<Navigate to="/" />} />
           </>
         ) : (
           <>
-        
             <Route path="/auth/login" element={<Login />} />
-            <Route path="/*" element={<Navigate to='/auth/login' />} />
-
+            <Route path="/*" element={<Navigate to="/auth/login" />} />
           </>
         )}
       </Routes>

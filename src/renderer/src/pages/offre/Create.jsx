@@ -1,24 +1,18 @@
 import { Button, Checkbox, Chip, Input, Select, SelectItem, SelectSection } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
-import { MdClose, MdCompress } from 'react-icons/md'
+import { MdClose } from 'react-icons/md'
 import { LuImagePlus } from 'react-icons/lu'
 import { useDispatch, useSelector } from 'react-redux'
-import { createOffer } from '../../redux/api/offerApi' // Adjust this import based on your file structure
+import { createOffer } from '../../redux/api/offerApi' 
 import { getProducts } from '../../redux/api/productApi'
 import { toast } from 'react-toastify'
 import { getCategoriesWithProducts } from '../../redux/api/categoryApi'
 import { imageURI } from '../../utils/axios'
 import defaultImage from '../../assets/images/dfault-image.png'
-import { GiBarbecue } from 'react-icons/gi'
-import { PiOvenFill } from 'react-icons/pi'
-import { formatErrorField } from '../../utils/utils'
+import { formatErrorField, productTypes } from '../../utils/utils'
 import { offerActions } from '../../redux/slices/offerSlice'
-const productTypes = [
-  { value: 'CHARBON', label: 'Charbon', icon: <GiBarbecue size={18} /> },
-  { value: 'PANINI', label: 'Panini', icon: <MdCompress size={18} /> },
-  { value: 'FOUR', label: 'Four', icon: <PiOvenFill size={18} /> }
-]
+
 const Create = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSelectOpen, setIsSelectOpen] = useState(false)

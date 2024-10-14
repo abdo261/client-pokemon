@@ -8,14 +8,12 @@ import {
   SelectSection,
   Spinner
 } from '@nextui-org/react'
-import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { MdClose, MdCompress } from 'react-icons/md'
 import { LuImagePlus } from 'react-icons/lu'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateOffer, getOfferById } from '../../redux/api/offerApi' // Adjust this import based on your file structure
+import { updateOffer, getOfferById } from '../../redux/api/offerApi' 
 import { getProducts } from '../../redux/api/productApi'
-import { toast } from 'react-toastify'
 import { getCategoriesWithProducts } from '../../redux/api/categoryApi'
 import { imageURI } from '../../utils/axios'
 import defaultImage from '../../assets/images/dfault-image.png'

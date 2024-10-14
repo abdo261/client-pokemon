@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import Create from './Create'
 import { LuPanelTopOpen, LuPanelBottomOpen } from 'react-icons/lu'
 import { BiSolidEdit, BiTrash } from 'react-icons/bi'
-import { FiEye, FiSearch } from 'react-icons/fi'
+import { FiSearch } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import swal from 'sweetalert'
@@ -118,7 +118,7 @@ const List = () => {
         ) : (
           'Loading...'
         ))}
-      <div className="my-4 w-full flex justify-center">
+      <div className="my-4 w-full flex justify-start">
         {pages > 1 && (
           <Pagination
             showControls
@@ -138,7 +138,7 @@ export default List
 
 const Table = ({ items, totale, setItemToDelete ,isLOadingDelete, itemToDelete}) => {
   return (
-    <div className="rounded-lg  h-[450px]  w-full   mt-4 ">
+    <div className="rounded-lg  h-[300px]  w-full   mt-4 ">
       <div className="overflow-x-auto rounded-t-lg w-full justify-center shadow-[0px_0px_7px_-2px_rgba(0,0,0,0.75)]">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white  dark:divide-gray-700 dark:bg-[#43474b]  ">
           <thead className="ltr:text-left rtl:text-right ">

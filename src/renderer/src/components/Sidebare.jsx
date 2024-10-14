@@ -56,7 +56,7 @@ const Sidebare = ({ open }) => {
   const handelLogout = () => {
     setIsLogout(true)
   }
-const dispatch=useDispatch()
+  const dispatch = useDispatch()
   useEffect(() => {
     if (isLogout) {
       swal({
@@ -65,15 +65,15 @@ const dispatch=useDispatch()
         buttons: true,
         dangerMode: true
       }).then((isOk) => {
-        if (isOk) {dispatch(
-          logoutUser(() => {
-            setIsLogout(false);
-            navigate("/");
-          })
-        );
+        if (isOk) {
+          dispatch(
+            logoutUser(() => {
+              setIsLogout(false)
+              navigate('/')
+            })
+          )
         }
-        setIsLogout(false);
-
+        setIsLogout(false)
       })
     }
   }, [isLogout, navigate])
@@ -83,7 +83,7 @@ const dispatch=useDispatch()
         open ? 'w-16' : 'w-0  '
       } overflow-hidden duration-500 ease-in-out  flex-col justify-between border-e dark:border-gray-800 dark:bg-[#242526] dark:text-white bg-white fixed top-0 left-0 `}
     >
-      <div className=' flex-1 flex flex-col max-h-screen'>
+      <div className=" flex-1 flex flex-col max-h-screen">
         <div className="inline-flex size-16 items-center justify-center">
           <Link to="/" className="grid size-10 place-content-center ">
             <div className="w-14">
@@ -91,8 +91,8 @@ const dispatch=useDispatch()
             </div>
           </Link>
         </div>
-        <div className='custom-scroll flex flex-1 flex-col overflow-y-auto h-full pb-20'>
-          <div >
+        <div className="custom-scroll flex flex-1 flex-col overflow-y-auto h-full pb-20">
+          <div>
             <div className="px-2">
               <ul className="space-y-1  pb-1 pt-4">
                 {Links.map((l, i) => (
